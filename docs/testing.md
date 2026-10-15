@@ -22,6 +22,7 @@ These checks do not require a running Obsidian instance. They cover:
 | --- | --- |
 | CLI transport | Code is passed as an argument rather than through a shell. Missing initial output can be recovered by polling. |
 | Result handling | Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
+| Note creation | Plugin-generated Markdown, existing-path and traversal rejection, saved editable session, retained creation after initialization failure, and request replay without duplicate creation. |
 | Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending source/shared notifications are processed without waiting for animation frames. |
 | Synchronous rollback | Failed edits restore records, including history-ignored changes, without leaving forward changes queued for other Editors. |
 | Exceptions | Arbitrary thrown values become failed jobs with readable errors; subsequent requests remain usable. |
@@ -31,6 +32,14 @@ These checks do not require a running Obsidian instance. They cover:
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. |
 
 If the plugin package is stale, regenerate it with `python3 scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
+
+## Note creation integration check
+
+```sh
+python3 tests/live_create.py --vault Documents
+```
+
+This check creates a uniquely named folder and Markdown note through `create`, verifies an empty editable document, request replay, duplicate rejection, and a saved shape edit, then closes the session and removes its temporary note and folder. It uses fresh runtime and loader copies so cached code does not affect the check.
 
 ## Runtime reload integration check
 

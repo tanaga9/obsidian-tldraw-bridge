@@ -15,6 +15,7 @@ def parser():
     sub = p.add_subparsers(dest="command", required=True)
     sub.add_parser("doctor")
     sub.add_parser("forget", help="Release a completed receipt; its id must not be retried afterwards").add_argument("id")
+    sub.add_parser("create", help="Create a new tldraw Markdown note and open its editor session").add_argument("path", help="New vault-relative .md path")
     for command in ("open", "state", "saved", "close"):
         sub.add_parser(command).add_argument("path", help="Vault-relative .md path")
     batch = sub.add_parser("batch")

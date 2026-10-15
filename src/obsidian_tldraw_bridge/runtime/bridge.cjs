@@ -118,6 +118,29 @@ async function acquireSeed(app, plugin, file) {
   throw new Error('Opened tldraw view, but no live Editor reference became available')
 }
 
+async function create(app, path) {
+  if (typeof path !== 'string' || !path.endsWith('.md') || path.includes('\\') || /[\x00-\x1f]/.test(path)
+    || path.split('/').some(part => !part || part === '.' || part === '..') || path.split('/').at(-1) === '.md') {
+    throw new Error('Use a vault-relative Markdown path without traversal')
+  }
+  const plugin = app.plugins.getPlugin('tldraw')
+  if (!['1.31.0', '1.32.0'].includes(plugin?.manifest.version)) throw new Error('Unsupported tldraw plugin version')
+  if (app.vault.getAbstractFileByPath(path)) throw new Error(`File or folder already exists: ${path}`)
+  if (sessionsFor(app).has(path)) throw new Error(`Close the existing session before creating: ${path}`)
+  const parts = path.split('/')
+  const filename = parts.pop()
+  const file = await plugin.createTldrFile(filename, { foldername: parts.join('/'), inMarkdown: true })
+  try {
+    if (sessionsFor(app).has(file.path)) throw new Error('A session already exists for the created path')
+    await plugin.openTldrFile(file, 'new-tab', 'tldraw-view')
+    const result = await open(app, file.path)
+    return { ...result, created: true, requestedPath: path, persistence: await saved(app, file.path) }
+  } catch (error) {
+    // Keep the created note: GUI edits or a delayed save may already exist.
+    throw new Error(`Created ${file.path}, but initialization failed: ${errorMessage(error)}. Use open with this path to recover.`)
+  }
+}
+
 async function open(app, path, currentPageId) {
   if (sessionsFor(app).has(path)) return state(app, path)
   const plugin = app.plugins.getPlugin('tldraw')
@@ -257,6 +280,7 @@ async function execute(app, action, args) {
       supported: ['1.31.0','1.32.0'].includes(plugin?.manifest.version),
       documents: [...sessionsFor(app).keys()]}
   }
+  if (action === 'create') return create(app, args.path)
   if (action === 'open') return open(app, args.path, args.currentPageId)
   if (action === 'state') return state(app, args.path)
   if (action === 'batch' || action === 'script') {

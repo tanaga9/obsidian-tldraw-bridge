@@ -200,3 +200,92 @@ test('save drains source and shared notifications before checking Markdown',asyn
   assert.equal((await h.access.saved(h.app,'a.md')).saved,true)
   assert.deepEqual(flushed,['source','source listener removed','main','main listener removed'])
 })
+
+function createFixture() {
+  const h = setup()
+  const files = new Map()
+  const calls = []
+  const plugin = {
+    manifest: {version:'1.32.0'},
+    async createTldrFile(filename, options) {
+      calls.push({filename,options})
+      const actual = h.actualPath || [options.foldername,filename].filter(Boolean).join('/')
+      const file = {path:actual,extension:'md'}
+      files.set(actual,file)
+      return file
+    },
+    async openTldrFile(file, location, type) {
+      calls.push({opened:file.path,location,type})
+      if(h.openError) throw new Error(h.openError)
+      // Model the already-open session boundary; real Editor construction is
+      // exercised by the opt-in create integration test.
+      h.access.sessionsFor(h.app).set(file.path,{path:file.path,file,editor:h.editor,seed:h.editor})
+    },
+  }
+  h.app.plugins.getPlugin=()=>plugin
+  h.app.vault.getAbstractFileByPath=path=>files.get(path)
+  return Object.assign(h,{files,calls,plugin})
+}
+
+test('create delegates Markdown generation to plugin and returns saved editable session',async()=>{
+  const h=createFixture()
+  const result=await h.invoke('create',{path:'Drawings/project-plan.md'},'create-plan')
+  assert.equal(result.created,true)
+  assert.equal(result.path,'Drawings/project-plan.md')
+  assert.equal(result.requestedPath,result.path)
+  assert.equal(result.persistence.saved,true)
+  assert.equal(result.currentPageId,'page:a')
+  assert.ok(result.revision)
+  assert.deepEqual(copy(h.calls[0]),{filename:'project-plan.md',options:{foldername:'Drawings',inMarkdown:true}})
+  assert.deepEqual(h.calls[1],{opened:'Drawings/project-plan.md',location:'new-tab',type:'tldraw-view'})
+  const replay=await h.invoke('create',{path:'Drawings/project-plan.md'},'create-plan')
+  assert.equal(replay.revision,result.revision)
+  assert.equal(h.calls.length,2)
+})
+
+test('create refuses existing files or folders without changing them',async()=>{
+  const h=createFixture(), existing={path:'existing.md',content:'keep me'}
+  h.files.set(existing.path,existing)
+  await assert.rejects(h.invoke('create',{path:existing.path}),/already exists/)
+  assert.equal(h.files.get(existing.path),existing)
+  assert.equal(h.calls.length,0)
+})
+
+test('create refuses unsafe paths even when called without CLI validation',async()=>{
+  for(const path of ['/absolute.md','../escape.md','a/../escape.md','a/./x.md','a//x.md','a\\x.md','x.tldr','.md','a/\u0000x.md']) {
+    const h=createFixture()
+    await assert.rejects(h.invoke('create',{path}),/vault-relative Markdown path/)
+    assert.equal(h.calls.length,0)
+  }
+})
+
+test('create checks plugin compatibility before writing',async()=>{
+  const h=createFixture()
+  h.plugin.manifest.version='0.0.0'
+  await assert.rejects(h.invoke('create',{path:'plan.md'}),/Unsupported/)
+  assert.equal(h.calls.length,0)
+})
+
+test('create reports actual plugin-assigned path if a competing creation takes the requested name',async()=>{
+  const h=createFixture()
+  h.actualPath='plan 1.md'
+  const result=await h.invoke('create',{path:'plan.md'})
+  assert.equal(result.path,'plan 1.md')
+  assert.equal(result.requestedPath,'plan.md')
+  assert.equal(result.persistence.path,'plan 1.md')
+})
+
+test('initialization failure retains created file and reports recovery path without recreating on replay',async()=>{
+  const h=createFixture()
+  h.openError='Editor unavailable'
+  await assert.rejects(h.invoke('create',{path:'plan.md'},'create-failed'),/Created plan.md.*Editor unavailable.*Use open/)
+  assert.ok(h.files.has('plan.md'))
+  await assert.rejects(h.invoke('create',{path:'plan.md'},'create-failed'),/Created plan.md/)
+  assert.equal(h.calls.filter(c=>c.filename).length,1)
+})
+
+test('create refuses to reuse a stale session path',async()=>{
+  const h=createFixture()
+  await assert.rejects(h.invoke('create',{path:'a.md'}),/Close the existing session/)
+  assert.equal(h.calls.length,0)
+})

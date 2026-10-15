@@ -22,9 +22,9 @@ That is the only user setup step. The plugin bundles its Skill and bridge code; 
 
 Tell Codex which diagram to work on and what you want to do. For example:
 
-> Open "Drawings/example.md" in the Documents vault and explain the diagram.
+> Create "Drawings/project-plan.md" in the Documents vault and draw a project schedule.
 
-Codex runs the connectivity checks and diagram commands. If the vault cannot be identified from the conversation, Codex asks you to specify it.
+Codex runs the connectivity checks and diagram commands. The `create` command generates a new tldraw Markdown note through the existing plugin, opens it in a GUI tab and a bridge session, and returns its revision and persistence result. Existing files are rejected. If the vault cannot be identified from the conversation, Codex asks you to specify it.
 
 ## Current support
 
@@ -52,7 +52,7 @@ A dedicated Editor handles bridge edits. The existing plugin's document store ma
 
 If the SDK has not been initialized, the bridge opens a diagram tab through the existing plugin and then returns to the previously active tab. The diagram tab remains open.
 
-Before an edit, the bridge checks a revision covering all SDK document-scope records, including document settings, pages, shapes, bindings, and assets. Stale revisions are rejected. Persistence checks compare the saved records with the Editor. Camera and selection state are excluded. Revision checks do not lock out human editing. PNG export checks the revision before and after rendering; a conflict leaves the output file unchanged.
+Before editing an existing document, the bridge checks a revision covering all SDK document-scope records, including document settings, pages, shapes, bindings, and assets. Stale revisions are rejected. Persistence checks compare the saved records with the Editor. Camera and selection state are excluded. Revision checks do not lock out human editing. PNG export checks the revision before and after rendering; a conflict leaves the output file unchanged.
 
 The integration uses private APIs, so unverified plugin versions are rejected. Runtime source changes are detected on the next new request. The bridge checks persistence, closes its dedicated sessions, and reopens them with the updated runtime, restoring each selected page; Obsidian does not need to restart. A failed reopen is reported in `doctor.reloadErrors` and does not block other documents. Use `open` to retry that document or `close` to dismiss its recovery entry. Updates refuse to interrupt running work and preserve retained request IDs. Recreating sessions resets the bridge Editor’s Undo history. Reopen sessions after Obsidian restarts. Bridge and GUI Editors have separate Undo histories.
 

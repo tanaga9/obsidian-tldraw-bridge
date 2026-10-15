@@ -8,7 +8,7 @@ Run these commands from the repository root; package installation is not require
 
 ```sh
 python3 bridge.py --vault Documents doctor
-python3 bridge.py --vault Documents open 'Drawings/example.md'
+python3 bridge.py --vault Documents --request-id create-example create 'Drawings/example.md'
 python3 bridge.py --vault Documents state 'Drawings/example.md'
 ```
 
@@ -24,6 +24,14 @@ python3 bridge.py --vault Documents close 'Drawings/example.md'
 Use `--obsidian /path/to/executable` or the `OBSIDIAN_CLI` environment variable to override the Obsidian CLI location. Always specify the vault. Diagram paths are vault-relative `.md` paths. For `batch` and `script`, `--input -` reads from standard input. Results are JSON; handled errors are written as JSON to standard error with exit code 1.
 
 Optional Python package installation with `python3 -m pip install .` exposes the `obsidian-tldraw` command. Normal plugin use does not require this installation.
+
+## Create a note
+
+`create <path.md>` creates a new tldraw Markdown note through the plugin, opens a GUI tab and a bridge Editor session, and checks persistence. Parent folders are created by the plugin when needed. No revision is required for creation. The result includes `created: true`, the actual `path`, `requestedPath`, `currentPageId`, `revision`, records, and `persistence`. Use the returned revision for the first edit. Use `open <path.md>` for an existing note.
+
+An existing file or folder at the requested path is rejected without overwriting it. If another client takes the name during creation, the plugin may choose a unique filename; use the returned `path` for subsequent commands. Creation uses the plugin's current frontmatter, tags, and serialization settings.
+
+Pass an explicit `--request-id` to recover a timed-out creation without creating another note. If the note was created but opening or checking persistence failed, the error identifies the retained note's path. Recover it with `open` and `saved`; the bridge does not delete the note automatically.
 
 ## Release retained results
 
