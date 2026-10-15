@@ -86,6 +86,7 @@ function state(app, path) {
   return {
     path: session.path,
     revision: revision(session.editor),
+    currentPageId: session.editor.getCurrentPageId(),
     pluginVersion: app.plugins.getPlugin('tldraw').manifest.version,
     bootstrap: session.bootstrap,
     vault: app.vault.getName(),
@@ -117,7 +118,7 @@ async function acquireSeed(app, plugin, file) {
   throw new Error('Opened tldraw view, but no live Editor reference became available')
 }
 
-async function open(app, path) {
+async function open(app, path, currentPageId) {
   if (sessionsFor(app).has(path)) return state(app, path)
   const plugin = app.plugins.getPlugin('tldraw')
   if (!['1.31.0', '1.32.0'].includes(plugin?.manifest.version)) throw new Error('Unsupported tldraw plugin version')
@@ -148,6 +149,10 @@ async function open(app, path) {
       getContainer: () => session.container,
       fontAssetUrls: plugin.getFontOverrides(),
     })
+    if (currentPageId) {
+      if (!session.editor.getPage(currentPageId)) throw new Error(`Previous page no longer exists: ${currentPageId}`)
+      session.editor.setCurrentPage(currentPageId)
+    }
     return state(app, path)
   } catch (error) {
     close(app, path)
@@ -252,7 +257,7 @@ async function execute(app, action, args) {
       supported: ['1.31.0','1.32.0'].includes(plugin?.manifest.version),
       documents: [...sessionsFor(app).keys()]}
   }
-  if (action === 'open') return open(app, args.path)
+  if (action === 'open') return open(app, args.path, args.currentPageId)
   if (action === 'state') return state(app, args.path)
   if (action === 'batch' || action === 'script') {
     const result = action === 'batch' ? batch(app,args.path,args.operations,args.revision) : script(app,args.path,args.code,args.revision)

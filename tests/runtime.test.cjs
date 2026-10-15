@@ -41,6 +41,7 @@ function setup() {
     updateDocumentSettings:settings=>Object.assign(values.find(r=>r.typeName==='document'),settings),
     updateShapes:changes=>{for(const change of changes)Object.assign(values.find(r=>r.id===change.id),change)},
     getCurrentPageShapeIds:()=>['shape:a'],
+    getCurrentPageId:()=> 'page:a',
   }
   const markdown=records=>'```json !!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!\n'+JSON.stringify({raw:{records}})+'\n!!!_END_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!'
   const app={vault:{getName:()=> 'test',read:async()=>markdown(disk)},plugins:{getPlugin:()=>({manifest:{version:'1.32.0'}})},workspace:{getActiveFile:()=>null,getLeavesOfType:()=>[]}}

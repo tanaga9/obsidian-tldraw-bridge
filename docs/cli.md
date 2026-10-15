@@ -34,3 +34,7 @@ python3 bridge.py --vault Documents forget '<request-id>'
 ```
 
 Forgetting an ID also removes its deduplication protection. Ordinary results are released automatically after retrieval; timed-out requests are retained. At the 128-receipt limit, new requests are rejected without executing them.
+
+## Runtime reload diagnostics
+
+`state` and successful edits include `currentPageId`. Source updates preserve the selected page when recreating each dedicated Editor. `doctor` includes a `reloadErrors` array with the path, previous page ID, and error for each failed reopen. A failed document does not block other documents. Use `open <path>` to retry recovery, or `close <path>` to dismiss its recovery entry. If the previous page was deleted, dismiss recovery before opening the document normally.

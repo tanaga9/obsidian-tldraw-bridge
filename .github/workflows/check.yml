@@ -15,6 +15,7 @@ jobs:
         with:
           node-version: '22'
       - run: python -m unittest discover -s tests -p 'test_*.py'
-      - run: node --test tests/runtime.test.cjs
+      - run: node --test tests/*.test.cjs
       - run: node --check src/obsidian_tldraw_bridge/runtime/bridge.cjs
+      - run: node --check src/obsidian_tldraw_bridge/runtime/loader.cjs
       - run: python scripts/build_plugin.py --check

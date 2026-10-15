@@ -10,8 +10,9 @@ Use Python 3.10+ and Node.js 22, matching the CI configuration. Node.js is a dev
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_*.py'
-node --test tests/runtime.test.cjs
+node --test tests/*.test.cjs
 node --check src/obsidian_tldraw_bridge/runtime/bridge.cjs
+node --check src/obsidian_tldraw_bridge/runtime/loader.cjs
 python3 scripts/build_plugin.py --check
 ```
 
@@ -26,9 +27,28 @@ These checks do not require a running Obsidian instance. They cover:
 | Exceptions | Arbitrary thrown values become failed jobs with readable errors; subsequent requests remain usable. |
 | Preview | Changes during image generation reject the export without replacing an existing output file. |
 | Receipt capacity | The limit rejects new work while preserving retained results and their deduplication protection. |
+| Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. |
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. |
 
 If the plugin package is stale, regenerate it with `python3 scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
+
+## Runtime reload integration check
+
+Against an existing dedicated test diagram, run:
+
+```sh
+python3 tests/live_reload.py --vault Documents --path 'Bridge test diagram.md'
+```
+
+The check loads a temporary runtime, changes its source at the same path, and verifies automatic session recreation, unchanged document records and revision, initialized text options, and replay of a retained request ID. It does not add or remove shapes in this mode. The loader is also copied to a fresh path so the check always exercises the code on disk.
+
+To verify that an edit after reload targets the previously selected second page, use:
+
+```sh
+python3 tests/live_reload.py --vault Documents --path 'Bridge test diagram.md' --multi-page-copy
+```
+
+This mode creates a temporary diagram copy, selects a new second page, reloads the runtime, and checks the parent page of a newly created shape. The copy is deleted after the check; the source diagram is not edited.
 
 ## Live test prerequisites
 
@@ -64,7 +84,7 @@ python3 tests/live_sessions.py --vault Documents --path 'Bridge test diagram.md'
 
 This test creates a temporary copy of the diagram, opens both documents, and verifies that an edit to the copy is saved without changing the original session's revision. It then closes both sessions and removes the temporary Markdown file.
 
-This script uses the normal runtime path. Restart Obsidian before testing changed runtime code if that path has already been loaded; otherwise its require cache can retain an older implementation.
+This script uses the normal runtime path, where runtime source updates are detected automatically. Restart Obsidian when testing changes to the loader itself, since Node caches that module.
 
 ## Cleanup and manual validation
 

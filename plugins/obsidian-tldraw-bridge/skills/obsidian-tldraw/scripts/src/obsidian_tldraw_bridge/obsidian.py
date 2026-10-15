@@ -42,8 +42,13 @@ class Client:
         except json.JSONDecodeError as exc:
             raise BridgeError("Unexpected CLI response: " + values[-1]) from exc
 
+    def _runtime(self):
+        loader = str(Path(__file__).resolve().parent / "runtime" / "loader.cjs")
+        return f"require({json.dumps(loader)})", json.dumps(self.module)
+
     def forget(self, request_id):
-        return self.evaluate(f"require({json.dumps(self.module)}).forget(app,{json.dumps(request_id)})")
+        loader, module = self._runtime()
+        return self.evaluate(f"{loader}.forget(app,{module},{json.dumps(request_id)})")
 
     def _release_automatic(self, job_id, request_id):
         if request_id is None:
@@ -56,11 +61,12 @@ class Client:
 
     def call(self, action, args=None, request_id=None):
         job_id = request_id or "bridge-" + uuid.uuid4().hex
-        module, identity = json.dumps(self.module), json.dumps(job_id)
-        self.evaluate(f"require({module}).dispatch(app,{json.dumps(action)},{json.dumps(args or {})},{identity})", True)
+        loader, module = self._runtime()
+        identity = json.dumps(job_id)
+        self.evaluate(f"{loader}.dispatch(app,{module},{json.dumps(action)},{json.dumps(args or {})},{identity})", True)
         deadline = time.monotonic() + self.timeout
         while time.monotonic() < deadline:
-            job = self.evaluate(f"require({module}).poll(app,{identity})", True)
+            job = self.evaluate(f"{loader}.poll(app,{module},{identity})", True)
             if job and job.get("status") == "failed":
                 self._release_automatic(job_id, request_id)
                 raise BridgeError(job["error"] + " (request " + job_id + ")")

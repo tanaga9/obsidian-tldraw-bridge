@@ -21,6 +21,18 @@ class TransportTest(unittest.TestCase):
             self.assertEqual(run.call_args.args[0][-1], "code="+code)
             self.assertNotIn("shell", run.call_args.kwargs)
 
+    def test_dispatch_poll_and_forget_use_loader_with_runtime_path(self):
+        client = self.client()
+        with patch.object(client, "evaluate", side_effect=[None, {"status":"complete", "result":{}}, {"forgotten":True}]) as evaluate:
+            client.call("doctor")
+            calls = [item.args[0] for item in evaluate.call_args_list]
+            for code in calls:
+                self.assertIn("loader.cjs", code)
+                self.assertIn(json.dumps(client.module), code)
+            self.assertIn(".dispatch(app,", calls[0])
+            self.assertIn(".poll(app,", calls[1])
+            self.assertIn(".forget(app,", calls[2])
+
     def test_lost_dispatch_output_still_polls(self):
         client = self.client()
         with patch.object(client, "evaluate", side_effect=[None,{"status":"running"},{"status":"complete","result":{"saved":True}}]):
