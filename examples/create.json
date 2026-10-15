@@ -1,0 +1,6 @@
+[
+  {"method":"createShapes","args":[[
+    {"id":"shape:bridge-example","type":"geo","x":100,"y":100,
+     "props":{"geo":"rectangle","w":240,"h":120,"color":"blue","fill":"solid"}}
+  ]]}
+]

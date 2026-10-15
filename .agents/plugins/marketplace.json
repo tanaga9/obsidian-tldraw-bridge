@@ -1,0 +1,20 @@
+{
+  "name": "obsidian-tldraw-bridge-local",
+  "interface": {
+    "displayName": "Obsidian tldraw Bridge"
+  },
+  "plugins": [
+    {
+      "name": "obsidian-tldraw-bridge",
+      "source": {
+        "source": "local",
+        "path": "./plugins/obsidian-tldraw-bridge"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
