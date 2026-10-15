@@ -25,6 +25,24 @@ Use `--obsidian /path/to/executable` or the `OBSIDIAN_CLI` environment variable 
 
 Optional Python package installation with `python3 -m pip install .` exposes the `obsidian-tldraw` command. Normal plugin use does not require this installation.
 
+## Edit results
+
+`batch` and `script` return a compact result by default:
+
+```json
+{
+  "path": "Drawings/example.md",
+  "revision": "<new revision>",
+  "currentPageId": "page:example",
+  "changes": {"added": 2, "updated": 1, "removed": 0},
+  "persistence": {"saved": true, "path": "Drawings/example.md", "bytes": 1024}
+}
+```
+
+`changes` counts the net differences in all persistent document records, including shapes, pages, bindings, assets, and document settings. Changes made and reversed within one edit count as zero; camera and selection changes are excluded. Counts describe the edit itself, rather than the number of requested operations.
+
+Use `state <path.md>` to inspect full records, or append `--full` to `batch` or `script` to include records and editor diagnostics in that edit's result. `--full` is part of the request: keep it unchanged when replaying an explicit request ID. Previously retained requests still return their original results. `create`, `open`, and `state` continue to return full document state.
+
 ## Create a note
 
 `create <path.md>` creates a new tldraw Markdown note through the plugin, opens a GUI tab and a bridge Editor session, and checks persistence. Parent folders are created by the plugin when needed. No revision is required for creation. The result includes `created: true`, the actual `path`, `requestedPath`, `currentPageId`, `revision`, records, and `persistence`. Use the returned revision for the first edit. Use `open <path.md>` for an existing note.

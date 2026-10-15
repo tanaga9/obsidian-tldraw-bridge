@@ -54,7 +54,7 @@ with tempfile.TemporaryDirectory(prefix='bridge-live-reload-') as directory:
             vault_task('await app.vault.create(' + json.dumps(copied_path) + ', await app.vault.read(app.vault.getAbstractFileByPath(' + json.dumps(a.path) + ')))')
         before = c.call('open', args)
         if copied_path:
-            before = c.call('script', args | {
+            before = c.call('script', args | {'full': True,
                 'revision': before['revision'],
                 'code': 'editor.createPage({id:' + json.dumps(test_page) + ',name:"Reload second page"});editor.setCurrentPage(' + json.dumps(test_page) + ');',
             })
@@ -74,7 +74,7 @@ with tempfile.TemporaryDirectory(prefix='bridge-live-reload-') as directory:
         assert checked['persistence']['saved']
         if copied_path:
             shape_id = 'shape:reload-' + uuid.uuid4().hex
-            edited = c.call('batch', args | {'revision': after['revision'], 'operations': [
+            edited = c.call('batch', args | {'full': True,'revision': after['revision'], 'operations': [
                 {'method': 'createShapes', 'args': [[{'id': shape_id, 'type': 'geo', 'props': {'w': 80, 'h': 60}}]]},
             ]})
             assert next(r for r in edited['records'] if r['id'] == shape_id)['parentId'] == test_page

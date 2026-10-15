@@ -36,3 +36,7 @@ not provided. A revision check detects changes before the edit; it does not lock
 out human edits while a long export is running.
 
 Preview checks the document revision before and after asynchronous rendering and blob conversion. A conflict leaves an existing output file unchanged. An unsupported async script can still run already scheduled callbacks after it returns an error; this bridge does not provide a JavaScript sandbox or cancellation of arbitrary code.
+
+## Results
+
+`batch` and `script` return compact summaries with `path`, `revision`, `currentPageId`, `changes` (`added`, `updated`, `removed`), and `persistence`. Change counts measure net differences in document-scope records. Session records are excluded. Use `state` for full records, or add `--full` to an edit for full state plus change counts. A replayed request ID must use the same arguments, including the full-output option.

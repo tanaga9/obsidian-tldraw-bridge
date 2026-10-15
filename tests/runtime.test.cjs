@@ -289,3 +289,48 @@ test('create refuses to reuse a stale session path',async()=>{
   await assert.rejects(h.invoke('create',{path:'a.md'}),/Close the existing session/)
   assert.equal(h.calls.length,0)
 })
+
+test('compact edit results count net additions, updates and removals without returning records',async()=>{
+  const h=setup()
+  h.values().push({id:'shape:removed',typeName:'shape',props:{color:'red'}})
+  h.editor.createShapes=shapes=>h.values().push(...shapes)
+  h.editor.deleteShapes=ids=>{
+    for(let i=h.values().length-1;i>=0;i--) if(ids.includes(h.values()[i].id)) h.values().splice(i,1)
+  }
+  const result=h.access.batch(h.app,'a.md',[
+    {method:'createShapes',args:[[{id:'shape:new',typeName:'shape',props:{color:'green'}}]]},
+    {method:'updateShapes',args:[[{id:'shape:a',props:{color:'violet'}}]]},
+    {method:'deleteShapes',args:[['shape:removed']]},
+  ],h.access.revision(h.editor))
+  assert.deepEqual(copy(result.changes),{added:1,updated:1,removed:1})
+  assert.deepEqual(Object.keys(result).sort(),['changes','currentPageId','path','revision'])
+  const state=await h.invoke('state',{path:'a.md'})
+  assert.equal(state.revision,result.revision)
+  assert.ok(state.records.some(r=>r.id==='shape:new'))
+  assert.ok(!state.records.some(r=>r.id==='shape:removed'))
+})
+
+test('script summary counts document settings but ignores camera-only changes and no-op writes',()=>{
+  const h=setup()
+  h.editor.moveCamera=()=>{h.values().find(r=>r.typeName==='camera').x=123}
+  const settings=h.access.script(h.app,'a.md','editor.updateDocumentSettings({gridSize:20});',h.access.revision(h.editor))
+  assert.deepEqual(copy(settings.changes),{added:0,updated:1,removed:0})
+  const camera=h.access.script(h.app,'a.md','editor.moveCamera();editor.updateDocumentSettings({gridSize:20});',settings.revision)
+  assert.deepEqual(copy(camera.changes),{added:0,updated:0,removed:0})
+  assert.equal(camera.revision,settings.revision)
+})
+
+test('dispatch returns compact saved results by default and full records on request',async()=>{
+  const h=setup(), revision=h.access.revision(h.editor)
+  const args={path:'a.md',revision,code:';'}
+  const compact=await h.invoke('script',args,'compact')
+  assert.equal(compact.persistence.saved,true)
+  assert.equal('records' in compact,false)
+  assert.deepEqual(copy(compact.changes),{added:0,updated:0,removed:0})
+  assert.deepEqual(copy(await h.invoke('script',args,'compact')),copy(compact))
+  const full=await h.invoke('script',{...args,full:true},'full')
+  assert.ok(full.records.length)
+  assert.equal(full.persistence.saved,true)
+  assert.equal(full.revision,compact.revision)
+  assert.deepEqual(copy(full.changes),copy(compact.changes))
+})

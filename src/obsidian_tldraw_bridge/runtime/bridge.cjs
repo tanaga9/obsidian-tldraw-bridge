@@ -200,7 +200,22 @@ const methods = new Set(['createShapes', 'updateShapes', 'deleteShapes', 'create
 function assertRevision(session, expected) {
   if (!expected || revision(session.editor) !== expected) throw new Error('Revision conflict: read state and re-plan before editing')
 }
-function batch(app, path, operations, expected) {
+function editResult(app, path, before, full) {
+  const result = state(app, path)
+  const previous = new Map(before.map(record => [record.id, record]))
+  const changes = { added: 0, updated: 0, removed: 0 }
+  for (const record of result.records) {
+    const old = previous.get(record.id)
+    if (!old) changes.added++
+    else if (JSON.stringify(old) !== JSON.stringify(record)) changes.updated++
+    previous.delete(record.id)
+  }
+  changes.removed = previous.size
+  if (full) return { ...result, changes }
+  return { path: result.path, revision: result.revision, currentPageId: result.currentPageId, changes }
+}
+
+function batch(app, path, operations, expected, full = false) {
   const session = sessionFor(app, path)
   assertRevision(session, expected)
   if (!Array.isArray(operations) || !operations.length || operations.length > 1000) throw new Error('Batch must contain 1-1000 operations')
@@ -208,20 +223,22 @@ function batch(app, path, operations, expected) {
     if (!op || !methods.has(op.method) || !Array.isArray(op.args) || typeof session.editor[op.method] !== 'function') throw new Error('Unsupported operation')
   }
   const editor = session.editor
+  const before = JSON.parse(JSON.stringify(records(editor)))
   const history = operations.some(op => ['undo','redo'].includes(op.method))
   if (history && operations.length !== 1) throw new Error('Undo/redo must be a separate batch')
   const apply = () => { for (const op of operations) editor[op.method](...op.args) }
   if (history) editor.run(apply)
   else runWithRollback(editor, 'Obsidian tldraw bridge', apply)
-  return state(app, path)
+  return editResult(app, path, before, full)
 }
-function script(app, path, code, expected) {
+function script(app, path, code, expected, full = false) {
   const session = sessionFor(app, path)
   assertRevision(session, expected)
   if (typeof code !== 'string' || !code.trim()) throw new Error('Script is empty')
   const editor = session.editor
   // Trusted synchronous code, not a sandbox. A returned Promise is detected only
   // after execution: this check cannot cancel already scheduled work.
+  const before = JSON.parse(JSON.stringify(records(editor)))
   const fn = new Function('editor', 'app', 'plugin', 'require', code)
   runWithRollback(editor, 'Obsidian tldraw bridge script', () => {
     const result = fn(editor, app, app.plugins.getPlugin('tldraw'), require)
@@ -230,7 +247,7 @@ function script(app, path, code, expected) {
       throw new Error('Scripts must be synchronous; scheduled work cannot be cancelled')
     }
   })
-  return state(app, path)
+  return editResult(app, path, before, full)
 }
 
 function parseMarkdown(text) {
@@ -284,7 +301,7 @@ async function execute(app, action, args) {
   if (action === 'open') return open(app, args.path, args.currentPageId)
   if (action === 'state') return state(app, args.path)
   if (action === 'batch' || action === 'script') {
-    const result = action === 'batch' ? batch(app,args.path,args.operations,args.revision) : script(app,args.path,args.code,args.revision)
+    const result = action === 'batch' ? batch(app,args.path,args.operations,args.revision,args.full) : script(app,args.path,args.code,args.revision,args.full)
     return {...result, persistence: await saved(app,args.path)}
   }
   if (action === 'saved') return saved(app, args.path)

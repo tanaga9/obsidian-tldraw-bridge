@@ -42,7 +42,7 @@ For direct CLI use, see the [CLI reference](docs/cli.md). For builds and local m
 editor.alignShapes([...editor.getCurrentPageShapeIds()], 'left');
 ```
 
-See the [operation reference](integrations/codex/skills/obsidian-tldraw/references/operations.md) for details. Scripts run with Obsidian's local privileges and are not sandboxed. Use code you write or review.
+Edits return a compact summary containing the path, revision, selected page, net record change counts, and persistence result. Inspect full records with `state`, or add `--full` to `batch` or `script` to include them in the edit result. See the [operation reference](integrations/codex/skills/obsidian-tldraw/references/operations.md) for details. Scripts run with Obsidian's local privileges and are not sandboxed. Use code you write or review.
 
 If synchronous code throws, the bridge restores Store records using the history mark and the pre-execution records. Asynchronous scripts and delayed edits through timers are unsupported. Rejecting a returned Promise does not cancel already scheduled work. Side effects outside the Store, such as filesystem changes, are not restored.
 

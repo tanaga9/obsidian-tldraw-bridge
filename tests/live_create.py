@@ -44,7 +44,10 @@ with tempfile.TemporaryDirectory(prefix='bridge-live-create-') as directory:
             {'method': 'createShapes', 'args': [[{'id': shape, 'type': 'geo', 'props': {'w': 120, 'h': 60}}]]},
         ]})
         assert edited['persistence']['saved']
-        assert next(r for r in edited['records'] if r['id'] == shape)['parentId'] == result['currentPageId']
+        assert 'records' not in edited
+        assert edited['changes']['added'] == 1
+        current = c.call('state', {'path': created_path})
+        assert next(r for r in current['records'] if r['id'] == shape)['parentId'] == result['currentPageId']
         print(json.dumps({'created': True, 'nestedFolder': True, 'emptyNote': True, 'editable': True, 'replayPreserved': True, 'existingRejected': True}))
     finally:
         if created_path in c.call('doctor')['documents']:

@@ -27,7 +27,7 @@ args={"path":a.path}
 original=c.call("open",args)
 def batch(ops,rev=None,identity=None):
     current=c.call("state",args)
-    return c.call("batch",args|{"revision":rev or current["revision"],"operations":ops},identity)
+    return c.call("batch",args|{"revision":rev or current["revision"],"operations":ops,"full":True},identity)
 def op(method,*values): return {"method":method,"args":list(values)}
 def assert_restored(expected):
     current=c.call("state",args)
@@ -42,7 +42,7 @@ try:
     request="live-create-"+uuid.uuid4().hex
     result=batch(create,original["revision"],request)
     assert result["persistence"]["saved"]
-    same=c.call("batch",args|{"revision":original["revision"],"operations":create},request)
+    same=c.call("batch",args|{"revision":original["revision"],"operations":create,"full":True},request)
     assert same["revision"]==result["revision"]
     try:
         batch([op("deleteShapes",[shape])],original["revision"])
@@ -59,7 +59,7 @@ try:
         assert "rollback-test" in str(exc)
     assert_restored(before)
     after=c.call("state",args)
-    updated=c.call("script",args|{"revision":after["revision"],"code":f'editor.updateShapes([{{id:{json.dumps(shape)},type:"geo",props:{{color:"violet"}}}}]);'})
+    updated=c.call("script",args|{"full":True,"revision":after["revision"],"code":f'editor.updateShapes([{{id:{json.dumps(shape)},type:"geo",props:{{color:"violet"}}}}]);'})
     assert next(r for r in updated["records"] if r["id"]==shape)["props"]["color"]=="violet"
     before_document=c.call("state",args)
     try:

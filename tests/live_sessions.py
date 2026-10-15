@@ -16,7 +16,7 @@ for _ in range(30):
  time.sleep(.1)
 try:
  sa=c.call('open',{'path':a});sb=c.call('open',{'path':b})
- edited=c.call('batch',{'path':b,'revision':sb['revision'],'operations':[{'method':'createShapes','args':[[{'id':id,'type':'geo','x':500,'y':0,'props':{'geo':'ellipse','w':80,'h':80}}]]}]})
+ edited=c.call('batch',{'full':True,'path':b,'revision':sb['revision'],'operations':[{'method':'createShapes','args':[[{'id':id,'type':'geo','x':500,'y':0,'props':{'geo':'ellipse','w':80,'h':80}}]]}]})
  assert any(r['id']==id for r in edited['records'])
  assert c.call('state',{'path':a})['revision']==sa['revision']
  assert edited['persistence']['saved']

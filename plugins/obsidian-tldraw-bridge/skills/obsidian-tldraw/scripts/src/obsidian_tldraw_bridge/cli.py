@@ -26,6 +26,8 @@ def parser():
     script.add_argument("path")
     script.add_argument("--revision", required=True)
     script.add_argument("--input", required=True, help="Trusted JavaScript file, or - for stdin")
+    for edit_parser in (batch, script):
+        edit_parser.add_argument("--full", action="store_true", help="Include full document records and editor diagnostics in the result")
     preview = sub.add_parser("preview")
     preview.add_argument("path")
     preview.add_argument("--output", required=True)
@@ -48,6 +50,8 @@ def main(argv=None):
         if getattr(options, "revision", None):
             args["revision"] = options.revision
         if options.command in ("batch", "script"):
+            if options.full:
+                args["full"] = True
             source = sys.stdin.read() if options.input == "-" else Path(options.input).read_text()
             if options.command == "batch":
                 data = json.loads(source)
