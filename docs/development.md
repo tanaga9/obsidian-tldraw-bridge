@@ -9,7 +9,7 @@ python3 scripts/build_plugin.py
 python3 scripts/build_plugin.py --check
 ```
 
-The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/`. The generated package at `plugins/obsidian-tldraw-bridge/` is included in the repository and referenced by the marketplace. Regenerate it after changing the canonical sources; `--check` detects stale bundled files.
+The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/`. The generated package at `plugins/obsidian-tldraw-bridge/` is included in the repository and referenced by the marketplace. Regenerate it after changing the canonical sources; `--check` detects stale bundled files. Both package builders exclude `.DS_Store` recursively, and the plugin consistency check ignores it in existing output directories. Source metadata files are left untouched.
 
 For local distribution testing, register the repository's marketplace:
 

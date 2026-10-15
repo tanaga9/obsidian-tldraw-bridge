@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Build or check the tracked, self-contained marketplace package."""
 import argparse
-import filecmp
 import json
 from pathlib import Path
 import shutil
@@ -18,15 +17,16 @@ manifest = {
 }
 def files(path):
     return {str(p.relative_to(path)):p.read_bytes() for p in path.rglob("*")
-            if p.is_file() and "__pycache__" not in p.parts}
+            if p.is_file() and "__pycache__" not in p.parts and ".DS_Store" not in p.parts}
 with tempfile.TemporaryDirectory() as tmp:
     package = Path(tmp) / "obsidian-tldraw-bridge"
     skill = package / "skills" / "obsidian-tldraw"
-    shutil.copytree(root / "integrations/codex/skills/obsidian-tldraw", skill)
+    shutil.copytree(root / "integrations/codex/skills/obsidian-tldraw", skill,
+                    ignore=shutil.ignore_patterns("__pycache__", ".DS_Store"))
     scripts = skill / "scripts"
     scripts.mkdir()
     shutil.copy(root / "bridge.py", scripts / "bridge.py")
-    shutil.copytree(root / "src", scripts / "src", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(root / "src", scripts / "src", ignore=shutil.ignore_patterns("__pycache__", ".DS_Store"))
     (package / "plugin.json").write_text(json.dumps(manifest,indent=2)+"\n")
     target = root / "plugins" / "obsidian-tldraw-bridge"
     if args.check:
@@ -37,5 +37,5 @@ with tempfile.TemporaryDirectory() as tmp:
         if target.exists():
             shutil.rmtree(target)
         target.parent.mkdir(exist_ok=True)
-        shutil.copytree(package,target)
+        shutil.copytree(package,target, ignore=shutil.ignore_patterns(".DS_Store"))
         print(target)

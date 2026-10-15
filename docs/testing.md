@@ -29,7 +29,7 @@ These checks do not require a running Obsidian instance. They cover:
 | Preview | Changes during image generation reject the export without replacing an existing output file. |
 | Receipt capacity | The limit rejects new work while preserving retained results and their deduplication protection. |
 | Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. |
-| Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. |
+| Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
 
 If the plugin package is stale, regenerate it with `python3 scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
 
