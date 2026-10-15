@@ -21,7 +21,7 @@ These checks do not require a running Obsidian instance. They cover:
 | --- | --- |
 | CLI transport | Code is passed as an argument rather than through a shell. Missing initial output can be recovered by polling. |
 | Result handling | Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
-| Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. |
+| Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending source/shared notifications are processed without waiting for animation frames. |
 | Synchronous rollback | Failed edits restore records, including history-ignored changes, without leaving forward changes queued for other Editors. |
 | Exceptions | Arbitrary thrown values become failed jobs with readable errors; subsequent requests remain usable. |
 | Preview | Changes during image generation reject the export without replacing an existing output file. |
@@ -46,6 +46,7 @@ python3 tests/live.py --vault Documents --path 'Bridge test diagram.md' \
 The test loads a fresh runtime copy to avoid stale Obsidian require cache entries. It verifies:
 
 - Shape creation, update, deletion, and Markdown persistence.
+- Rich-text labels rendered with the GUI Editor's inherited text options.
 - Idempotent retry and stale-revision rejection.
 - Undo and Redo.
 - Successful synchronous SDK scripts and document-settings edits.

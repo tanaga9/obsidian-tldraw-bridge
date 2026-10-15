@@ -38,7 +38,7 @@ def assert_restored(expected):
     assert main==expected["records"], "Shared Store was not restored"
 
 try:
-    create=[op("createShapes",[{"id":shape,"type":"geo","x":500,"y":200,"props":{"geo":"rectangle","w":160,"h":100,"color":"blue"}}])]
+    create=[op("createShapes",[{"id":shape,"type":"geo","x":500,"y":200,"props":{"geo":"rectangle","w":160,"h":100,"color":"blue","font":"sans","richText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Integration test"}]}]}}}])]
     request="live-create-"+uuid.uuid4().hex
     result=batch(create,original["revision"],request)
     assert result["persistence"]["saved"]

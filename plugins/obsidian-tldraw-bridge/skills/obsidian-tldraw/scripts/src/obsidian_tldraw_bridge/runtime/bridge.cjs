@@ -144,6 +144,7 @@ async function open(app, path) {
       tools: Object.values(seed.root.children).map(tool => tool.constructor),
       initialState: 'select',
       autoFocus: false,
+      options: { text: seed.getTextOptions?.() ?? seed.options?.text },
       getContainer: () => session.container,
       fontAssetUrls: plugin.getFontOverrides(),
     })
@@ -215,11 +216,25 @@ function parseMarkdown(text) {
   return data
 }
 
+function flushPendingChanges(app, session) {
+  // Store.listen flushes pending notifications before attaching the listener.
+  // Drain both hops without waiting for animation frames in background windows.
+  const flush = store => {
+    const stop = store.listen(() => {}, { scope: 'document' })
+    stop()
+  }
+  flush(session.editor.store)
+  const main = app.plugins.getPlugin('tldraw')?.tlDataDocumentStoreManager
+    ?.storesManager.storeGroupMap.get(session.file.path)?.main.store
+  if (main && main !== session.editor.store) flush(main)
+}
+
 async function saved(app, path) {
   const session = sessionFor(app, path)
   if (!session) throw new Error('No session')
   const deadline = Date.now() + 10000
   while (Date.now() < deadline) {
+    flushPendingChanges(app, session)
     const text = await app.vault.read(session.file)
     const document = parseMarkdown(text)
     const actual = JSON.stringify(documentRecords(session.editor, document.raw.records))

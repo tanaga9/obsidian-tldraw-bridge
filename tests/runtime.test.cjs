@@ -24,6 +24,7 @@ function setup() {
     store: {
       scopedTypes: {document:new Set(['document','page','shape','asset','binding','custom'])},
       allRecords:()=>values,
+      listen:()=>()=>{},
       getStoreSnapshot:()=>({store:Object.fromEntries(copy(values).map(r=>[r.id,r]))}),
       applyDiff:diff=>{
         const map = new Map(values.map(r=>[r.id,r]))
@@ -182,4 +183,19 @@ test('failed scripts restore shared records when SDK transaction aborts do not r
   assert.equal(h.access.revision(h.editor),before)
   assert.equal(shared.find(r=>r.typeName==='document').gridSize,10)
   assert.equal((await h.access.saved(h.app,'a.md')).saved,true)
+})
+
+test('save drains source and shared notifications before checking Markdown',async()=>{
+  const h=setup(), flushed=[]
+  h.editor.updateDocumentSettings({gridSize:20})
+  h.editor.store.listen=()=>{flushed.push('source');return ()=>flushed.push('source listener removed')}
+  const main={listen:()=>{
+    assert.equal(flushed[0],'source')
+    flushed.push('main')
+    h.setDisk(h.values())
+    return ()=>flushed.push('main listener removed')
+  }}
+  h.app.plugins.getPlugin=()=>({tlDataDocumentStoreManager:{storesManager:{storeGroupMap:new Map([['a.md',{main:{store:main}}]])}}})
+  assert.equal((await h.access.saved(h.app,'a.md')).saved,true)
+  assert.deepEqual(flushed,['source','source listener removed','main','main listener removed'])
 })
