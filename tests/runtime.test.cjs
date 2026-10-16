@@ -41,6 +41,7 @@ function setup() {
     updateDocumentSettings:settings=>Object.assign(values.find(r=>r.typeName==='document'),settings),
     updateShapes:changes=>{for(const change of changes)Object.assign(values.find(r=>r.id===change.id),change)},
     getCurrentPageShapeIds:()=>['shape:a'],
+    getShape:id=>values.find(r=>r.id===id),
     getCurrentPageId:()=> 'page:a',
   }
   const markdown=records=>'```json !!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!\n'+JSON.stringify({raw:{records}})+'\n!!!_END_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!'
@@ -109,6 +110,34 @@ test('unchanged preview writes bytes tagged with the captured revision',async()=
     const before=h.access.revision(h.editor)
     assert.equal((await h.invoke('preview',{path:'a.md',output})).revision,before)
     assert.equal(fs.readFileSync(output,'utf8'),'image')
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('part preview exports only tagged current-page strokes at the requested scale',async()=>{
+  const h=setup(), dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-detail-')),output=path.join(dir,'out.png')
+  h.values().find(r=>r.id==='shape:a').meta={bridgeFreehand:{part:'detail'}}
+  h.values().push({id:'shape:other',typeName:'shape',meta:{bridgeFreehand:{part:'detail'}}})
+  let received
+  h.editor.toImage=async(ids,options)=>{
+    received={ids:Array.from(ids),scale:options.scale}
+    return {blob:{arrayBuffer:async()=>Buffer.from('detail')},width:300,height:300}
+  }
+  try {
+    await h.invoke('preview',{path:'a.md',part:'detail',scale:3,output})
+    assert.deepEqual(received,{ids:['shape:a'],scale:3})
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('bad preview selections and scales leave existing output untouched',async()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-bad-detail-')),output=path.join(dir,'out.png')
+  fs.writeFileSync(output,'original')
+  try {
+    for(const args of [{ids:[]},{ids:['shape:missing']},{part:'missing'},{ids:['shape:a'],part:'detail'},{scale:0},{scale:5},{scale:NaN}]){
+      const h=setup()
+      h.editor.toImage=async()=>{throw new Error('Unexpected render')}
+      await assert.rejects(h.invoke('preview',{path:'a.md',output,...args}),error=>!error.message.includes('Unexpected render'))
+      assert.equal(fs.readFileSync(output,'utf8'),'original')
+    }
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
 

@@ -48,5 +48,47 @@ class EditOutputTest(unittest.TestCase):
                     self.assertIn('changes', json.loads(output.getvalue()))
 
 
+class FreehandCommandTest(unittest.TestCase):
+    def test_curve_definitions_use_existing_revision_and_request_id_contract(self):
+        source = json.dumps({'strokes': [{'id': 'shape:curve', 'part': 'detail', 'path': 'M0 0 Q10 20 20 0'}]})
+        with patch('obsidian_tldraw_bridge.cli.Client') as client:
+            client.return_value.call.return_value = {'revision': 'after'}
+            with patch('sys.stdin', io.StringIO(source)), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(['--vault', 'V', '--request-id', 'draw-curve', 'freehand',
+                                       'plan.md', '--revision', 'before', '--input', '-', '--full']), 0)
+            action, args, identity = client.return_value.call.call_args.args
+            self.assertEqual((action, identity), ('script', 'draw-curve'))
+            self.assertEqual(args['revision'], 'before')
+            self.assertTrue(args['full'])
+            self.assertIsInstance(args['code'], str)
+
+    def test_invalid_curves_fail_before_connecting(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client:
+            with patch('sys.stdin', io.StringIO('{"strokes": []}')), contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(main(['--vault', 'V', 'freehand', 'plan.md',
+                                       '--revision', 'before', '--input', '-']), 1)
+            client.assert_not_called()
+
+
+class PreviewCommandTest(unittest.TestCase):
+    def test_part_and_scale_are_forwarded(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client:
+            client.return_value.call.return_value = {'path': '/tmp/detail.png'}
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--part', 'detail',
+                                       '--scale', '3', '--output', '/tmp/detail.png']), 0)
+            args = client.return_value.call.call_args.args[1]
+            self.assertEqual(args['part'], 'detail')
+            self.assertEqual(args['scale'], 3)
+
+    def test_invalid_scale_fails_before_connecting(self):
+        for scale in ('nan', 'inf', '0', '-1', '5'):
+            with self.subTest(scale=scale), patch('obsidian_tldraw_bridge.cli.Client') as client:
+                with contextlib.redirect_stderr(io.StringIO()):
+                    self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--scale', scale,
+                                           '--output', '/tmp/detail.png']), 1)
+                client.assert_not_called()
+
+
 if __name__ == '__main__':
     unittest.main()

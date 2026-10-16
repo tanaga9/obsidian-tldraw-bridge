@@ -4,6 +4,7 @@ import json
 import sys
 from pathlib import Path
 from .obsidian import BridgeError, Client
+from .freehand import compile_script
 
 
 def parser():
@@ -26,12 +27,20 @@ def parser():
     script.add_argument("path")
     script.add_argument("--revision", required=True)
     script.add_argument("--input", required=True, help="Trusted JavaScript file, or - for stdin")
-    for edit_parser in (batch, script):
+    freehand = sub.add_parser("freehand", help="Create or redraw named strokes from authored curves")
+    freehand.add_argument("path")
+    freehand.add_argument("--revision", required=True)
+    freehand.add_argument("--input", required=True, help="Stroke definitions JSON file, or - for stdin")
+    for edit_parser in (batch, script, freehand):
         edit_parser.add_argument("--full", action="store_true", help="Include full document records and editor diagnostics in the result")
     preview = sub.add_parser("preview")
     preview.add_argument("path")
     preview.add_argument("--output", required=True)
     preview.add_argument("--revision")
+    region = preview.add_mutually_exclusive_group()
+    region.add_argument("--ids", nargs="+", help="Preview only these current-page shape IDs")
+    region.add_argument("--part", help="Preview only freehand strokes tagged with this part")
+    preview.add_argument("--scale", type=float, default=1, help="Export scale, greater than 0 and at most 4")
     return p
 
 
@@ -49,22 +58,33 @@ def main(argv=None):
             args["path"] = path
         if getattr(options, "revision", None):
             args["revision"] = options.revision
-        if options.command in ("batch", "script"):
+        if options.command in ("batch", "script", "freehand"):
             if options.full:
                 args["full"] = True
             source = sys.stdin.read() if options.input == "-" else Path(options.input).read_text()
             if options.command == "batch":
                 data = json.loads(source)
                 args["operations"] = data["operations"] if isinstance(data, dict) else data
+            elif options.command == "freehand":
+                args["code"] = compile_script(json.loads(source))
             else:
                 args["code"] = source
         if options.command == "preview":
+            if not 0 < options.scale <= 4:
+                raise BridgeError("Preview scale must be greater than 0 and at most 4")
             output = Path(options.output).expanduser().resolve()
             if not output.parent.is_dir():
                 raise BridgeError("Preview output directory does not exist")
             args["output"] = str(output)
+            if options.scale != 1:
+                args["scale"] = options.scale
+            if options.ids is not None:
+                args["ids"] = options.ids
+            if options.part is not None:
+                args["part"] = options.part
         client = Client(options.vault, options.obsidian, options.timeout)
-        result = client.forget(options.id) if options.command == "forget" else client.call(options.command, args, options.request_id)
+        action = "script" if options.command == "freehand" else options.command
+        result = client.forget(options.id) if options.command == "forget" else client.call(action, args, options.request_id)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     except (BridgeError, OSError, ValueError, KeyError) as exc:

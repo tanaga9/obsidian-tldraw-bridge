@@ -27,6 +27,12 @@ Explicit `--obsidian` takes precedence over `OBSIDIAN_CLI`; an invalid override 
 
 Optional Python package installation with `python3 -m pip install .` exposes the `obsidian-tldraw` command. Normal plugin use does not require this installation.
 
+## Freehand drawing and detail previews
+
+`freehand <path> --revision <revision> --input <json-file>` creates or redraws strokes from authored curves using stable IDs. See the bundled [freehand reference](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) for the input format and iterative workflow. It uses the same edit result, persistence, and request-ID contracts as `script`.
+
+`preview` accepts `--part <part>` or `--ids <shape-id> ...` to export a subset of the current page, and `--scale <number>` to enlarge it (greater than 0, at most 4). The default remains a whole-page preview at scale 1. An empty or invalid selection fails without changing the output file.
+
 ## Edit results
 
 `batch` and `script` return a compact result by default:
