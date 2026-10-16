@@ -23,6 +23,8 @@ python3 bridge.py --vault Documents close 'Drawings/example.md'
 
 Use `--obsidian /path/to/executable` or the `OBSIDIAN_CLI` environment variable to override the Obsidian CLI location. Always specify the vault. Diagram paths are vault-relative `.md` paths. For `batch` and `script`, `--input -` reads from standard input. Results are JSON; handled errors are written as JSON to standard error with exit code 1.
 
+Explicit `--obsidian` takes precedence over `OBSIDIAN_CLI`; an invalid override fails without switching installations. Automatic discovery checks `obsidian` on PATH, then `obsidian-cli` on PATH, then `/Applications/Obsidian.app/Contents/MacOS/obsidian-cli`. If an older PATH registration resolves to the app bundle's GUI executable, discovery selects its sibling `obsidian-cli` instead. Automatic discovery never falls back to launching that GUI executable; update the installer if the dedicated CLI is missing.
+
 Optional Python package installation with `python3 -m pip install .` exposes the `obsidian-tldraw` command. Normal plugin use does not require this installation.
 
 ## Edit results

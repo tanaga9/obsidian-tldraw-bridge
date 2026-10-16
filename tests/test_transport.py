@@ -1,11 +1,95 @@
 import json
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from obsidian_tldraw_bridge.obsidian import Client, BridgeError
+from obsidian_tldraw_bridge.obsidian import Client, BridgeError, find_cli
+
+class CliDiscoveryTest(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.root = Path(self.directory.name)
+        self.default = self.root / "Applications/Obsidian.app/Contents/MacOS/obsidian-cli"
+        self.commands = {}
+        for patcher in (
+            patch.dict("os.environ", {}, clear=True),
+            patch("obsidian_tldraw_bridge.obsidian.DEFAULT_CLI", self.default),
+            patch("obsidian_tldraw_bridge.obsidian.shutil.which", side_effect=self.commands.get),
+        ):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def file(self, path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch()
+        return str(path)
+
+    def test_explicit_override_precedes_environment_and_discovery(self):
+        explicit = self.file(self.root / "custom cli")
+        with patch.dict("os.environ", {"OBSIDIAN_CLI": "/missing/environment"}):
+            self.assertEqual(find_cli(explicit), str(Path(explicit).resolve()))
+
+    def test_environment_override_resolves_command_name(self):
+        cli = self.file(self.root / "custom-cli")
+        self.commands["custom-command"] = cli
+        with patch.dict("os.environ", {"OBSIDIAN_CLI": "custom-command"}):
+            self.assertEqual(find_cli(), str(Path(cli).resolve()))
+
+    def test_missing_override_does_not_silently_use_default(self):
+        self.file(self.default)
+        with self.assertRaisesRegex(BridgeError, "Specified Obsidian CLI not found"):
+            find_cli(str(self.root / "missing"))
+        with patch.dict("os.environ", {"OBSIDIAN_CLI": str(self.root / "missing-env")}):
+            with self.assertRaisesRegex(BridgeError, "Specified Obsidian CLI not found"):
+                find_cli()
+
+    def test_registered_symlink_precedes_other_installations(self):
+        target = self.root / "Other.app/Contents/MacOS/obsidian-cli"
+        self.file(target)
+        self.file(self.default)
+        link = self.root / "bin/obsidian"
+        link.parent.mkdir()
+        link.symlink_to(target)
+        self.commands["obsidian"] = str(link)
+        self.commands["obsidian-cli"] = str(self.default)
+        self.assertEqual(find_cli(), str(target.resolve()))
+
+    def test_legacy_registration_uses_cli_in_same_bundle(self):
+        gui = self.root / "Other.app/Contents/MacOS/Obsidian"
+        self.file(gui)
+        cli = gui.with_name("obsidian-cli")
+        self.file(cli)
+        self.file(self.default)
+        link = self.root / "obsidian"
+        link.symlink_to(gui)
+        self.commands["obsidian"] = str(link)
+        self.assertEqual(find_cli(), str(cli.resolve()))
+
+    def test_legacy_gui_without_cli_is_skipped(self):
+        self.commands["obsidian"] = self.file(self.root / "Old.app/Contents/MacOS/Obsidian")
+        cli = self.file(self.root / "bin/obsidian-cli")
+        self.commands["obsidian-cli"] = cli
+        self.assertEqual(find_cli(), str(Path(cli).resolve()))
+
+    def test_default_dedicated_cli_without_path_registration(self):
+        self.file(self.default)
+        self.assertEqual(find_cli(), str(self.default.resolve()))
+
+    def test_gui_only_installation_is_not_a_fallback(self):
+        gui = self.default.with_name("Obsidian")
+        self.commands["obsidian"] = self.file(gui)
+        with self.assertRaisesRegex(BridgeError, "Update the Obsidian installer"):
+            find_cli()
+
+    def test_explicit_gui_path_is_not_rewritten(self):
+        gui = self.default.with_name("Obsidian")
+        self.file(gui)
+        self.file(self.default)
+        self.assertEqual(find_cli(str(gui)), str(gui.resolve()))
 
 class TransportTest(unittest.TestCase):
     def client(self):

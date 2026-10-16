@@ -10,14 +10,27 @@ import uuid
 class BridgeError(RuntimeError):
     pass
 
+DEFAULT_CLI = Path("/Applications/Obsidian.app/Contents/MacOS/obsidian-cli")
+
 def find_cli(explicit=None):
-    candidate = explicit or os.environ.get("OBSIDIAN_CLI") or shutil.which("obsidian")
-    if not candidate:
-        candidate = "/Applications/Obsidian.app/Contents/MacOS/Obsidian"
-    resolved = shutil.which(candidate) or candidate
-    if not Path(resolved).is_file():
-        raise BridgeError("Obsidian CLI not found. Enable it in Obsidian or pass --obsidian.")
-    return str(Path(resolved).resolve())
+    override = explicit or os.environ.get("OBSIDIAN_CLI")
+    if override:
+        resolved = Path(shutil.which(override) or override).resolve()
+        if resolved.is_file():
+            return str(resolved)
+        raise BridgeError("Specified Obsidian CLI not found: " + str(override))
+
+    for candidate in (shutil.which("obsidian"), shutil.which("obsidian-cli"), DEFAULT_CLI):
+        if not candidate:
+            continue
+        resolved = Path(candidate).resolve()
+        # Older PATH registrations point at the GUI executable. Use the CLI
+        # from that same app bundle rather than launching another GUI process.
+        if resolved.name.lower() == "obsidian" and resolved.parent.name == "MacOS":
+            resolved = resolved.with_name("obsidian-cli")
+        if resolved.is_file():
+            return str(resolved)
+    raise BridgeError("Obsidian CLI not found. Update the Obsidian installer and enable its CLI, or pass --obsidian.")
 
 class Client:
     def __init__(self, vault, executable=None, timeout=30):
