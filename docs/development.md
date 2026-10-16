@@ -17,6 +17,19 @@ python3 scripts/build_plugin.py --check
 
 The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/`. The generated package at `plugins/obsidian-tldraw-bridge/` is included in the repository and referenced by the marketplace. Regenerate it after changing the canonical sources; `--check` detects stale bundled files. Both package builders exclude `.DS_Store` recursively, and the plugin consistency check ignores it in existing output directories. Source metadata files are left untouched.
 
+## Maintaining diagramming guidance
+
+Keep diagramming guidance inside the canonical Skill's [references](../integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md) so both builds remain self-contained.
+
+- Assume the agent knows familiar diagram types; name them and their purpose rather than writing tutorials.
+- Add knowledge that changes decisions: project preferences, unfamiliar notation, or demonstrated implementation pitfalls. State when it applies and any useful exception; include evidence or a compact example when needed.
+- Keep drawing conventions in `diagramming/index.md`, SDK details in `diagramming/tldraw.md`, and operation contracts in `operations.md`. Split a reference only when its size or independent use justifies it.
+- Update existing guidance before adding new rules. Keep history in Git rather than cumulative activity logs.
+
+After knowledge-only changes, rebuild the plugin, run `python3 scripts/build_plugin.py --check`, and run `python3 -m unittest discover -s tests -p 'test_package.py'`. Package tests check that local Markdown references are self-contained and reachable from `SKILL.md`. These checks do not establish drawing quality; live tests are needed for runtime changes.
+
+## Local distribution testing
+
 For local distribution testing, register the repository's marketplace:
 
 ```sh

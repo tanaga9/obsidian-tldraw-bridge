@@ -1,10 +1,12 @@
 from pathlib import Path
 import json
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+from urllib.parse import unquote, urlsplit
 
 ROOT=Path(__file__).resolve().parents[1]
 class PackageTest(unittest.TestCase):
@@ -30,6 +32,40 @@ class PackageTest(unittest.TestCase):
         marketplace=json.loads((ROOT/".agents/plugins/marketplace.json").read_text())
         for entry in marketplace["plugins"]:
             self.assertTrue((ROOT/entry["source"]["path"]/"plugin.json").is_file())
+
+    def test_skill_local_references_resolve_in_both_distributions(self):
+        # Walk from the actual entrypoint, checking transitive references after
+        # copying each distribution out of the checkout. Repository-only links
+        # must not accidentally make an installed Skill appear self-contained.
+        source=ROOT/"integrations/codex/skills/obsidian-tldraw"
+        plugin=ROOT/"plugins/obsidian-tldraw-bridge/skills/obsidian-tldraw"
+        for origin in (source, plugin):
+            with self.subTest(origin=origin), tempfile.TemporaryDirectory() as tmp:
+                skill=Path(tmp)/"skill"
+                shutil.copytree(origin, skill)
+                pending=[skill/"SKILL.md"]
+                visited=set()
+                while pending:
+                    document=pending.pop()
+                    if document in visited:
+                        continue
+                    visited.add(document)
+                    # References use inline Markdown links; skip code examples.
+                    content=re.sub(r"```.*?```", "", document.read_text(), flags=re.S)
+                    for target in re.findall(r"(?<!!)\[[^\]]+\]\(([^\s)]+)\)", content):
+                        url=urlsplit(target)
+                        if url.scheme or url.netloc or not url.path:
+                            continue
+                        linked=(document.parent/unquote(url.path)).resolve()
+                        self.assertIn(skill.resolve(), linked.parents,
+                                      f"Reference escapes Skill: {document}: {target}")
+                        self.assertTrue(linked.is_file(),
+                                        f"Missing reference: {document}: {target}")
+                        if linked.suffix == ".md":
+                            pending.append(linked)
+                documents={p.resolve() for p in (skill/"references").rglob("*.md")}
+                self.assertFalse(documents-visited,
+                                 f"References unreachable from SKILL.md: {documents-visited}")
 
 class BuildMetadataTest(unittest.TestCase):
     def prepare_fixture(self, root):

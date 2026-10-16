@@ -1,7 +1,9 @@
 ---
 name: obsidian-tldraw
-description: Read and edit local tldraw Markdown diagrams inside a running Obsidian vault, using the existing tldraw plugin. Use for Obsidian tldraw diagrams; other tldraw apps and Obsidian Canvas use different tools.
+description: Create, read, and edit local Obsidian tldraw diagrams, choosing suitable diagram patterns and readable layouts through the existing tldraw plugin. Other tldraw apps and Obsidian Canvas use different tools.
 ---
+
+For new diagrams, structural edits, or readability reviews, read the [diagramming guidance](references/diagramming/index.md) for project conventions and relevant implementation notes. Rely on established knowledge for familiar diagram types; preserve creative choices and keep local corrections local.
 
 Use the bundled CLI: `python3 <skill-directory>/scripts/bridge.py --vault <vault> <command>`.
 Installing this Plugin is the user setup. Assume Python 3.9.6+, the local Obsidian app, existing tldraw plugin, and enabled official CLI are prerequisites; mention them briefly only when relevant. Run `doctor` yourself to check connectivity and supported plugin versions. Resolve the vault from the conversation or ask when it is ambiguous. Execute the bundled CLI yourself; do not turn CLI commands, building, copying skills, or installing Python packages into routine user setup steps. Before invoking the bundled CLI, check that python3 is available and is version 3.9.6 or newer. If missing or too old, notify the user briefly that Python 3.9.6+ is required and stop the dependent operation. Do not install, bundle, or configure a Python environment automatically.

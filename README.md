@@ -34,6 +34,10 @@ The plugin and Skill packages are included in this repository. Installation thro
 
 For direct CLI use, see the [CLI reference](docs/cli.md). For builds and local marketplace registration, see [Development and distribution](docs/development.md).
 
+## Diagramming knowledge
+
+The Skill includes concise [diagramming guidance](integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md): a diagram selection table, project conventions, and Obsidian tldraw implementation notes. Both plugin and standalone builds include it. Familiar diagram types use established conventions rather than bundled tutorials. See [development guidance](docs/development.md) when extending these notes.
+
 ## Advanced SDK operations
 
 `script <path> --revision <revision> --input layout.js` runs synchronous JavaScript with access to `editor`, `app`, `plugin`, and `require`. For example:
