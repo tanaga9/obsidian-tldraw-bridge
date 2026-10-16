@@ -2,7 +2,7 @@
 
 The items below are accepted limitations for the current implementation scope. They do not block completion of that scope, and they do not imply that implementation or validation has been completed.
 
-Python 3.10+ is an environment prerequisite. The bridge does not bundle or install Python. Codex notifies the user if it is missing or too old. Providing a Python runtime is not outstanding work. User setup consists only of installing the Codex plugin.
+Python 3.9.6+ is an environment prerequisite. The bridge does not bundle or install Python. Codex notifies the user if it is missing or too old. Providing a Python runtime is not outstanding work. User setup consists only of installing the Codex plugin.
 
 | Item | Status | Current approach |
 | --- | --- | --- |

@@ -6,7 +6,7 @@ Run commands from the repository root.
 
 ## Automated checks
 
-Use Python 3.10+ and Node.js 22, matching the CI configuration. Node.js is a developer test dependency, not a requirement for normal plugin use.
+Use Python 3.9.6+ and Node.js 22. CI tests Python 3.9, 3.10, and 3.13; the 3.9 job uses the latest available patch release. To verify the minimum supported version on a Mac where `/usr/bin/python3 --version` reports 3.9.6, run the Python checks below with `/usr/bin/python3` instead of `python3`. Node.js is a developer test dependency, not a requirement for normal plugin use.
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_*.py'
@@ -61,7 +61,7 @@ This mode creates a temporary diagram copy, selects a new second page, reloads t
 
 ## Live test prerequisites
 
-Use macOS with Python 3.10+, running Obsidian Desktop, the enabled official CLI, and a supported tldraw plugin version. Create a dedicated tldraw Markdown test diagram using the existing plugin. Do not use a production diagram.
+Use macOS with Python 3.9.6+, running Obsidian Desktop, the enabled official CLI, and a supported tldraw plugin version. Create a dedicated tldraw Markdown test diagram using the existing plugin. Do not use a production diagram.
 
 Specify the vault and its relative diagram path explicitly. The examples below assume a vault named `Documents` and an existing file named `Bridge test diagram.md`.
 

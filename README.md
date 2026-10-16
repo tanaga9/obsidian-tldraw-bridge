@@ -10,7 +10,7 @@ Codex -> Skill -> Bridge CLI -> Official Obsidian CLI -> Dedicated Editor/Store
                                                 Obsidian GUI and vault Markdown
 ```
 
-Python 3.10+, a running Obsidian Desktop instance, a supported tldraw plugin, and the enabled official Obsidian CLI are prerequisites. Codex checks Python before running the bridge and notifies you if it is missing or too old.
+Python 3.9.6+, a running Obsidian Desktop instance, a supported tldraw plugin, and the enabled official Obsidian CLI are prerequisites. Codex checks Python before running the bridge and notifies you if it is missing or too old.
 
 ## Setup
 

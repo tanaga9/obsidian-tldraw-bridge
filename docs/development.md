@@ -2,6 +2,12 @@
 
 These steps are for maintainers. Plugin users do not need to run them.
 
+## Python compatibility and dependencies
+
+The minimum supported Python version is 3.9.6. The current policy is to use only the Python standard library for the bridge runtime, so normal plugin use requires no additional Python packages. Build dependencies declared in `pyproject.toml` apply to optional package installation, not running the bundled CLI.
+
+This policy can be revisited as requirements evolve. Evaluate additional Python packages or a higher minimum version case by case, considering their benefit, compatibility, and user setup cost.
+
 ## Build the plugin package
 
 ```sh

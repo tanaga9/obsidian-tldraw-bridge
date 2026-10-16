@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "obsidian-tldraw-bridge"
 version = "0.1.0"
 description = "Local CLI for live Obsidian tldraw diagrams"
-requires-python = ">=3.10"
+requires-python = ">=3.9.6"
 
 [project.scripts]
 obsidian-tldraw = "obsidian_tldraw_bridge.cli:main"
