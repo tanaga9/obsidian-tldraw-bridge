@@ -1,17 +1,14 @@
 """Shared operation boundary for CLI and other adapters; no shell or CLI parsing."""
 import math
 from pathlib import Path
-from .obsidian import BridgeError, Client
+from .obsidian import BridgeError, Client, validate_connection
 from .freehand import compile_script
 
 
 class Bridge:
     """Validate requests before connecting, then use the existing live runtime."""
     def __init__(self, vault, executable=None, timeout=30, client_factory=Client):
-        if not isinstance(vault, str) or not vault.strip():
-            raise BridgeError("Specify a vault", code="INVALID_INPUT", outcome="not_applied")
-        if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or not math.isfinite(timeout) or timeout <= 0:
-            raise BridgeError("Timeout must be positive and finite", code="INVALID_INPUT", outcome="not_applied")
+        validate_connection(vault, timeout)
         self.config = (vault, executable, timeout)
         self.client_factory = client_factory
 

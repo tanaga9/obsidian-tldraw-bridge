@@ -1,4 +1,6 @@
+import base64
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -17,6 +19,7 @@ class CliDiscoveryTest(unittest.TestCase):
         self.commands = {}
         for patcher in (
             patch.dict("os.environ", {}, clear=True),
+            patch("obsidian_tldraw_bridge.obsidian.sys.platform", "darwin"),
             patch("obsidian_tldraw_bridge.obsidian.DEFAULT_CLI", self.default),
             patch("obsidian_tldraw_bridge.obsidian.shutil.which", side_effect=self.commands.get),
         ):
@@ -53,10 +56,11 @@ class CliDiscoveryTest(unittest.TestCase):
         self.file(self.default)
         link = self.root / "bin/obsidian"
         link.parent.mkdir()
-        link.symlink_to(target)
         self.commands["obsidian"] = str(link)
         self.commands["obsidian-cli"] = str(self.default)
-        self.assertEqual(find_cli(), str(target.resolve()))
+        resolve = Path.resolve
+        with patch.object(Path, "resolve", autospec=True, side_effect=lambda p: resolve(target) if p == link else resolve(p)):
+            self.assertEqual(find_cli(), str(target.resolve()))
 
     def test_legacy_registration_uses_cli_in_same_bundle(self):
         gui = self.root / "Other.app/Contents/MacOS/Obsidian"
@@ -65,9 +69,10 @@ class CliDiscoveryTest(unittest.TestCase):
         self.file(cli)
         self.file(self.default)
         link = self.root / "obsidian"
-        link.symlink_to(gui)
         self.commands["obsidian"] = str(link)
-        self.assertEqual(find_cli(), str(cli.resolve()))
+        resolve = Path.resolve
+        with patch.object(Path, "resolve", autospec=True, side_effect=lambda p: resolve(gui) if p == link else resolve(p)):
+            self.assertEqual(find_cli(), str(cli.resolve()))
 
     def test_legacy_gui_without_cli_is_skipped(self):
         self.commands["obsidian"] = self.file(self.root / "Old.app/Contents/MacOS/Obsidian")
@@ -91,7 +96,19 @@ class CliDiscoveryTest(unittest.TestCase):
         self.file(self.default)
         self.assertEqual(find_cli(str(gui)), str(gui.resolve()))
 
+def evaluation_path(argv):
+    encoded = re.search(r"Buffer.from\('([^']+)','base64'\)", argv[-1]).group(1)
+    return Path(base64.b64decode(encoded).decode('utf-8'))
+
+
 class TransportTest(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        patcher = patch("obsidian_tldraw_bridge.obsidian.tempfile.tempdir", directory.name)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def client(self):
         with patch("obsidian_tldraw_bridge.obsidian.find_cli", return_value="/app/obsidian"):
             return Client("Vault with spaces")
@@ -99,16 +116,21 @@ class TransportTest(unittest.TestCase):
     def test_code_is_argv_not_shell(self):
         client = self.client()
         code = 'require("a path;$(touch nope)")'
-        proc = subprocess.CompletedProcess([],0,'installer warning\n=> {"ok":true}\n','')
-        with patch("subprocess.run", return_value=proc) as run:
+        proc = subprocess.CompletedProcess([],0,b'installer warning\n=> {"ok":true}\n',b'')
+        sources = []
+        def invoke(argv, **kwargs):
+            sources.append(evaluation_path(argv).read_text(encoding='utf-8'))
+            return proc
+        with patch("obsidian_tldraw_bridge.obsidian.Client._run_cli", side_effect=invoke) as run:
             self.assertEqual(client.evaluate(code), {"ok":True})
-            self.assertEqual(run.call_args.args[0][-1], "code="+code)
+            self.assertEqual(sources, [code])
+            self.assertNotIn(code, run.call_args.args[0][-1])
             self.assertNotIn("shell", run.call_args.kwargs)
 
     def test_dispatch_poll_and_forget_use_loader_with_runtime_path(self):
         client = self.client()
         with patch.object(client, "evaluate", side_effect=[None, {"status":"complete", "result":{}}, {"forgotten":True}]) as evaluate:
-            client.call("doctor")
+            client.call("saved")
             calls = [item.args[0] for item in evaluate.call_args_list]
             for code in calls:
                 self.assertIn("loader.cjs", code)
@@ -201,13 +223,22 @@ class RuntimeAdmissionTest(unittest.TestCase):
 
 class OsErrorRecoveryTest(unittest.TestCase):
     client = TransportTest.client
+    setUp = TransportTest.setUp
 
     def test_oserror_after_dispatch_keeps_unknown_outcome_and_request_id(self):
         for identity in (None, 'edit-1'):
             with self.subTest(identity=identity):
                 client = self.client()
-                dispatched = subprocess.CompletedProcess([], 0, '=> {"status":"running"}\n', '')
-                with patch('subprocess.run', side_effect=[dispatched, FileNotFoundError('CLI replaced')]) as run:
+                dispatched = subprocess.CompletedProcess([], 0, b'=> {"status":"running"}\n', b'')
+                sources = []
+                responses = iter([dispatched, FileNotFoundError('CLI replaced')])
+                def invoke(argv, **kwargs):
+                    sources.append(evaluation_path(argv).read_text(encoding='utf-8'))
+                    response = next(responses)
+                    if isinstance(response, Exception):
+                        raise response
+                    return response
+                with patch('obsidian_tldraw_bridge.obsidian.Client._run_cli', side_effect=invoke) as run:
                     with self.assertRaises(BridgeError) as failure:
                         client.call('apply', {}, identity)
                 error = failure.exception
@@ -217,23 +248,23 @@ class OsErrorRecoveryTest(unittest.TestCase):
                     self.assertTrue(error.request_id.startswith('bridge-'))
                 else:
                     self.assertEqual(error.request_id, identity)
-                self.assertIn(json.dumps(error.request_id), run.call_args_list[0].args[0][-1])
+                self.assertIn(json.dumps(error.request_id), sources[0])
                 self.assertEqual(run.call_count, 2)
 
     def test_cleanup_oserror_preserves_successful_edit(self):
         client = self.client()
         saved = {'revision': 'after', 'persistence': {'saved': True}}
-        responses = [subprocess.CompletedProcess([], 0, '=> {"status":"running"}\n', ''),
-                     subprocess.CompletedProcess([], 0, '=> ' + json.dumps({'status': 'complete', 'result': saved}) + '\n', ''),
+        responses = [subprocess.CompletedProcess([], 0, b'=> {"status":"running"}\n', b''),
+                     subprocess.CompletedProcess([], 0, ('=> ' + json.dumps({'status': 'complete', 'result': saved}) + '\n').encode('utf-8'), b''),
                      PermissionError('CLI unavailable during cleanup')]
-        with patch('subprocess.run', side_effect=responses) as run:
+        with patch('obsidian_tldraw_bridge.obsidian.Client._run_cli', side_effect=responses) as run:
             self.assertEqual(client.call('apply'), saved)
         self.assertEqual(run.call_count, 3)
-        self.assertIn('.forget(app,', run.call_args.args[0][-1])
+        self.assertIn('.forget(app,', evaluation_path(run.call_args.args[0]).read_text(encoding='utf-8'))
 
     def test_status_oserror_preserves_queried_id(self):
         client = self.client()
-        with patch('subprocess.run', side_effect=PermissionError('CLI unavailable')):
+        with patch('obsidian_tldraw_bridge.obsidian.Client._run_cli', side_effect=PermissionError('CLI unavailable')):
             with self.assertRaises(BridgeError) as failure:
                 client.status('edit-1')
         self.assertEqual(failure.exception.code, 'RESULT_UNKNOWN')

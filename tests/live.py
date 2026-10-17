@@ -14,7 +14,7 @@ from obsidian_tldraw_bridge.obsidian import Client,BridgeError
 p=argparse.ArgumentParser()
 p.add_argument("--vault",required=True)
 p.add_argument("--path",required=True)
-p.add_argument("--output",default="/private/tmp/obsidian-tldraw-bridge-live.png")
+p.add_argument("--output",default=str(Path(tempfile.gettempdir()) / "obsidian-tldraw-bridge-live.png"))
 a=p.parse_args()
 c=Client(a.vault)
 # A unique module path prevents Obsidian's require cache from testing old code.

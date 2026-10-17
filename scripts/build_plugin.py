@@ -27,7 +27,7 @@ with tempfile.TemporaryDirectory() as tmp:
     scripts.mkdir()
     shutil.copy(root / "bridge.py", scripts / "bridge.py")
     shutil.copytree(root / "src", scripts / "src", ignore=shutil.ignore_patterns("__pycache__", ".DS_Store"))
-    (package / "plugin.json").write_text(json.dumps(manifest,indent=2)+"\n")
+    (package / "plugin.json").write_bytes((json.dumps(manifest, indent=2) + "\n").encode("utf-8"))
     target = root / "plugins" / "obsidian-tldraw-bridge"
     if args.check:
         if not target.exists() or files(package) != files(target):

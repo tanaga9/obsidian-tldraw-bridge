@@ -1,9 +1,14 @@
-"""CLI transport: argv only; requests never pass through a shell."""
+"""File-backed CLI evaluations; only a short bootstrap is passed as argv."""
+import base64
+from contextlib import contextmanager
 import json
+import math
 import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
+import tempfile
 import time
 import uuid
 
@@ -21,71 +26,218 @@ class BridgeError(RuntimeError):
             result["details"] = self.details
         return result
 
+class _CliLaunchError(OSError):
+    """The child process was never created; delivery cannot be pending."""
+
+
+def _capture_reader_opener(path, flags):
+    # Windows O_TEMPORARY shares delete access with NamedTemporaryFile's writer.
+    return os.open(path, flags | getattr(os, "O_TEMPORARY", 0))
+
+
+@contextmanager
+def _capture_output():
+    # Reopen by name: dup() would share the inherited writer's file position.
+    with tempfile.NamedTemporaryFile() as writer:
+        with open(writer.name, "rb", opener=_capture_reader_opener) as reader:
+            yield writer, reader
+
+
 DEFAULT_CLI = Path("/Applications/Obsidian.app/Contents/MacOS/obsidian-cli")
+
+def validate_connection(vault, timeout):
+    if (not isinstance(vault, str) or not vault.strip() or
+            any(c in vault for c in ('/', '\\')) or any(ord(c) < 32 for c in vault) or
+            (len(vault) >= 2 and vault[0].isalpha() and vault[1] == ':') or vault in ('.', '..')):
+        raise BridgeError("Use an Obsidian vault name or id, not a filesystem path",
+                          code="INVALID_INPUT", outcome="not_applied", details={"stage": "vault"})
+    if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or not math.isfinite(timeout) or timeout <= 0:
+        raise BridgeError("Timeout must be positive and finite", code="INVALID_INPUT", outcome="not_applied")
+
+
+def _cli_candidates():
+    # PATH registrations take precedence over standard installation locations.
+    commands = ("Obsidian.com", "obsidian", "obsidian-cli") if sys.platform == "win32" else ("obsidian", "obsidian-cli")
+    for command in commands:
+        candidate = shutil.which(command)
+        if candidate:
+            yield Path(candidate)
+    if sys.platform == "win32":
+        for variable, suffix in (("LOCALAPPDATA", "Programs/Obsidian/Obsidian.com"),
+                                 ("ProgramFiles", "Obsidian/Obsidian.com"),
+                                 ("ProgramFiles(x86)", "Obsidian/Obsidian.com")):
+            directory = os.environ.get(variable)
+            if directory:
+                yield Path(directory) / suffix
+    else:
+        yield DEFAULT_CLI
+
 
 def find_cli(explicit=None):
     override = explicit or os.environ.get("OBSIDIAN_CLI")
     if override:
         resolved = Path(shutil.which(override) or override).resolve()
+        if sys.platform == "win32" and resolved.name.lower() == "obsidian.exe":
+            raise BridgeError("Select the official Windows CLI Obsidian.com, not Obsidian.exe",
+                              code="CLI_EXECUTABLE_REQUIRED", outcome="not_applied", details={"stage": "cli"})
         if resolved.is_file():
             return str(resolved)
-        raise BridgeError("Specified Obsidian CLI not found: " + str(override))
+        raise BridgeError("Specified Obsidian CLI not found: " + str(override),
+                          code="CLI_NOT_FOUND", outcome="not_applied", details={"stage": "cli"})
 
-    for candidate in (shutil.which("obsidian"), shutil.which("obsidian-cli"), DEFAULT_CLI):
-        if not candidate:
-            continue
-        resolved = Path(candidate).resolve()
-        # Older PATH registrations point at the GUI executable. Use the CLI
-        # from that same app bundle rather than launching another GUI process.
+    for candidate in _cli_candidates():
+        resolved = candidate.resolve()
+        # Older registrations point at a GUI. Select the CLI in the same install.
         if resolved.name.lower() == "obsidian" and resolved.parent.name == "MacOS":
             resolved = resolved.with_name("obsidian-cli")
+        elif resolved.name.lower() == "obsidian.exe":
+            resolved = resolved.with_suffix(".com")
         if resolved.is_file():
             return str(resolved)
-    raise BridgeError("Obsidian CLI not found. Update the Obsidian installer and enable its CLI, or pass --obsidian.")
+    raise BridgeError("Obsidian CLI not found. Update the Obsidian installer and enable its CLI, or pass --obsidian.",
+                      code="CLI_NOT_FOUND", outcome="not_applied", details={"stage": "cli"})
 
 class Client:
     def __init__(self, vault, executable=None, timeout=30):
+        validate_connection(vault, timeout)
         self.vault = vault
         self.executable = find_cli(executable)
         self.timeout = timeout
         self.module = str(Path(__file__).resolve().parent / "runtime" / "bridge.cjs")
+        self._evaluation_files = set()
 
-    def evaluate(self, code, missing_ok=False):
+    def _evaluation_details(self):
+        # Only report files still present, including previous unacknowledged polls.
+        for path in tuple(self._evaluation_files):
+            try:
+                path.stat()
+            except FileNotFoundError:
+                self._evaluation_files.discard(path)
+            except OSError:
+                pass  # Inaccessible files still require inspection.
+        return {"evaluationFiles": sorted(str(path) for path in self._evaluation_files)} if self._evaluation_files else {}
+
+    def _discard_evaluation(self, path):
         try:
-            proc = subprocess.run([self.executable, "vault=" + self.vault, "eval", "code=" + code],
-                                  text=True, capture_output=True, timeout=self.timeout)
-        except subprocess.TimeoutExpired as exc:
-            raise BridgeError("Obsidian CLI timed out; the request may still be running. Do not blindly repeat mutations.") from exc
+            path.unlink()
+        except OSError:
+            pass  # Cleanup must not hide an evaluation result or its original error.
+
+    def _run_cli(self, argv, timeout):
+        process = None
+        try:
+            # Regular files avoid pipe EOF waits; independent readers never move
+            # the positions of writers inherited by descendants.
+            with _capture_output() as (stdout, stdout_reader), _capture_output() as (stderr, stderr_reader):
+                process = subprocess.Popen(argv, stdout=stdout, stderr=stderr)
+                with process:
+                    try:
+                        process.wait(timeout=timeout)
+                    except BaseException:
+                        process.kill()
+                        process.wait()
+                        raise
+                # Snapshot the direct child's completed output. Do not follow
+                # later writes from descendants or wait for their handles to close.
+                stdout_size = os.fstat(stdout.fileno()).st_size
+                stderr_size = os.fstat(stderr.fileno()).st_size
+                return subprocess.CompletedProcess(argv, process.returncode,
+                                                   stdout_reader.read(stdout_size), stderr_reader.read(stderr_size))
         except OSError as exc:
-            raise BridgeError("Could not invoke Obsidian CLI: " + str(exc)) from exc
-        values = [line[3:] for line in proc.stdout.splitlines() if line.startswith("=> ")]
+            if process is None:
+                raise _CliLaunchError(str(exc)) from exc
+            raise
+
+    def evaluate(self, code, missing_ok=False, *, timeout=None):
+        payload = None
+        delivery = "prepared"
+        try:
+            # Close the file before Obsidian reads it (also required on Windows).
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", newline="\n",
+                                             prefix="obsidian-tldraw-eval-", suffix=".js", delete=False) as source:
+                payload = Path(source.name)
+                self._evaluation_files.add(payload)
+                source.write(code)
+            encoded_path = base64.b64encode(str(payload).encode("utf-8")).decode("ascii")
+            # Keep argv short and independent of quoting in the evaluation source.
+            bootstrap = ("(()=>{const fs=require('node:fs');const p=Buffer.from('" + encoded_path +
+                         "','base64').toString('utf8');const code=fs.readFileSync(p,'utf8');"
+                         "try{fs.unlinkSync(p)}catch{};return eval(code)})()")
+            delivery = "unacknowledged"
+            proc = self._run_cli([self.executable, "vault=" + self.vault, "eval", "code=" + bootstrap],
+                                 timeout=self.timeout if timeout is None else timeout)
+            # Decode explicitly so response encoding never depends on the locale.
+            stdout = proc.stdout.decode("utf-8")
+            stderr = proc.stderr.decode("utf-8")
+            values = [line[3:] for line in stdout.splitlines() if line.startswith("=> ")]
+            if values:
+                delivery = "acknowledged"
+        except _CliLaunchError as exc:
+            delivery = "prepared"
+            self._discard_evaluation(payload)
+            raise BridgeError("Could not start Obsidian CLI: " + str(exc),
+                              details=self._evaluation_details()) from exc
+        except subprocess.TimeoutExpired as exc:
+            raise BridgeError("Obsidian CLI timed out; the request may still be running. Do not blindly repeat mutations.",
+                              details=self._evaluation_details()) from exc
+        except UnicodeError as exc:
+            if payload is not None and delivery == "prepared":
+                self._discard_evaluation(payload)
+            raise BridgeError("Obsidian CLI transport requires valid UTF-8",
+                              details=self._evaluation_details()) from exc
+        except OSError as exc:
+            if payload is not None and delivery == "prepared":
+                self._discard_evaluation(payload)
+            raise BridgeError("Could not invoke Obsidian CLI: " + str(exc),
+                              details=self._evaluation_details()) from exc
+        finally:
+            # Preserve unread files only if a receiver could still consume them.
+            if payload is not None and delivery != "unacknowledged":
+                self._discard_evaluation(payload)
+            self._evaluation_details()
+        if not values and "Command line interface is not enabled" in stdout + stderr:
+            raise BridgeError("Enable the official Obsidian CLI in Settings > General > Advanced.",
+                              code="CLI_DISABLED", details={"stage": "connection", **self._evaluation_details()})
         if proc.returncode or (not values and not missing_ok):
-            raise BridgeError("CLI evaluation failed: " + (proc.stdout + proc.stderr).strip())
+            diagnostic = (stdout + stderr).strip() or "No evaluation response; check that Obsidian is running, the vault name/id is correct, and local CLI communication is permitted."
+            raise BridgeError("CLI evaluation failed: " + diagnostic,
+                              details=self._evaluation_details())
         if not values:
             return None
         try:
             return json.loads(values[-1])
         except json.JSONDecodeError as exc:
-            raise BridgeError("Unexpected CLI response: " + values[-1]) from exc
+            raise BridgeError("Unexpected CLI response: " + values[-1],
+                              details=self._evaluation_details()) from exc
 
     def _runtime(self):
         loader = str(Path(__file__).resolve().parent / "runtime" / "loader.cjs")
         return f"require({json.dumps(loader)})", json.dumps(self.module)
 
-    def _runtime_evaluate(self, expression, request_id=None, missing_ok=False):
+    def _runtime_evaluate(self, expression, request_id=None, missing_ok=False, *, deadline=None):
         # Preserve admission/status errors as data instead of parsing CLI error text.
-        wrapped = ("(()=>{try{return " + expression + ";}catch(e){return JSON.stringify({_bridgeError:{"
+        guard = ("if(![app.vault.getName(),app.appId].includes(" + json.dumps(self.vault) + "))"
+                 "throw Object.assign(new Error('Connected vault does not match --vault'),"
+                 "{code:'VAULT_MISMATCH',outcome:'unknown'});")
+        wrapped = ("(()=>{try{" + guard + "return " + expression + ";}catch(e){return JSON.stringify({_bridgeError:{"
                    "code:e?.code||'RUNTIME_ERROR',message:e?.message||String(e),"
                    "outcome:e?.outcome||'unknown'}})}})()")
         try:
-            result = self.evaluate(wrapped, missing_ok)
+            if deadline is None:
+                result = self.evaluate(wrapped, missing_ok)
+            else:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise BridgeError("Request timeout budget exhausted")
+                result = self.evaluate(wrapped, missing_ok, timeout=remaining)
         except BridgeError as exc:
             if exc.code != "BRIDGE_ERROR":
-                raise
-            raise BridgeError(str(exc), code="RESULT_UNKNOWN", request_id=request_id) from exc
+                raise BridgeError(str(exc), code=exc.code, outcome=exc.outcome,
+                                  request_id=request_id, details=exc.details) from exc
+            raise BridgeError(str(exc), code="RESULT_UNKNOWN", request_id=request_id, details={**exc.details, **self._evaluation_details()}) from exc
         if isinstance(result, dict) and "_bridgeError" in result:
             error = result["_bridgeError"]
-            raise BridgeError(error["message"], code=error["code"], outcome=error["outcome"], request_id=request_id)
+            raise BridgeError(error["message"], code=error["code"], outcome=error["outcome"], request_id=request_id, details={**(error.get("details") or {}), **self._evaluation_details()})
         return result
 
     def status(self, request_id):
@@ -93,37 +245,83 @@ class Client:
         job = self._runtime_evaluate(f"{loader}.poll(app,{module},{json.dumps(request_id)})", request_id)
         return {key: value for key, value in job.items() if key != "request"}
 
-    def forget(self, request_id):
+    def forget(self, request_id, *, deadline=None):
         loader, module = self._runtime()
-        return self._runtime_evaluate(f"{loader}.forget(app,{module},{json.dumps(request_id)})", request_id)
+        return self._runtime_evaluate(f"{loader}.forget(app,{module},{json.dumps(request_id)})", request_id, deadline=deadline)
 
-    def _release_automatic(self, job_id, request_id):
+    def _release_automatic(self, job_id, request_id, deadline):
         if request_id is None:
             try:
-                self.forget(job_id)
+                self.forget(job_id, deadline=deadline)
             except BridgeError:
                 # A cleanup failure must not hide a committed edit or its result.
                 # The runtime admission limit still bounds retained receipts.
                 pass
 
+    def _diagnose_connection(self, deadline):
+        checks = [{"stage": "cli", "ok": True, "executable": self.executable}]
+        try:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise BridgeError("Connection diagnostic timeout budget exhausted")
+            connected = self.evaluate("JSON.stringify({vault:app.vault.getName(),id:app.appId,"
+                                      "pluginVersion:app.plugins.getPlugin('tldraw')?.manifest.version??null,"
+                                      "installed:!!app.plugins.manifests?.tldraw})", timeout=remaining)
+        except BridgeError as exc:
+            raise BridgeError(str(exc), code=exc.code if exc.code != "BRIDGE_ERROR" else "CLI_CONNECTION_FAILED",
+                              details={**exc.details, "stage": "connection", "checks": checks}) from exc
+        if not isinstance(connected, dict) or not isinstance(connected.get("vault"), str):
+            raise BridgeError("Unexpected connection diagnostic response", code="CLI_CONNECTION_FAILED",
+                              details={"stage": "connection", "checks": checks})
+        checks.append({"stage": "connection", "ok": True})
+        if self.vault not in (connected["vault"], connected.get("id")):
+            raise BridgeError("Connected vault does not match --vault", code="VAULT_MISMATCH", outcome="not_applied",
+                              details={"stage": "vault", "actualVault": connected["vault"], "checks": checks})
+        checks.append({"stage": "vault", "ok": True, "name": connected["vault"], "id": connected.get("id")})
+        if connected.get("pluginVersion") is None:
+            message = "Enable the tldraw community plugin" if connected.get("installed") else "Install and enable the tldraw community plugin"
+            raise BridgeError(message, code="TLDRAW_UNAVAILABLE", outcome="not_applied",
+                              details={"stage": "plugin", "checks": checks})
+        return checks
+
     def call(self, action, args=None, request_id=None):
+        # Dispatch, polling and best-effort receipt cleanup share one budget.
+        deadline = time.monotonic() + self.timeout
+        checks = self._diagnose_connection(deadline) if action == "doctor" else None
+        try:
+            result = self._call(action, args, request_id, deadline)
+        except BridgeError as exc:
+            if checks is None:
+                raise
+            raise BridgeError(str(exc), code=exc.code, outcome=exc.outcome, request_id=exc.request_id,
+                              details={**exc.details, "stage": "runtime", "checks": checks}) from exc
+        if checks is not None:
+            if not result.get("supported"):
+                raise BridgeError("Unsupported tldraw plugin version: " + str(result.get("pluginVersion")),
+                                  code="TLDRAW_UNSUPPORTED", outcome="not_applied",
+                                  details={"stage": "plugin", "checks": checks, "pluginVersion": result.get("pluginVersion")})
+            result = {**result, "checks": checks + [
+                {"stage": "plugin", "ok": True, "version": result["pluginVersion"]},
+                {"stage": "runtime", "ok": True}]}
+        return result
+
+    def _call(self, action, args, request_id, deadline):
         job_id = request_id or "bridge-" + uuid.uuid4().hex
         loader, module = self._runtime()
         identity = json.dumps(job_id)
-        self._runtime_evaluate(f"{loader}.dispatch(app,{module},{json.dumps(action)},{json.dumps(args or {})},{identity})", job_id, True)
-        deadline = time.monotonic() + self.timeout
+        self._runtime_evaluate(f"{loader}.dispatch(app,{module},{json.dumps(action)},{json.dumps(args or {})},{identity})", job_id, True, deadline=deadline)
         while time.monotonic() < deadline:
-            job = self._runtime_evaluate(f"{loader}.poll(app,{module},{identity})", job_id, True)
+            job = self._runtime_evaluate(f"{loader}.poll(app,{module},{identity})", job_id, True, deadline=deadline)
             if job and job.get("status") == "failed":
                 failure = job.get("failure", {})
                 if failure.get("outcome", "unknown") == "not_applied":
-                    self._release_automatic(job_id, request_id)
+                    self._release_automatic(job_id, request_id, deadline)
                 raise BridgeError(job["error"] + " (request " + job_id + ")",
                                   code=failure.get("code", "BRIDGE_ERROR"),
                                   outcome=failure.get("outcome", "unknown"), request_id=job_id,
-                                  details=failure.get("details"))
+                                  details={**(failure.get("details") or {}), **self._evaluation_details()})
             if job and job.get("status") == "complete":
-                self._release_automatic(job_id, request_id)
+                self._release_automatic(job_id, request_id, deadline)
                 return job["result"]
-            time.sleep(0.1)
-        raise BridgeError("Request timed out; use status or resume with the same --request-id: " + job_id, code="RESULT_UNKNOWN", request_id=job_id)
+            time.sleep(min(0.1, max(0, deadline - time.monotonic())))
+        raise BridgeError("Request timed out; use status or resume with the same --request-id: " + job_id, code="RESULT_UNKNOWN", request_id=job_id, details=self._evaluation_details())

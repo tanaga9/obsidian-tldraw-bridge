@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parents[1]
 class PackageTest(unittest.TestCase):
     def test_standalone_plugin(self):
         package=ROOT/"plugins/obsidian-tldraw-bridge"
-        self.assertEqual(json.loads((package/"plugin.json").read_text())["name"],"obsidian-tldraw-bridge")
+        self.assertEqual(json.loads((package/"plugin.json").read_text(encoding="utf-8"))["name"],"obsidian-tldraw-bridge")
         with tempfile.TemporaryDirectory() as tmp:
             target=Path(tmp)/"plugin"
             shutil.copytree(package,target)
@@ -23,13 +23,13 @@ class PackageTest(unittest.TestCase):
 
     def test_skill_metadata_and_references(self):
         skill=ROOT/"integrations/codex/skills/obsidian-tldraw"
-        text=(skill/"SKILL.md").read_text()
+        text=(skill/"SKILL.md").read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\n"))
         metadata=text.split("---",2)[1]
         self.assertIn("name: obsidian-tldraw",metadata)
         self.assertIn("description:",metadata)
         self.assertTrue((skill/"references/operations.md").is_file())
-        marketplace=json.loads((ROOT/".agents/plugins/marketplace.json").read_text())
+        marketplace=json.loads((ROOT/".agents/plugins/marketplace.json").read_text(encoding="utf-8"))
         for entry in marketplace["plugins"]:
             self.assertTrue((ROOT/entry["source"]["path"]/"plugin.json").is_file())
 
@@ -51,7 +51,7 @@ class PackageTest(unittest.TestCase):
                         continue
                     visited.add(document)
                     # References use inline Markdown links; skip code examples.
-                    content=re.sub(r"```.*?```", "", document.read_text(), flags=re.S)
+                    content=re.sub(r"```.*?```", "", document.read_text(encoding="utf-8"), flags=re.S)
                     for target in re.findall(r"(?<!!)\[[^\]]+\]\(([^\s)]+)\)", content):
                         url=urlsplit(target)
                         if url.scheme or url.netloc or not url.path:
@@ -73,11 +73,11 @@ class BuildMetadataTest(unittest.TestCase):
             (root/directory).mkdir(parents=True, exist_ok=True)
         for script in ('build_plugin.py', 'build_skill.py'):
             shutil.copy(ROOT/'scripts'/script, root/'scripts'/script)
-        (root/'bridge.py').write_text('# Example CLI\n')
-        (root/'src/runtime/bridge.cjs').write_text('// Example runtime\n')
+        (root/'bridge.py').write_text('# Example CLI 日本語\n', encoding='utf-8')
+        (root/'src/runtime/bridge.cjs').write_text('// Example runtime 日本語\n', encoding='utf-8')
         skill=root/'integrations/codex/skills/obsidian-tldraw'
-        (skill/'SKILL.md').write_text('# Example skill\n')
-        (skill/'references/operations.md').write_text('# Example operations\n')
+        (skill/'SKILL.md').write_text('# Example skill 日本語\n', encoding='utf-8')
+        (skill/'references/operations.md').write_text('# Example operations 日本語\n', encoding='utf-8')
         for directory in (root/'src', root/'src/runtime', skill, skill/'references'):
             (directory/'.DS_Store').write_bytes(b'source metadata')
 
@@ -92,13 +92,21 @@ class BuildMetadataTest(unittest.TestCase):
             built=self.run_builder(root, 'build_plugin.py')
             self.assertEqual(built.returncode, 0, built.stderr)
             package=root/'plugins/obsidian-tldraw-bridge'
+            manifest=(package/'plugin.json').read_bytes()
+            self.assertNotIn(b'\r', manifest)
+            self.assertTrue(manifest.endswith(b'\n'))
+            self.assertEqual(json.loads(manifest.decode('utf-8'))['name'], 'obsidian-tldraw-bridge')
+            for source, target in ((root/'bridge.py', package/'skills/obsidian-tldraw/scripts/bridge.py'),
+                                   (root/'src/runtime/bridge.cjs', package/'skills/obsidian-tldraw/scripts/src/runtime/bridge.cjs'),
+                                   (root/'integrations/codex/skills/obsidian-tldraw/SKILL.md', package/'skills/obsidian-tldraw/SKILL.md')):
+                self.assertEqual(target.read_bytes(), source.read_bytes())
             self.assertEqual(list(package.rglob('.DS_Store')), [])
             for directory in (package, package/'skills/obsidian-tldraw/scripts/src/runtime'):
                 (directory/'.DS_Store').write_bytes(b'different output metadata')
             checked=self.run_builder(root, 'build_plugin.py', '--check')
             self.assertEqual(checked.returncode, 0, checked.stderr)
             self.assertEqual((root/'src/.DS_Store').read_bytes(), b'source metadata')
-            (root/'src/runtime/bridge.cjs').write_text('// Updated runtime\n')
+            (root/'src/runtime/bridge.cjs').write_text('// Updated runtime 日本語\n', encoding='utf-8')
             stale=self.run_builder(root, 'build_plugin.py', '--check')
             self.assertNotEqual(stale.returncode, 0)
             self.assertIn('Plugin package is stale', stale.stderr)
@@ -112,5 +120,8 @@ class BuildMetadataTest(unittest.TestCase):
             skill=root/'dist/obsidian-tldraw'
             self.assertEqual(list(skill.rglob('.DS_Store')), [])
             self.assertTrue((skill/'SKILL.md').is_file())
-            self.assertTrue((skill/'scripts/src/runtime/bridge.cjs').is_file())
+            self.assertEqual((skill/'scripts/src/runtime/bridge.cjs').read_bytes(),
+                             (root/'src/runtime/bridge.cjs').read_bytes())
+            self.assertEqual((skill/'SKILL.md').read_bytes(),
+                             (root/'integrations/codex/skills/obsidian-tldraw/SKILL.md').read_bytes())
             self.assertEqual((root/'src/.DS_Store').read_bytes(), b'source metadata')

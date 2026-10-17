@@ -86,7 +86,7 @@ catch(e){console.log(JSON.stringify({error:e.message,records:[...records.values(
 '''
         proc = subprocess.run(['node', '-e', harness], input=json.dumps({
             'code': compile_script(data), 'existing': existing or [],
-        }), capture_output=True, text=True, check=True)
+        }), capture_output=True, text=True, encoding="utf-8", check=True)
         return json.loads(proc.stdout)
 
     def test_filled_translucent_region_is_created_in_one_edit_and_redraw_resets_style(self):

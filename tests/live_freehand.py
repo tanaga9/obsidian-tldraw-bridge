@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 import sys
+import tempfile
 import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
@@ -12,7 +13,7 @@ from obsidian_tldraw_bridge.obsidian import BridgeError, Client
 p = argparse.ArgumentParser()
 p.add_argument('--vault', required=True)
 p.add_argument('--path', required=True, help='Existing dedicated test diagram')
-p.add_argument('--output', default='/tmp/freehand-live-detail.png')
+p.add_argument('--output', default=str(Path(tempfile.gettempdir()) / 'freehand-live-detail.png'))
 a = p.parse_args()
 c = Client(a.vault)
 key = uuid.uuid4().hex

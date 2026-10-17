@@ -16,7 +16,7 @@ p.add_argument('--path', required=True)
 p.add_argument('--multi-page-copy', action='store_true', help='Test page preservation on a temporary diagram copy')
 a = p.parse_args()
 c = Client(a.vault)
-source = Path(c.module).read_text()
+source = Path(c.module).read_text(encoding="utf-8")
 loader_source = Path(c.module).with_name('loader.cjs')
 
 def vault_task(code):
@@ -43,7 +43,7 @@ with tempfile.TemporaryDirectory(prefix='bridge-live-reload-') as directory:
     c._runtime = lambda: (f'require({json.dumps(str(loader))})', json.dumps(c.module))
     def write(version):
         runtime.write_text(source.replace('return {vault: app.vault.getName(),',
-            'return {runtimeTestVersion: ' + str(version) + ', vault: app.vault.getName(),'))
+            'return {runtimeTestVersion: ' + str(version) + ', vault: app.vault.getName(),'), encoding='utf-8')
     write(1)
     c.module = str(runtime)
     copied_path = 'Codex Bridge Reload ' + uuid.uuid4().hex + '.md' if a.multi_page_copy else None
