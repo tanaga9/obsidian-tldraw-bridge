@@ -53,14 +53,19 @@ class Client:
     def evaluate(self, code, missing_ok=False):
         try:
             proc = subprocess.run([self.executable, "vault=" + self.vault, "eval", "code=" + code],
-                                  text=True, capture_output=True, timeout=self.timeout)
+                                  capture_output=True, timeout=self.timeout)
+            # Decode here: Windows pipe reader threads can swallow decode errors.
+            stdout = proc.stdout.decode("utf-8")
+            stderr = proc.stderr.decode("utf-8")
         except subprocess.TimeoutExpired as exc:
             raise BridgeError("Obsidian CLI timed out; the request may still be running. Do not blindly repeat mutations.") from exc
+        except UnicodeError as exc:
+            raise BridgeError("Obsidian CLI response is not valid UTF-8") from exc
         except OSError as exc:
             raise BridgeError("Could not invoke Obsidian CLI: " + str(exc)) from exc
-        values = [line[3:] for line in proc.stdout.splitlines() if line.startswith("=> ")]
+        values = [line[3:] for line in stdout.splitlines() if line.startswith("=> ")]
         if proc.returncode or (not values and not missing_ok):
-            raise BridgeError("CLI evaluation failed: " + (proc.stdout + proc.stderr).strip())
+            raise BridgeError("CLI evaluation failed: " + (stdout + stderr).strip())
         if not values:
             return None
         try:

@@ -99,7 +99,7 @@ class TransportTest(unittest.TestCase):
     def test_code_is_argv_not_shell(self):
         client = self.client()
         code = 'require("a path;$(touch nope)")'
-        proc = subprocess.CompletedProcess([],0,'installer warning\n=> {"ok":true}\n','')
+        proc = subprocess.CompletedProcess([],0,b'installer warning\n=> {"ok":true}\n',b'')
         with patch("subprocess.run", return_value=proc) as run:
             self.assertEqual(client.evaluate(code), {"ok":True})
             self.assertEqual(run.call_args.args[0][-1], "code="+code)
@@ -206,7 +206,7 @@ class OsErrorRecoveryTest(unittest.TestCase):
         for identity in (None, 'edit-1'):
             with self.subTest(identity=identity):
                 client = self.client()
-                dispatched = subprocess.CompletedProcess([], 0, '=> {"status":"running"}\n', '')
+                dispatched = subprocess.CompletedProcess([], 0, b'=> {"status":"running"}\n', b'')
                 with patch('subprocess.run', side_effect=[dispatched, FileNotFoundError('CLI replaced')]) as run:
                     with self.assertRaises(BridgeError) as failure:
                         client.call('apply', {}, identity)
@@ -223,8 +223,8 @@ class OsErrorRecoveryTest(unittest.TestCase):
     def test_cleanup_oserror_preserves_successful_edit(self):
         client = self.client()
         saved = {'revision': 'after', 'persistence': {'saved': True}}
-        responses = [subprocess.CompletedProcess([], 0, '=> {"status":"running"}\n', ''),
-                     subprocess.CompletedProcess([], 0, '=> ' + json.dumps({'status': 'complete', 'result': saved}) + '\n', ''),
+        responses = [subprocess.CompletedProcess([], 0, b'=> {"status":"running"}\n', b''),
+                     subprocess.CompletedProcess([], 0, ('=> ' + json.dumps({'status': 'complete', 'result': saved}) + '\n').encode('utf-8'), b''),
                      PermissionError('CLI unavailable during cleanup')]
         with patch('subprocess.run', side_effect=responses) as run:
             self.assertEqual(client.call('apply'), saved)

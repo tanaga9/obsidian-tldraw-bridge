@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parents[1]
 class PackageTest(unittest.TestCase):
     def test_standalone_plugin(self):
         package=ROOT/"plugins/obsidian-tldraw-bridge"
-        self.assertEqual(json.loads((package/"plugin.json").read_text())["name"],"obsidian-tldraw-bridge")
+        self.assertEqual(json.loads((package/"plugin.json").read_text(encoding="utf-8"))["name"],"obsidian-tldraw-bridge")
         with tempfile.TemporaryDirectory() as tmp:
             target=Path(tmp)/"plugin"
             shutil.copytree(package,target)
@@ -23,13 +23,13 @@ class PackageTest(unittest.TestCase):
 
     def test_skill_metadata_and_references(self):
         skill=ROOT/"integrations/codex/skills/obsidian-tldraw"
-        text=(skill/"SKILL.md").read_text()
+        text=(skill/"SKILL.md").read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\n"))
         metadata=text.split("---",2)[1]
         self.assertIn("name: obsidian-tldraw",metadata)
         self.assertIn("description:",metadata)
         self.assertTrue((skill/"references/operations.md").is_file())
-        marketplace=json.loads((ROOT/".agents/plugins/marketplace.json").read_text())
+        marketplace=json.loads((ROOT/".agents/plugins/marketplace.json").read_text(encoding="utf-8"))
         for entry in marketplace["plugins"]:
             self.assertTrue((ROOT/entry["source"]["path"]/"plugin.json").is_file())
 
@@ -51,7 +51,7 @@ class PackageTest(unittest.TestCase):
                         continue
                     visited.add(document)
                     # References use inline Markdown links; skip code examples.
-                    content=re.sub(r"```.*?```", "", document.read_text(), flags=re.S)
+                    content=re.sub(r"```.*?```", "", document.read_text(encoding="utf-8"), flags=re.S)
                     for target in re.findall(r"(?<!!)\[[^\]]+\]\(([^\s)]+)\)", content):
                         url=urlsplit(target)
                         if url.scheme or url.netloc or not url.path:
