@@ -7,6 +7,7 @@ Python 3.9.6+ is an environment prerequisite. The bridge does not bundle or inst
 | Item | Status | Current approach |
 | --- | --- | --- |
 | End-to-end validation from plugin UI installation to the first edit | Not verified | Track separately from the completed bundled CLI checks. |
+| Cross-platform live regression coverage | Partial | Windows tldraw 1.32.0 transport/diagnostic checks are verified; macOS regression and the remaining Windows live scenarios are pending. See [platform validation status](testing.md#platform-validation-status). |
 | Public plugin directory publication | Not published | A local marketplace package is provided. |
 | Automatic session recovery or forced disposal after file rename/deletion or disabling the existing plugin | Not implemented | If normal session closure cannot recover, restart Obsidian and reopen an existing document using its current path. This does not restore a deleted document. |
 | Updating the runtime loader itself | Requires restart | Drawing runtime source changes at the same installed path reload automatically after persistence checks. Changes to `loader.cjs` itself require restarting Obsidian. |

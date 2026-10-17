@@ -6,29 +6,40 @@ use this version's `--help` and [compatibility policy](development.md#compatibil
 
 ## Example
 
-Run from the repository root. Create a note, then observe its revision and page:
+Run from the repository root with the selected Python 3.9.6+ environment.
+Examples use `python`; use `python3` or an absolute interpreter path when needed.
+In PowerShell 7, invoke a quoted interpreter path with `&`. Create a note, then
+observe its revision and page:
 
 ```sh
-python3 bridge.py --vault Documents doctor
-python3 bridge.py --vault Documents capabilities
-python3 bridge.py --vault Documents --request-id create-example create 'Drawings/example.md'
-python3 bridge.py --vault Documents observe 'Drawings/example.md'
+python bridge.py --vault Documents doctor
+python bridge.py --vault Documents capabilities
+python bridge.py --vault Documents --request-id create-example create 'Drawings/example.md'
+python bridge.py --vault Documents observe 'Drawings/example.md'
 ```
 
 Substitute the observed revision and `currentPageId` below. Use the returned path
 if creation chose a unique filename.
 
-```sh
-python3 bridge.py --vault Documents --request-id edit-example apply 'Drawings/example.md' \
-  --revision '<revision-from-observe>' --page-id '<currentPageId>' --input - <<'JSON'
+Save the operations as a UTF-8 file named `operations.json` (a UTF-8 BOM is also
+accepted). Using a file avoids shell-specific multiline quoting:
+
+```json
 [{"op":"createShapes","shapes":[
   {"id":"shape:bridge-example","type":"geo","x":100,"y":100,
    "props":{"geo":"rectangle","w":240,"h":120,"color":"blue","fill":"solid"}}
 ]}]
-JSON
-python3 bridge.py --vault Documents preview 'Drawings/example.md' --output /tmp/example.png
-python3 bridge.py --vault Documents close 'Drawings/example.md'
 ```
+
+```sh
+python bridge.py --vault Documents --request-id edit-example apply 'Drawings/example.md' --revision '<revision-from-observe>' --page-id '<currentPageId>' --input operations.json
+python bridge.py --vault Documents preview 'Drawings/example.md' --output example.png
+python bridge.py --vault Documents close 'Drawings/example.md'
+```
+
+Preview output paths are local filesystem paths, resolved against the process's
+working directory; their parent directory must exist. They are separate from
+vault-relative diagram paths.
 
 Always specify the vault; diagram paths are vault-relative `.md` paths. `apply`,
 `batch`, `freehand`, and `script` accept `--input -` for standard input. Results
@@ -43,7 +54,9 @@ without selecting a target:
 obsidian vaults verbose
 ```
 
-`vaults` lists names; `verbose` includes paths. Use the executable resolved by
+`vaults` lists names; `verbose` includes paths. Pass a registered name or ID to
+`--vault`; filesystem paths are rejected. If the user identifies a vault by path,
+match it to the registered entry before calling the bridge. Use the executable resolved by
 [connection discovery](#connection-and-sessions) if `obsidian` is not registered
 on PATH. This is an official CLI command, not a bridge subcommand; it lists known
 vaults rather than searching the filesystem for every vault.
@@ -88,12 +101,23 @@ retained note: recover with `open` and `saved`. The bridge does not delete it.
 
 ## Connection and sessions
 
-Use `--obsidian /path/to/executable` or `OBSIDIAN_CLI` to override CLI discovery;
-the flag takes precedence and an invalid override fails. Automatic discovery
-checks `obsidian` on PATH, `obsidian-cli` on PATH, then
-`/Applications/Obsidian.app/Contents/MacOS/obsidian-cli`. Old GUI executable
-registrations resolve to the sibling `obsidian-cli`; the GUI executable is never
-launched as a fallback. Update the installer if the dedicated CLI is missing.
+Use `--obsidian <official-CLI-executable>` or `OBSIDIAN_CLI` to override
+CLI discovery. The flag takes precedence; an invalid override fails without
+silently selecting another installation. On Windows, use `Obsidian.com`;
+an explicit `Obsidian.exe` selects the GUI and is rejected. Automatic discovery
+uses PATH registrations and standard installation locations for each OS.
+See [CLI discovery and connection diagnostics](../integrations/codex/skills/obsidian-tldraw/references/operations.md#cli-discovery-and-connection-diagnostics)
+for the exact search order, diagnostic codes and timeout contract.
+
+Run `doctor` before the first edit. It reports checks for the CLI executable,
+evaluation connection, vault identity, plugin and runtime. Failures identify the
+stage in `error.details.stage`. A connection error can also reflect restricted
+local IPC permissions; it does not by itself prove the app is stopped. For
+OS-specific commands and live checks, see [live test setup](testing.md#live-test-setup).
+
+`--timeout` is a shared client wait budget, not cancellation in Obsidian. A
+retained request may still run after the CLI process times out. Recover using
+`status` and the same request ID before repeating an uncertain edit.
 
 Multiple document sessions are supported. SDK initialization may open a diagram
 tab and return focus to the previously active tab; the diagram tab stays open.
@@ -107,4 +131,4 @@ is not interrupted. Failed reopens appear in `doctor.reloadErrors`; retry with
 dismiss before reopening. Other documents remain usable. Changes to `loader.cjs`
 itself require restarting Obsidian.
 
-Optional `python3 -m pip install .` exposes the `obsidian-tldraw` command.
+Optional `python -m pip install .` exposes the `obsidian-tldraw` command.

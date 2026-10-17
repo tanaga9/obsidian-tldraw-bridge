@@ -41,10 +41,85 @@ These checks do not require a running Obsidian instance. They cover:
 
 If the plugin package is stale, regenerate it with `python scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
 
+## Platform validation status
+
+The CLI targets macOS and Windows. The automated CI matrix also includes Linux;
+that does not establish live Obsidian integration on Linux. Earlier macOS use
+predates the cross-platform transport changes, so it does not close the current
+macOS regression checks. This table records current validation scope, not an
+execution history or a claim that all supported plugin versions were tested.
+
+| Scope | macOS | Windows |
+| --- | --- | --- |
+| Automated Python/Node checks and package consistency | CI configured; current remote results must be checked | Local checks passed, including an LF checkout with `core.autocrlf=true`; CI also configured |
+| Official CLI discovery and doctor with vault name/ID | Regression run pending | Verified with the standard per-user CLI installation and tldraw 1.32.0 |
+| Large Unicode edits, saved records, lost-response recovery, retained-ID replay and changed-request rejection | Regression run pending | Verified by `live_transport.py` with tldraw 1.32.0; temporary note/session/evaluation-file cleanup confirmed |
+| Full live suite: GUI synchronization/conflicts, rollback, PNG export, freehand and runtime reload | Regression run pending | Live verification pending; automated mocks do not close this row |
+| All supported plugin versions | Recheck 1.31.0 and 1.32.0 separately | 1.31.0 live run pending; 1.32.0 coverage is limited to the rows above |
+| Codex plugin UI installation through first edit | Not verified | Not verified |
+
+When running live checks on a new revision or environment, record the commit, OS/architecture,
+Python executable/version, Obsidian app and installer versions, CLI executable,
+tldraw version, commands and outcomes in the review or test report. A mocked
+scenario or a passing diagnostic alone does not establish the unexecuted live
+scenarios. Update this table only for the scope actually verified; retain pending
+items in [known limitations](known-limitations.md).
+
+## Live test setup
+
+Use macOS or Windows with Python 3.9.6+, running Obsidian Desktop, its enabled
+official CLI, and tldraw 1.31.0 or 1.32.0. On Windows, use PowerShell 7 and the
+console executable `Obsidian.com`. If CLI discovery fails, update the Obsidian
+installer or select the actual official CLI path; do not point at the GUI.
+
+Choose the registered vault explicitly. `--vault` accepts its name or ID, not a
+filesystem path. The examples use a vault named `Documents`; substitute the
+user's chosen registered vault. `doctor` uses automatic CLI discovery:
+
+macOS, using a suitable `python3` environment:
+
+```sh
+python3 --version
+python3 bridge.py --vault 'Documents' doctor
+python3 tests/live_transport.py --vault 'Documents'
+```
+
+Windows, from the selected Python environment in PowerShell 7:
+
+```powershell
+$bridgePython = 'python' # Or the absolute path to the selected python.exe.
+& $bridgePython --version
+& $bridgePython bridge.py --vault 'Documents' doctor
+& $bridgePython tests/live_transport.py --vault 'Documents'
+```
+
+Both sequences end with the self-contained transport check described below.
+To list registered vaults when PATH registration is absent, invoke the official
+CLI in its actual installation directory. Standard-install examples:
+
+```sh
+'/Applications/Obsidian.app/Contents/MacOS/obsidian-cli' vaults verbose
+```
+
+```powershell
+& "$env:LOCALAPPDATA\Programs\Obsidian\Obsidian.com" vaults verbose
+```
+
+For a custom installation, pass `--obsidian` to the bridge or set `OBSIDIAN_CLI`
+in the current shell. The environment variable also works for live scripts that
+have no `--obsidian` option. See [connection diagnostics](../integrations/codex/skills/obsidian-tldraw/references/operations.md#cli-discovery-and-connection-diagnostics).
+
+Before tests that take `--path`, create a dedicated tldraw Markdown test diagram
+using the existing plugin. Their examples assume `Bridge test diagram.md`.
+These tests edit that diagram or temporary copies; do not use a production note.
+Scripts that create their own notes are identified below. PNG-producing scripts
+default to the OS temporary directory; an explicit `--output` must have an
+existing parent. Preview files remain available for visual inspection.
+
 ## Evaluation transport integration check
 
 ```sh
-python3 tests/live_transport.py --vault Documents
+python tests/live_transport.py --vault Documents
 ```
 
 Pass `--obsidian <official-CLI-executable>` when explicit CLI selection is needed.
@@ -58,7 +133,7 @@ it is separate from the automated Node-based transport checks.
 ## Freehand integration check
 
 ```sh
-python3 tests/live_freehand.py --vault Documents --path 'Bridge test diagram.md'
+python tests/live_freehand.py --vault Documents --path 'Bridge test diagram.md'
 ```
 
 Uses an existing dedicated test note. Creates a uniquely named frame and two strokes (including a translucent filled region), verifies redraw isolation, persistence, replay, stale revisions, invalid targets, a detail PNG, and a context crop with exact dimensions and unchanged document revision, then removes its frame and strokes and closes its session. Inspect the images separately for visual quality.
@@ -66,7 +141,7 @@ Uses an existing dedicated test note. Creates a uniquely named frame and two str
 ## Note creation integration check
 
 ```sh
-python3 tests/live_create.py --vault Documents
+python tests/live_create.py --vault Documents
 ```
 
 This check creates a uniquely named folder and Markdown note through `create`, verifies an empty editable document, request replay, duplicate rejection, and a named saved shape edit, compact observation, capabilities, retained status, structured stale-revision rejection, full-state inspection, position edits from compact observations, five deferred-GUI conflict rejections, and a GUI change injected during saving, then closes the session and removes its temporary note and folder. It uses fresh runtime and loader copies so cached code does not affect the check.
@@ -76,7 +151,7 @@ This check creates a uniquely named folder and Markdown note through `create`, v
 Against an existing dedicated test diagram, run:
 
 ```sh
-python3 tests/live_reload.py --vault Documents --path 'Bridge test diagram.md'
+python tests/live_reload.py --vault Documents --path 'Bridge test diagram.md'
 ```
 
 The check loads a temporary runtime, changes its source at the same path, and verifies automatic session recreation, unchanged document records and revision, initialized text options, and replay of a retained request ID. It does not add or remove shapes in this mode. The loader is also copied to a fresh path so the check always exercises the code on disk.
@@ -84,22 +159,15 @@ The check loads a temporary runtime, changes its source at the same path, and ve
 To verify that an edit after reload targets the previously selected second page, use:
 
 ```sh
-python3 tests/live_reload.py --vault Documents --path 'Bridge test diagram.md' --multi-page-copy
+python tests/live_reload.py --vault Documents --path 'Bridge test diagram.md' --multi-page-copy
 ```
 
 This mode creates a temporary diagram copy, selects a new second page, reloads the runtime, and checks the parent page of a newly created shape. The copy is deleted after the check; the source diagram is not edited.
 
-## Live test prerequisites
-
-Use macOS with Python 3.9.6+, running Obsidian Desktop, the enabled official CLI, and a supported tldraw plugin version. Create a dedicated tldraw Markdown test diagram using the existing plugin. Do not use a production diagram.
-
-Specify the vault and its relative diagram path explicitly. The examples below assume a vault named `Documents` and an existing file named `Bridge test diagram.md`.
-
 ## Single-document integration test
 
 ```sh
-python3 tests/live.py --vault Documents --path 'Bridge test diagram.md' \
-  --output /tmp/obsidian-tldraw-test.png
+python tests/live.py --vault Documents --path 'Bridge test diagram.md'
 ```
 
 The test loads a fresh runtime copy to avoid stale Obsidian require cache entries. It verifies:
@@ -118,7 +186,7 @@ A passing test exits with code 0 and prints the completed checks and preview pat
 ## Multiple-document integration test
 
 ```sh
-python3 tests/live_sessions.py --vault Documents --path 'Bridge test diagram.md'
+python tests/live_sessions.py --vault Documents --path 'Bridge test diagram.md'
 ```
 
 This test creates a temporary copy of the diagram, opens both documents, and verifies that an edit to the copy is saved without changing the original session's revision. It then closes both sessions and removes the temporary Markdown file.
@@ -126,6 +194,15 @@ This test creates a temporary copy of the diagram, opens both documents, and ver
 This script uses the normal runtime path, where runtime source updates are detected automatically. Restart Obsidian when testing changes to the loader itself, since Node caches that module.
 
 ## Cleanup and manual validation
+
+On each target OS/plugin version, inspect a PNG and verify a mouse-driven GUI
+edit is observed by the bridge and a saved bridge edit appears in the GUI and
+Markdown. Check Unicode note names and an output path containing spaces. Test
+unavailable/disabled CLI and missing/disabled/unsupported tldraw diagnostics in a
+disposable test environment; do not disable a plugin during unrelated live work.
+If a real dispatch times out, inspect its receipt before retrying and verify
+recovery under the same ID. `live_transport.py` simulates lost dispatch output;
+it does not prove that every real timeout/shutdown race behaves correctly.
 
 After live tests, confirm that temporary shapes and documents are gone, the original grid size is restored, and dedicated sessions are closed. Compare persistent diagram records with the pre-test baseline when validating cleanup. A failed test can also fail during cleanup; inspect its output and the diagram before rerunning it.
 
