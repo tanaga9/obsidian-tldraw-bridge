@@ -3,6 +3,8 @@ name: obsidian-tldraw
 description: Create, read, and edit local Obsidian tldraw diagrams, choosing suitable diagram patterns and readable layouts through the existing tldraw plugin. Other tldraw apps and Obsidian Canvas use different tools.
 ---
 
+Compatibility policy: this bridge's CLI commands/arguments, APIs, JSON input/output formats, and CI workflows may change without prior notice or a deprecation period; backward compatibility is not guaranteed. Use the bundled version's instructions and `--help` rather than older examples. When developing the bridge, agents may make breaking changes within the requested task's scope without separate compatibility approval; update affected callers, tests, documentation, and generated packages together. Do not add legacy compatibility layers unless requested. Document-preservation and current-operation correctness requirements still apply.
+
 For new diagrams, structural edits, or readability reviews, read the [diagramming guidance](references/diagramming/index.md) for project conventions and relevant implementation notes. Rely on established knowledge for familiar diagram types; preserve creative choices and keep local corrections local.
 
 For directly authored freehand illustrations, read [freehand drawing](references/freehand.md). Use small drawing passes, stable stroke IDs, and detail previews to refine the result. Define closed-path fills and opacity with the strokes; use bounds previews to inspect details with their surroundings.

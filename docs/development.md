@@ -2,6 +2,12 @@
 
 These steps are for maintainers. Plugin users do not need to run them.
 
+## Compatibility policy
+
+The bridge has no backward-compatibility guarantee. CLI commands and arguments, Python/JavaScript and transport APIs, JSON input/output formats, and CI workflows (including job names, test commands, and matrices) may change without prior notice or a deprecation period. Contributors and agents may make breaking changes within the requested task's scope without asking for separate compatibility approval. Legacy aliases, compatibility adapters, dual formats, and migration periods are not required solely to preserve historical callers unless explicitly requested.
+
+Update affected in-repository callers, tests, documentation, Skills, and generated packages together to describe and verify the new behavior. Use current interfaces rather than assuming older examples remain valid. This policy concerns compatibility across versions; it does not waive document preservation, revision checks, persistence verification, or other correctness requirements of the current implementation.
+
 ## Python compatibility and dependencies
 
 The minimum supported Python version is 3.9.6. The current policy is to use only the Python standard library for the bridge runtime, so normal plugin use requires no additional Python packages. Build dependencies declared in `pyproject.toml` apply to optional package installation, not running the bundled CLI.

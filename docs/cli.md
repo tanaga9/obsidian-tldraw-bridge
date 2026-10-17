@@ -2,6 +2,8 @@
 
 Direct CLI use is intended for development and debugging. It is not part of the plugin user's setup.
 
+Commands, arguments, and JSON input/output formats have no backward-compatibility guarantee and may change without prior notice or a deprecation period. Use this version's reference and `--help`; see the [compatibility policy](development.md#compatibility-policy).
+
 ## Command examples
 
 Run these commands from the repository root; package installation is not required.

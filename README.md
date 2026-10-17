@@ -12,6 +12,10 @@ Codex -> Skill -> Bridge CLI -> Official Obsidian CLI -> Dedicated Editor/Store
 
 Python 3.9.6+, a running Obsidian Desktop instance, a supported tldraw plugin, and the enabled official Obsidian CLI are prerequisites. Codex checks Python before running the bridge and notifies you if it is missing or too old.
 
+## Compatibility policy
+
+The bridge has no backward-compatibility guarantee. CLI commands and arguments, APIs, JSON input/output formats, and CI workflows may change without prior notice or a deprecation period. Use the documentation and help shipped with the current version when writing integrations. Contributors and agents may make breaking changes within their task's scope without separate compatibility approval; see the [development policy](docs/development.md#compatibility-policy).
+
 ## Setup
 
 **Install the `obsidian-tldraw-bridge` plugin in Codex.**
