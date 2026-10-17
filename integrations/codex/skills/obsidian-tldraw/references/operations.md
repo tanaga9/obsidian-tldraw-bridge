@@ -15,13 +15,15 @@ previous attempt in another vault.
 
 CLI selection uses `--obsidian`, then `OBSIDIAN_CLI`, then PATH registrations,
 then standard installation locations. An explicit override does not silently
-fall back. On Windows, discovery prefers `Obsidian.com`, maps a PATH GUI
-registration to the same installation's `.com`, and searches the per-user
+fall back. On macOS, discovery checks `obsidian` then `obsidian-cli` on PATH.
+A legacy GUI registration selects the CLI in that app bundle;
+`/Applications/Obsidian.app/Contents/MacOS/obsidian-cli` is the fallback.
+Custom installations use an explicit official CLI path.
+
+On Windows, discovery prefers `Obsidian.com`, maps a PATH GUI registration to
+the same installation's `.com`, and searches the per-user
 `LOCALAPPDATA/Programs/Obsidian` and system `ProgramFiles/Obsidian` locations.
-An explicit `Obsidian.exe` is rejected; select `Obsidian.com` instead. On macOS,
-PATH registrations retain priority, a legacy GUI registration selects the CLI in
-that app bundle, and `/Applications/Obsidian.app/Contents/MacOS/obsidian-cli` is
-the fallback. Custom installations use an explicit official CLI path.
+An explicit `Obsidian.exe` is rejected; select `Obsidian.com` instead.
 
 Run `doctor` when connection setup is uncertain. Successful results retain the
 runtime doctor fields and add `checks` for CLI discovery, evaluation connectivity,

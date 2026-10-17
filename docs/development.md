@@ -1,9 +1,10 @@
 # Development and distribution
 
 These steps are for maintainers. Plugin users do not need to run them.
-Use the selected Python environment; examples use `python`. On macOS, use
-`python3` or the environment's absolute Python path when needed. On Windows,
-run shell commands in PowerShell 7 or newer.
+macOS is the primary development target; examples use `python3` from the selected
+Python environment, or its absolute interpreter path when needed. On Windows,
+use PowerShell 7 or newer and substitute a verified Python 3.9.6+ command such
+as `python` or `py -3`.
 
 ## Compatibility policy
 
@@ -20,8 +21,8 @@ This policy can be revisited as requirements evolve. Evaluate additional Python 
 ## Build the plugin package
 
 ```sh
-python scripts/build_plugin.py
-python scripts/build_plugin.py --check
+python3 scripts/build_plugin.py
+python3 scripts/build_plugin.py --check
 ```
 
 The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/`. The generated package at `plugins/obsidian-tldraw-bridge/` is included in the repository and referenced by the marketplace. Regenerate it after changing the canonical sources; `--check` detects stale bundled files. Both package builders exclude `.DS_Store` recursively, and the plugin consistency check ignores it in existing output directories. Source metadata files are left untouched. Git checks text files out with LF line endings on all operating systems (`.gitattributes`); the generated JSON manifest is UTF-8 with LF as well. Keep canonical sources and bundled copies under that policy so a clean checkout passes `--check` on every CI OS.
@@ -35,7 +36,7 @@ Keep diagramming guidance inside the canonical Skill's [references](../integrati
 - Keep drawing conventions in `diagramming/index.md`, SDK details in `diagramming/tldraw.md`, and operation contracts in `operations.md`. Split a reference only when its size or independent use justifies it.
 - Update existing guidance before adding new rules. Keep history in Git rather than cumulative activity logs.
 
-After knowledge-only changes, rebuild the plugin, run `python scripts/build_plugin.py --check`, and run `python -m unittest discover -s tests -p 'test_package.py'`. Package tests check that local Markdown references are self-contained and reachable from `SKILL.md`. These checks do not establish drawing quality; live tests are needed for runtime changes.
+After knowledge-only changes, rebuild the plugin, run `python3 scripts/build_plugin.py --check`, and run `python3 -m unittest discover -s tests -p 'test_package.py'`. Package tests check that local Markdown references are self-contained and reachable from `SKILL.md`. These checks do not establish drawing quality; live tests are needed for runtime changes.
 
 ## Local distribution testing
 
@@ -50,7 +51,7 @@ This is a developer workflow. The package layout follows the [official OpenAI pl
 ## Build the standalone Skill
 
 ```sh
-python scripts/build_skill.py
+python3 scripts/build_skill.py
 ```
 
 `dist/obsidian-tldraw/` is a portable Skill for testing or standalone distribution. Normal plugin use relies on the bundled Skill and does not require copying it manually.

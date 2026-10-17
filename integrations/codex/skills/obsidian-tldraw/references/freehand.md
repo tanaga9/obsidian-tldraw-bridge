@@ -22,15 +22,15 @@ Closed paths ending in `Z` can be painted in the same edit: `fill: fill` uses th
 
 Use `scale` for line width, `pressure` (0–1) for pen pressure, and `taper` (0–1) for endpoint pressure reduction. Root-level `spacing` controls curve sampling (default 2). Keep edits in small passes; oversized inputs fail before connecting and should be split. After a human moves a stroke, read state and account for its new local position before redrawing it.
 
-Examples use the Python interpreter selected in `SKILL.md`. Choose an existing
-local output directory for previews; relative output paths below resolve against
-the process working directory.
+Examples use macOS `python3`; follow `SKILL.md` for interpreter selection in
+other environments. Choose an existing local output directory for previews;
+relative output paths below resolve against the process working directory.
 
 ```sh
-python "<skill-directory>/scripts/bridge.py" --vault <vault> --request-id stroke-pass-1 freehand study.md --revision <revision> --input strokes.json
-python "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --part detail --scale 3 --output detail.png
-python "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --ids shape:curve-a --scale 4 --output stroke.png
-python "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --bounds 80 100 180 160 --scale 3 --output context.png
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> --request-id stroke-pass-1 freehand study.md --revision <revision> --input strokes.json
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --part detail --scale 3 --output detail.png
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --ids shape:curve-a --scale 4 --output stroke.png
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --bounds 80 100 180 160 --scale 3 --output context.png
 ```
 
 Start with the overall structure, inspect the whole drawing, then refine one part at a time. Keep stable IDs across redraws and tag related strokes with a part. Inspect the relevant detail after changing it and the whole drawing after changing its layout. Do not automatically replace a request for directly authored strokes with image generation or contour extraction.

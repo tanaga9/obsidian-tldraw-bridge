@@ -7,15 +7,16 @@ use this version's `--help` and [compatibility policy](development.md#compatibil
 ## Example
 
 Run from the repository root with the selected Python 3.9.6+ environment.
-Examples use `python`; use `python3` or an absolute interpreter path when needed.
-In PowerShell 7, invoke a quoted interpreter path with `&`. Create a note, then
-observe its revision and page:
+Examples target macOS and use `python3`; use the selected environment's absolute
+interpreter path when needed. On Windows, substitute a verified Python 3.9.6+
+command such as `python` or `py -3`; in PowerShell 7, invoke a quoted interpreter
+path with `&`. Create a note, then observe its revision and page:
 
 ```sh
-python bridge.py --vault Documents doctor
-python bridge.py --vault Documents capabilities
-python bridge.py --vault Documents --request-id create-example create 'Drawings/example.md'
-python bridge.py --vault Documents observe 'Drawings/example.md'
+python3 bridge.py --vault Documents doctor
+python3 bridge.py --vault Documents capabilities
+python3 bridge.py --vault Documents --request-id create-example create 'Drawings/example.md'
+python3 bridge.py --vault Documents observe 'Drawings/example.md'
 ```
 
 Substitute the observed revision and `currentPageId` below. Use the returned path
@@ -32,9 +33,9 @@ accepted). Using a file avoids shell-specific multiline quoting:
 ```
 
 ```sh
-python bridge.py --vault Documents --request-id edit-example apply 'Drawings/example.md' --revision '<revision-from-observe>' --page-id '<currentPageId>' --input operations.json
-python bridge.py --vault Documents preview 'Drawings/example.md' --output example.png
-python bridge.py --vault Documents close 'Drawings/example.md'
+python3 bridge.py --vault Documents --request-id edit-example apply 'Drawings/example.md' --revision '<revision-from-observe>' --page-id '<currentPageId>' --input operations.json
+python3 bridge.py --vault Documents preview 'Drawings/example.md' --output example.png
+python3 bridge.py --vault Documents close 'Drawings/example.md'
 ```
 
 Preview output paths are local filesystem paths, resolved against the process's
@@ -103,9 +104,13 @@ retained note: recover with `open` and `saved`. The bridge does not delete it.
 
 Use `--obsidian <official-CLI-executable>` or `OBSIDIAN_CLI` to override
 CLI discovery. The flag takes precedence; an invalid override fails without
-silently selecting another installation. On Windows, use `Obsidian.com`;
-an explicit `Obsidian.exe` selects the GUI and is rejected. Automatic discovery
-uses PATH registrations and standard installation locations for each OS.
+silently selecting another installation. On macOS, discovery checks `obsidian`
+and `obsidian-cli` on PATH, then
+`/Applications/Obsidian.app/Contents/MacOS/obsidian-cli`. Legacy GUI registrations
+select the CLI in the same app bundle.
+
+On Windows, use `Obsidian.com`; an explicit `Obsidian.exe` is rejected. Discovery
+uses PATH registrations and standard Windows installation locations.
 See [CLI discovery and connection diagnostics](../integrations/codex/skills/obsidian-tldraw/references/operations.md#cli-discovery-and-connection-diagnostics)
 for the exact search order, diagnostic codes and timeout contract.
 
@@ -131,4 +136,4 @@ is not interrupted. Failed reopens appear in `doctor.reloadErrors`; retry with
 dismiss before reopening. Other documents remain usable. Changes to `loader.cjs`
 itself require restarting Obsidian.
 
-Optional `python -m pip install .` exposes the `obsidian-tldraw` command.
+Optional `python3 -m pip install .` exposes the `obsidian-tldraw` command.
