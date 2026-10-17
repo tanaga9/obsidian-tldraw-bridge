@@ -40,6 +40,8 @@ For direct CLI use, see the [CLI reference](docs/cli.md). For builds and local m
 
 ## Diagramming knowledge
 
+For a concise overview of tldraw apps, the SDK, file formats, comparisons with diagramming and slide tools, and AI agent editing, see [tldraw overview](docs/tldraw-overview.md).
+
 The Skill includes concise [diagramming guidance](integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md): a diagram selection table, project conventions, and Obsidian tldraw implementation notes. Both plugin and standalone builds include it. Familiar diagram types use established conventions rather than bundled tutorials. See [development guidance](docs/development.md) when extending these notes.
 
 ## Advanced SDK operations
