@@ -1,6 +1,7 @@
 """JSON CLI for structured operations and trusted SDK scripts."""
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 from .obsidian import BridgeError, Client
@@ -40,6 +41,8 @@ def parser():
     region = preview.add_mutually_exclusive_group()
     region.add_argument("--ids", nargs="+", help="Preview only these current-page shape IDs")
     region.add_argument("--part", help="Preview only freehand strokes tagged with this part")
+    region.add_argument("--bounds", nargs=4, type=float, metavar=("X", "Y", "W", "H"),
+                        help="Crop the full current page to this page-coordinate rectangle, including surrounding shapes")
     preview.add_argument("--scale", type=float, default=1, help="Export scale, greater than 0 and at most 4")
     return p
 
@@ -82,6 +85,10 @@ def main(argv=None):
                 args["ids"] = options.ids
             if options.part is not None:
                 args["part"] = options.part
+            if options.bounds is not None:
+                if not all(math.isfinite(v) for v in options.bounds) or any(v <= 0 for v in options.bounds[2:]):
+                    raise BridgeError("Preview bounds must be finite with positive width and height")
+                args["bounds"] = dict(zip(("x", "y", "w", "h"), options.bounds))
         client = Client(options.vault, options.obsidian, options.timeout)
         action = "script" if options.command == "freehand" else options.command
         result = client.forget(options.id) if options.command == "forget" else client.call(action, args, options.request_id)

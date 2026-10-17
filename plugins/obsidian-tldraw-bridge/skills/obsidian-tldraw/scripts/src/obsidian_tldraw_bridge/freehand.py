@@ -119,6 +119,12 @@ def compile_script(data):
         color = stroke.get("color", "black")
         if not isinstance(color, str):
             raise ValueError("color must be a tldraw color name")
+        fill = stroke.get("fill", "none")
+        if fill not in ("none", "semi", "solid", "pattern", "fill", "lined-fill"):
+            raise ValueError("fill must be none, semi, solid, pattern, fill, or lined-fill")
+        if fill != "none" and not closed:
+            raise ValueError("Filled strokes must close their path with Z")
+        opacity = number(stroke.get("opacity", 1), "opacity", 0, 1)
         part = stroke.get("part")
         if part is not None and (not isinstance(part, str) or not part.strip()):
             raise ValueError("part must be a nonempty string")
@@ -130,10 +136,10 @@ def compile_script(data):
                   pressure * (1 - taper * (1 - math.sin(math.pi * i / (len(points) - 1))))]
                  for i, p in enumerate(points)]
         result = {
-            "id": identity, "x": origin[0] + number(stroke.get("x", 0), "x"),
+            "id": identity, "opacity": opacity, "x": origin[0] + number(stroke.get("x", 0), "x"),
             "y": origin[1] + number(stroke.get("y", 0), "y"),
             "props": {"segments": [{"type": "free", "path": encode_points(local)}],
-                      "color": color, "size": size, "scale": scale, "fill": "none",
+                      "color": color, "size": size, "scale": scale, "fill": fill,
                       "dash": "draw", "isPen": True, "isComplete": True, "isClosed": closed},
         }
         if parent is not None:

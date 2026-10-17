@@ -58,6 +58,12 @@ class CurveTest(unittest.TestCase):
                      {'strokes': [dict(valid, parentId='elsewhere')]},
                      {'strokes': [dict(valid, part='')]},
                      {'strokes': [dict(valid, pressure=10 ** 400)]},
+                     {'strokes': [dict(valid, fill='fill')]},
+                     {'strokes': [dict(valid, fill='unknown')]},
+                     {'strokes': [dict(valid, opacity=-.1)]},
+                     {'strokes': [dict(valid, opacity=1.1)]},
+                     {'strokes': [dict(valid, opacity=True)]},
+                     {'strokes': [dict(valid, opacity=float('nan'))]},
                      {'spacing': float('nan'), 'strokes': [valid]}]:
             with self.subTest(data=data), self.assertRaises(ValueError):
                 compile_script(data)
@@ -82,6 +88,23 @@ catch(e){console.log(JSON.stringify({error:e.message,records:[...records.values(
             'code': compile_script(data), 'existing': existing or [],
         }), capture_output=True, text=True, check=True)
         return json.loads(proc.stdout)
+
+    def test_filled_translucent_region_is_created_in_one_edit_and_redraw_resets_style(self):
+        data = {'strokes': [{'id': 'shape:paint', 'path': 'M0 0 L30 0 L15 20 Z',
+                             'color': 'red', 'fill': 'fill', 'opacity': .35}]}
+        result = self.run_edit(data)
+        self.assertNotIn('error', result)
+        region = result['records'][0]
+        self.assertEqual(region['props']['fill'], 'fill')
+        self.assertEqual(region['props']['color'], 'red')
+        self.assertEqual(region['opacity'], .35)
+        self.assertTrue(region['props']['isClosed'])
+        result = self.run_edit({'strokes': [{'id': 'shape:paint', 'path': 'M0 0 L40 10'}]},
+                               [dict(region, meta={'note': 'keep'})])
+        region = result['records'][0]
+        self.assertEqual(region['props']['fill'], 'none')
+        self.assertEqual(region['opacity'], 1)
+        self.assertEqual(region['meta'], {'note': 'keep'})
 
     def test_redraw_preserves_id_parent_and_other_metadata(self):
         existing = [

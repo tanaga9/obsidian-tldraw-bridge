@@ -315,7 +315,7 @@ async function execute(app, action, args) {
     const editor = session.editor
     const capturedRevision = revision(editor)
     const pageIds = [...editor.getCurrentPageShapeIds()]
-    if (args.ids !== undefined && args.part !== undefined) throw new Error('Choose ids or part, not both')
+    if ([args.ids, args.part, args.bounds].filter(value => value !== undefined).length > 1) throw new Error('Choose ids, part, or bounds, not more than one')
     if (args.part !== undefined && (typeof args.part !== 'string' || !args.part.trim())) throw new Error('Part must be a nonempty string')
     const ids = args.part !== undefined
       ? pageIds.filter(id => editor.getShape(id)?.meta?.bridgeFreehand?.part === args.part)
@@ -323,8 +323,20 @@ async function execute(app, action, args) {
     if (!Array.isArray(ids) || !ids.length || ids.some(id => !pageIds.includes(id))) throw new Error('Preview selection must contain existing current-page shapes')
     const scale = args.scale ?? 1
     if (!Number.isFinite(scale) || scale <= 0 || scale > 4) throw new Error('Preview scale must be greater than 0 and at most 4')
+    let bounds
+    if (args.bounds !== undefined) {
+      const b = args.bounds
+      if (!b || !['x', 'y', 'w', 'h'].every(key => Number.isFinite(b[key])) || b.w <= 0 || b.h <= 0) {
+        throw new Error('Preview bounds must be finite with positive width and height')
+      }
+      // Keep the SDK Box prototype required by toImage; never mutate cached geometry.
+      const sample = ids.map(id => editor.getShapePageBounds(id)).find(Boolean)
+      if (!sample) throw new Error('No shape bounds available for preview')
+      bounds = Object.assign(sample.clone(), { x: b.x, y: b.y, w: b.w, h: b.h })
+    }
     const { blob, width, height } = await editor.toImage(ids, {
       format: 'png', scale, background: true,
+      ...(bounds ? { bounds, padding: 0 } : {}),
     })
     const bytes = Buffer.from(await blob.arrayBuffer())
     if (revision(editor) !== capturedRevision) throw new Error('Revision conflict during preview: read state and export again')

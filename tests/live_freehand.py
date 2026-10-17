@@ -43,7 +43,8 @@ try:
     ]})
     code = compile_script({'strokes': [
         {'id': curve, 'parentId': frame, 'part': part, 'path': 'M40 80 Q80 40 120 80'},
-        {'id': outline, 'parentId': frame, 'part': 'outline-' + key, 'path': 'M20 60 C20 0 180 0 180 60'},
+        {'id': outline, 'parentId': frame, 'part': 'outline-' + key,
+         'path': 'M20 60 C20 0 180 0 180 60 Z', 'color': 'light-blue', 'fill': 'fill', 'opacity': .4},
     ]})
     initial = state()
     identity = 'freehand-live-' + key
@@ -51,6 +52,8 @@ try:
     assert result['persistence']['saved'] and result['changes']['added'] == 2
     assert edit(code, initial['revision'], identity) == result
     first = {r['id']: r for r in state()['records']}
+    assert first[outline]['props']['fill'] == 'fill'
+    assert first[outline]['opacity'] == .4
     revised = compile_script({'strokes': [
         {'id': curve, 'part': part, 'path': 'M40 80 Q80 60 120 80', 'scale': .5},
     ]})
@@ -80,9 +83,16 @@ try:
     preview = c.call('preview', {**base, 'part': part, 'scale': 3, 'output': output})
     assert Path(output).read_bytes().startswith(b'\x89PNG')
     assert preview['revision'] == current['revision']
+    context_output = str(Path(output).with_name(Path(output).stem + '-context.png'))
+    context = c.call('preview', {**base, 'bounds': {'x': 2020, 'y': 2020, 'w': 160, 'h': 100},
+                                 'scale': 2, 'output': context_output})
+    assert Path(context_output).read_bytes().startswith(b'\x89PNG')
+    assert (context['width'], context['height']) == (320, 200)
+    assert state()['revision'] == current['revision']
     print(json.dumps({'passed': ['native-curves', 'persistence', 'request-replay', 'targeted-redraw',
                                   'unrelated-stroke-preserved', 'stale-revision-rejection',
-                                  'invalid-target-no-edits', 'part-preview'], 'preview': preview}))
+                                  'invalid-target-no-edits', 'part-preview', 'fill-and-opacity',
+                                  'context-crop-no-document-change'], 'preview': preview, 'context': context}))
 finally:
     current = state()
     if any(r['id'] == frame for r in current['records']):

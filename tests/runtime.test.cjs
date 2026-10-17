@@ -132,12 +132,38 @@ test('bad preview selections and scales leave existing output untouched',async()
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-bad-detail-')),output=path.join(dir,'out.png')
   fs.writeFileSync(output,'original')
   try {
-    for(const args of [{ids:[]},{ids:['shape:missing']},{part:'missing'},{ids:['shape:a'],part:'detail'},{scale:0},{scale:5},{scale:NaN}]){
+    for(const args of [{ids:[]},{ids:['shape:missing']},{part:'missing'},{ids:['shape:a'],part:'detail'},
+      {bounds:{x:0,y:0,w:0,h:20}},{bounds:{x:NaN,y:0,w:20,h:20}},
+      {bounds:{x:0,y:0,w:20,h:20},part:'detail'},{bounds:null},
+      {scale:0},{scale:5},{scale:NaN}]){
       const h=setup()
       h.editor.toImage=async()=>{throw new Error('Unexpected render')}
       await assert.rejects(h.invoke('preview',{path:'a.md',output,...args}),error=>!error.message.includes('Unexpected render'))
       assert.equal(fs.readFileSync(output,'utf8'),'original')
     }
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('bounds preview includes surrounding shapes and crops without changing cached bounds',async()=>{
+  const h=setup(), dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-crop-')),output=path.join(dir,'out.png')
+  h.editor.getCurrentPageShapeIds=()=>['shape:a','shape:b']
+  const geometry={x:0,y:0,w:800,h:1000,clone(){return {...this}}}
+  h.editor.getShapePageBounds=()=>geometry
+  let received
+  h.editor.toImage=async(ids,options)=>{
+    received={ids:Array.from(ids),bounds:options.bounds,padding:options.padding}
+    return {blob:{arrayBuffer:async()=>Buffer.from('crop')},width:200,height:150}
+  }
+  try {
+    const before=h.access.revision(h.editor)
+    const bounds={x:100,y:120,w:200,h:150}
+    const result=await h.invoke('preview',{path:'a.md',bounds,output})
+    assert.deepEqual(received.ids,['shape:a','shape:b'])
+    for(const key of ['x','y','w','h'])assert.equal(received.bounds[key],bounds[key])
+    assert.equal(received.padding,0)
+    assert.deepEqual([geometry.x,geometry.y,geometry.w,geometry.h],[0,0,800,1000])
+    assert.equal(result.revision,before)
+    assert.equal(h.access.revision(h.editor),before)
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
 

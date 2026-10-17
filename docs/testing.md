@@ -20,14 +20,14 @@ These checks do not require a running Obsidian instance. They cover:
 
 | Area | Expected behavior |
 | --- | --- |
-| Freehand drawing | Authored curves preserve geometry and pressure through point encoding; stable IDs support redraws without replacing unrelated shapes. Invalid targets fail before edits. |
+| Freehand drawing | Authored curves preserve geometry and pressure through point encoding; closed strokes accept fill and opacity in the same edit. Redraws reset omitted styles and preserve unrelated shapes. Invalid styles, open fills, and targets fail before edits. |
 | CLI transport | Code is passed as an argument rather than through a shell. Missing initial output can be recovered by polling. |
 | Result handling | Edits default to compact net change counts over document records; full output is available explicitly, and state remains inspectable. Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
 | Note creation | Plugin-generated Markdown, existing-path and traversal rejection, saved editable session, retained creation after initialization failure, and request replay without duplicate creation. |
 | Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending source/shared notifications are processed without waiting for animation frames. |
 | Synchronous rollback | Failed edits restore records, including history-ignored changes, without leaving forward changes queued for other Editors. |
 | Exceptions | Arbitrary thrown values become failed jobs with readable errors; subsequent requests remain usable. |
-| Preview | Part and ID selections export only current-page shapes at the requested scale. Invalid selections and revision conflicts leave output files unchanged. |
+| Preview | Part and ID selections export only current-page shapes at the requested scale. Bounds crop the whole page with surrounding shapes. Invalid selections, bounds, and revision conflicts leave output files unchanged. |
 | Receipt capacity | The limit rejects new work while preserving retained results and their deduplication protection. |
 | Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. |
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
@@ -40,7 +40,7 @@ If the plugin package is stale, regenerate it with `python3 scripts/build_plugin
 python3 tests/live_freehand.py --vault Documents --path 'Bridge test diagram.md'
 ```
 
-Uses an existing dedicated test note. Creates a uniquely named frame and two strokes, verifies redraw isolation, persistence, replay, stale revisions, invalid targets, and a detail PNG, then removes its frame and strokes and closes its session. Inspect the detail image separately for visual quality.
+Uses an existing dedicated test note. Creates a uniquely named frame and two strokes (including a translucent filled region), verifies redraw isolation, persistence, replay, stale revisions, invalid targets, a detail PNG, and a context crop with exact dimensions and unchanged document revision, then removes its frame and strokes and closes its session. Inspect the images separately for visual quality.
 
 ## Note creation integration check
 

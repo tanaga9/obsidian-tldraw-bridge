@@ -71,6 +71,24 @@ class FreehandCommandTest(unittest.TestCase):
 
 
 class PreviewCommandTest(unittest.TestCase):
+    def test_context_bounds_are_forwarded(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client:
+            client.return_value.call.return_value = {'path': '/tmp/crop.png'}
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--bounds',
+                                       '-10', '20', '200', '150', '--output', '/tmp/crop.png']), 0)
+            self.assertEqual(client.return_value.call.call_args.args[1]['bounds'],
+                             {'x': -10, 'y': 20, 'w': 200, 'h': 150})
+
+    def test_invalid_bounds_fail_before_connecting(self):
+        for bounds in [('nan', '0', '20', '20'), ('0', 'inf', '20', '20'),
+                       ('0', '0', '0', '20'), ('0', '0', '20', '-1')]:
+            with self.subTest(bounds=bounds), patch('obsidian_tldraw_bridge.cli.Client') as client:
+                with contextlib.redirect_stderr(io.StringIO()):
+                    self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--bounds',
+                                           *bounds, '--output', '/tmp/crop.png']), 1)
+                client.assert_not_called()
+
     def test_part_and_scale_are_forwarded(self):
         with patch('obsidian_tldraw_bridge.cli.Client') as client:
             client.return_value.call.return_value = {'path': '/tmp/detail.png'}
