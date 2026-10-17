@@ -2,10 +2,19 @@ name: Check
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python: ['3.9', '3.10', '3.13']
+        # setup-python has no CPython 3.9 build for macOS arm64.
+        exclude:
+          - os: macos-latest
+            python: '3.9'
+        include:
+          - os: macos-15-intel
+            python: '3.9'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -15,7 +24,7 @@ jobs:
         with:
           node-version: '22'
       - run: python -m unittest discover -s tests -p 'test_*.py'
-      - run: node --test tests/*.test.cjs
+      - run: node --test
       - run: node --check src/obsidian_tldraw_bridge/runtime/bridge.cjs
       - run: node --check src/obsidian_tldraw_bridge/runtime/loader.cjs
       - run: python scripts/build_plugin.py --check

@@ -2,19 +2,24 @@
 
 This guide describes how to verify the current implementation. Keep test procedures and expected behavior here; use Git history for past changes and [Known limitations](known-limitations.md) for outstanding work. Do not append dated execution logs or cumulative pass counts.
 
-Run commands from the repository root.
+Run commands from the repository root, using the selected Python environment.
+Examples use `python`; on macOS, use `python3` or its absolute path when needed.
 
 ## Automated checks
 
-Use Python 3.9.6+ and Node.js 22. CI tests Python 3.9, 3.10, and 3.13; the 3.9 job uses the latest available patch release. To verify the minimum supported version on a Mac where `/usr/bin/python3 --version` reports 3.9.6, run the Python checks below with `/usr/bin/python3` instead of `python3`. Node.js is a developer test dependency, not a requirement for normal plugin use.
+Use Python 3.9.6+ and Node.js 22. CI tests Python 3.9, 3.10, and 3.13 on Linux, macOS, and Windows; 3.9 jobs use the latest available patch release for each runner. The macOS 3.9 job uses `macos-15-intel` because the [official Python distribution manifest](https://github.com/actions/python-versions/blob/main/versions-manifest.json) has no CPython 3.9 build for macOS arm64; newer Python jobs use `macos-latest`. To verify the minimum supported version on a Mac where `/usr/bin/python3 --version` reports 3.9.6, run the Python checks below with `/usr/bin/python3` instead of `python3`. Node.js is a developer test dependency, not a requirement for normal plugin use.
 
 ```sh
-python3 -m unittest discover -s tests -p 'test_*.py'
-node --test tests/*.test.cjs
+python -m unittest discover -s tests -p 'test_*.py'
+node --test
 node --check src/obsidian_tldraw_bridge/runtime/bridge.cjs
 node --check src/obsidian_tldraw_bridge/runtime/loader.cjs
-python3 scripts/build_plugin.py --check
+python scripts/build_plugin.py --check
 ```
+
+Node discovers `*.test.cjs` files without shell wildcard expansion, so the same
+command works in POSIX shells and PowerShell 7. Tests use platform temporary
+directories; preview test outputs do not require `/tmp` or elevated privileges.
 
 These checks do not require a running Obsidian instance. They cover:
 
@@ -32,9 +37,9 @@ These checks do not require a running Obsidian instance. They cover:
 | Preview | Part and ID selections export only current-page shapes at the requested scale. Bounds crop the whole page with surrounding shapes. Invalid selections, bounds, and revision conflicts leave output files unchanged. |
 | Receipt capacity | The limit rejects new work while preserving retained results and their deduplication protection. |
 | Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. |
-| Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
+| Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders preserve UTF-8 source bytes, generate the manifest with LF line endings, and exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
 
-If the plugin package is stale, regenerate it with `python3 scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
+If the plugin package is stale, regenerate it with `python scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
 
 ## Evaluation transport integration check
 
