@@ -1,12 +1,12 @@
 # CLI reference
 
-The CLI is an adapter over the shared [operation API](api.md). Agents execute it through the bundled Skill; users do not need to install a separate CLI package.
+The CLI adapts the shared [Python API](api.md). Agents use the bundled Skill;
+no separate CLI installation is needed. Interfaces may change without notice;
+use this version's `--help` and [compatibility policy](development.md#compatibility-policy).
 
-Commands, arguments, and JSON input/output formats have no backward-compatibility guarantee and may change without prior notice or a deprecation period. Use this version's reference and `--help`; see the [compatibility policy](development.md#compatibility-policy).
+## Example
 
-## Command examples
-
-Run these commands from the repository root; package installation is not required.
+Run from the repository root. Create a note, then observe its revision and page:
 
 ```sh
 python3 bridge.py --vault Documents doctor
@@ -15,78 +15,76 @@ python3 bridge.py --vault Documents --request-id create-example create 'Drawings
 python3 bridge.py --vault Documents observe 'Drawings/example.md'
 ```
 
-Use the `revision` returned by `observe` when submitting edits:
+Substitute the observed revision and `currentPageId` below. Use the returned path
+if creation chose a unique filename.
 
 ```sh
-python3 bridge.py --vault Documents apply 'Drawings/example.md' \
-  --revision '<revision-from-observe>' --input examples/create.json
+python3 bridge.py --vault Documents --request-id edit-example apply 'Drawings/example.md' \
+  --revision '<revision-from-observe>' --page-id '<currentPageId>' --input - <<'JSON'
+[{"op":"createShapes","shapes":[
+  {"id":"shape:bridge-example","type":"geo","x":100,"y":100,
+   "props":{"geo":"rectangle","w":240,"h":120,"color":"blue","fill":"solid"}}
+]}]
+JSON
 python3 bridge.py --vault Documents preview 'Drawings/example.md' --output /tmp/example.png
 python3 bridge.py --vault Documents close 'Drawings/example.md'
 ```
 
-Use `--obsidian /path/to/executable` or the `OBSIDIAN_CLI` environment variable to override the Obsidian CLI location. Always specify the vault. Diagram paths are vault-relative `.md` paths. For `apply`, `batch`, `freehand`, and `script`, `--input -` reads from standard input. Results are JSON; handled errors are structured JSON on standard error with exit code 1. See [operations and recovery](../integrations/codex/skills/obsidian-tldraw/references/operations.md) for error codes and outcomes.
+Always specify the vault; diagram paths are vault-relative `.md` paths. `apply`,
+`batch`, `freehand`, and `script` accept `--input -` for standard input. Results
+are JSON; handled errors are JSON on standard error with exit code 1.
 
-Explicit `--obsidian` takes precedence over `OBSIDIAN_CLI`; an invalid override fails without switching installations. Automatic discovery checks `obsidian` on PATH, then `obsidian-cli` on PATH, then `/Applications/Obsidian.app/Contents/MacOS/obsidian-cli`. If an older PATH registration resolves to the app bundle's GUI executable, discovery selects its sibling `obsidian-cli` instead. Automatic discovery never falls back to launching that GUI executable; update the installer if the dedicated CLI is missing.
+## Commands and contracts
 
-Optional Python package installation with `python3 -m pip install .` exposes the `obsidian-tldraw` command. Normal plugin use does not require this installation.
+[Operations and recovery](../integrations/codex/skills/obsidian-tldraw/references/operations.md)
+is the canonical reference for input schemas, observation/pagination, coordinates,
+SDK access, result fields, errors, persistence, and request-ID recovery.
 
-## Observation and request status
+| Purpose | CLI usage |
+| --- | --- |
+| Compact observation | `observe <path> [--ids <id> ... \| --bounds X Y W H] [--limit N]`; continue with `--offset N --revision <revision> --page-id <currentPageId>` |
+| Full records | `state <path>`; add `--full` to `apply`, `batch`, `script`, or `freehand` for full edit results |
+| Freehand drawing | `freehand <path> --revision <revision> --input <file>`; see [drawing input](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) |
+| PNG preview | `preview <path> --output <png> [--part <part> \| --ids <id> ...] [--scale <number>]`; scale defaults to 1, maximum 4 |
+| Check persistence | `saved <path>` |
+| Inspect/release a receipt | `status <request-id>` / `forget <request-id>` |
 
-`observe <path>` returns compact current-page shape summaries and touching bindings.
-Use `--ids <id> ...` or `--bounds X Y W H` to filter. Default `--limit` is 100;
-maximum is 500. Continue with `--offset <nextOffset>` and `--revision <revision> --page-id <currentPageId>`.
-A revision and page ID are required after the first page of results. This observes the dedicated
-Editor, not the human GUI selection. Text and bindings are bounded; use `state`
-for complete native records. Compact shapes include parent-local `localPosition`
-for position updates, alongside page-space bounds. See the [operation reference](../integrations/codex/skills/obsidian-tldraw/references/operations.md).
+Use a fresh global `--request-id` for each consequential edit. After a timeout,
+inspect its status or repeat the identical request with the same ID. Release
+completed receipts with `forget`; explicit IDs occupy the 128-receipt capacity
+until forgotten or Obsidian restarts.
 
-`status <request-id>` inspects a retained receipt without re-executing the request.
-It returns running, complete, or failed status, along with the result or failure.
-Use it after a timeout, including one reporting an automatically generated ID.
-Receipts are in memory and disappear on Obsidian restart.
+## Note creation
 
-## Freehand drawing and detail previews
+`create <path.md>` uses the plugin's current frontmatter, tags, and serialization
+settings, creates parent folders as needed, and opens a GUI tab and bridge session.
+No revision is required. The result includes `created`, `path`, `requestedPath`,
+`currentPageId`, `revision`, records, and `persistence`; use its actual path and revision.
 
-`freehand <path> --revision <revision> --input <json-file>` creates or redraws strokes from authored curves using stable IDs. See the bundled [freehand reference](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) for the input format and iterative workflow. It uses the same edit result, persistence, and request-ID contracts as `script`.
+Existing files or folders are rejected. A concurrent name collision may make the
+plugin choose a unique filename. Use `open <path>` for existing notes. If creation
+succeeds but opening or persistence verification fails, the error identifies the
+retained note: recover with `open` and `saved`. The bridge does not delete it.
 
-`preview` accepts `--part <part>` or `--ids <shape-id> ...` to export a subset of the current page, and `--scale <number>` to enlarge it (greater than 0, at most 4). The default remains a whole-page preview at scale 1. An empty or invalid selection fails without changing the output file.
+## Connection and sessions
 
-## Edit results
+Use `--obsidian /path/to/executable` or `OBSIDIAN_CLI` to override CLI discovery;
+the flag takes precedence and an invalid override fails. Automatic discovery
+checks `obsidian` on PATH, `obsidian-cli` on PATH, then
+`/Applications/Obsidian.app/Contents/MacOS/obsidian-cli`. Old GUI executable
+registrations resolve to the sibling `obsidian-cli`; the GUI executable is never
+launched as a fallback. Update the installer if the dedicated CLI is missing.
 
-`apply`, `batch`, `script`, and `freehand` return a compact result by default:
+Multiple document sessions are supported. SDK initialization may open a diagram
+tab and return focus to the previously active tab; the diagram tab stays open.
+Bridge and GUI Editors have separate Undo histories. Reopen sessions after an
+Obsidian restart.
 
-```json
-{
-  "path": "Drawings/example.md",
-  "revision": "<new revision>",
-  "currentPageId": "page:example",
-  "changes": {"added": 2, "updated": 1, "removed": 0},
-  "persistence": {"saved": true, "path": "Drawings/example.md", "bytes": 1024}
-}
-```
+Runtime source updates check persistence and recreate sessions, preserving selected
+pages and retained request IDs, but resetting bridge Undo history. Running work
+is not interrupted. Failed reopens appear in `doctor.reloadErrors`; retry with
+`open <path>` or dismiss with `close <path>`. If the previous page was deleted,
+dismiss before reopening. Other documents remain usable. Changes to `loader.cjs`
+itself require restarting Obsidian.
 
-`changes` counts the net differences in all persistent document records, including shapes, pages, bindings, assets, and document settings. Changes made and reversed within one edit count as zero; camera and selection changes are excluded. Counts describe the edit itself, rather than the number of requested operations.
-
-Use `state <path.md>` to inspect full records, or append `--full` to `apply`, `batch`, `script`, or `freehand` to include records and editor diagnostics in that edit's result. `--full` is part of the request: keep it unchanged when replaying an explicit request ID. Previously retained requests still return their original results. `create`, `open`, and `state` continue to return full document state.
-
-## Create a note
-
-`create <path.md>` creates a new tldraw Markdown note through the plugin, opens a GUI tab and a bridge Editor session, and checks persistence. Parent folders are created by the plugin when needed. No revision is required for creation. The result includes `created: true`, the actual `path`, `requestedPath`, `currentPageId`, `revision`, records, and `persistence`. Use the returned revision for the first edit. Use `open <path.md>` for an existing note.
-
-An existing file or folder at the requested path is rejected without overwriting it. If another client takes the name during creation, the plugin may choose a unique filename; use the returned `path` for subsequent commands. Creation uses the plugin's current frontmatter, tags, and serialization settings.
-
-Pass an explicit `--request-id` to recover a timed-out creation without creating another note. If the note was created but opening or checking persistence failed, the error identifies the retained note's path. Recover it with `open` and `saved`; the bridge does not delete the note automatically.
-
-## Release retained results
-
-A request with an explicit `--request-id` can retrieve its result using the same ID and arguments. Release a completed result when it is no longer needed:
-
-```sh
-python3 bridge.py --vault Documents forget '<request-id>'
-```
-
-Forgetting an ID also removes its deduplication protection. Ordinary results are released automatically after retrieval; timed-out requests are retained. At the 128-receipt limit, new requests are rejected without executing them.
-
-## Runtime reload diagnostics
-
-`state` and successful edits include `currentPageId`. Source updates preserve the selected page when recreating each dedicated Editor. `doctor` includes a `reloadErrors` array with the path, previous page ID, and error for each failed reopen. A failed document does not block other documents. Use `open <path>` to retry recovery, or `close <path>` to dismiss its recovery entry. If the previous page was deleted, dismiss recovery before opening the document normally.
+Optional `python3 -m pip install .` exposes the `obsidian-tldraw` command.
