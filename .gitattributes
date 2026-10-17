@@ -1,0 +1,2 @@
+# Keep text sources and bundled copies identical across OS checkouts.
+* text=auto eol=lf

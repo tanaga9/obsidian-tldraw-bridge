@@ -2,6 +2,7 @@ import contextlib
 import io
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -71,12 +72,19 @@ class FreehandCommandTest(unittest.TestCase):
 
 
 class PreviewCommandTest(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory(prefix='bridge preview ')
+        self.addCleanup(directory.cleanup)
+        self.crop = str(Path(directory.name) / 'crop.png')
+        self.detail = str(Path(directory.name) / 'detail.png')
+
     def test_context_bounds_are_forwarded(self):
         with patch('obsidian_tldraw_bridge.cli.Client') as client:
-            client.return_value.call.return_value = {'path': '/tmp/crop.png'}
+            client.return_value.call.return_value = {'path': self.crop}
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--bounds',
-                                       '-10', '20', '200', '150', '--output', '/tmp/crop.png']), 0)
+                                       '-10', '20', '200', '150', '--output', self.crop]), 0)
+            self.assertEqual(client.return_value.call.call_args.args[1]['output'], str(Path(self.crop).resolve()))
             self.assertEqual(client.return_value.call.call_args.args[1]['bounds'],
                              {'x': -10, 'y': 20, 'w': 200, 'h': 150})
 
@@ -86,16 +94,17 @@ class PreviewCommandTest(unittest.TestCase):
             with self.subTest(bounds=bounds), patch('obsidian_tldraw_bridge.cli.Client') as client:
                 with contextlib.redirect_stderr(io.StringIO()):
                     self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--bounds',
-                                           *bounds, '--output', '/tmp/crop.png']), 1)
+                                           *bounds, '--output', self.crop]), 1)
                 client.assert_not_called()
 
     def test_part_and_scale_are_forwarded(self):
         with patch('obsidian_tldraw_bridge.cli.Client') as client:
-            client.return_value.call.return_value = {'path': '/tmp/detail.png'}
+            client.return_value.call.return_value = {'path': self.detail}
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--part', 'detail',
-                                       '--scale', '3', '--output', '/tmp/detail.png']), 0)
+                                       '--scale', '3', '--output', self.detail]), 0)
             args = client.return_value.call.call_args.args[1]
+            self.assertEqual(args['output'], str(Path(self.detail).resolve()))
             self.assertEqual(args['part'], 'detail')
             self.assertEqual(args['scale'], 3)
 
@@ -104,7 +113,7 @@ class PreviewCommandTest(unittest.TestCase):
             with self.subTest(scale=scale), patch('obsidian_tldraw_bridge.cli.Client') as client:
                 with contextlib.redirect_stderr(io.StringIO()):
                     self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--scale', scale,
-                                           '--output', '/tmp/detail.png']), 1)
+                                           '--output', self.detail]), 1)
                 client.assert_not_called()
 
 

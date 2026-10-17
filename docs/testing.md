@@ -1,20 +1,27 @@
 # Testing
 
-This guide describes how to verify the current implementation. Keep test procedures and expected behavior here; use Git history for past changes and [Known limitations](known-limitations.md) for outstanding work. Do not append dated execution logs or cumulative pass counts.
+This guide describes how to verify the current implementation. Keep test procedures and expected behavior here; use Git history for past changes and [Known limitations](known-limitations.md) for implementation boundaries. Do not append dated execution logs or cumulative pass counts.
 
-Run commands from the repository root.
+Run commands from the repository root, using the selected Python environment.
+macOS is the primary target; examples use `python3` or the selected environment's
+absolute interpreter path. On Windows, substitute a verified Python 3.9.6+ command
+such as `python` or `py -3` in PowerShell 7.
 
 ## Automated checks
 
-Use Python 3.9.6+ and Node.js 22. CI tests Python 3.9, 3.10, and 3.13; the 3.9 job uses the latest available patch release. To verify the minimum supported version on a Mac where `/usr/bin/python3 --version` reports 3.9.6, run the Python checks below with `/usr/bin/python3` instead of `python3`. Node.js is a developer test dependency, not a requirement for normal plugin use.
+Use Python 3.9.6+ and Node.js 22. CI tests Python 3.9, 3.10, and 3.13 on Linux, macOS, and Windows; 3.9 jobs use the latest available patch release for each runner. The macOS 3.9 job uses `macos-15-intel` because the [official Python distribution manifest](https://github.com/actions/python-versions/blob/main/versions-manifest.json) has no CPython 3.9 build for macOS arm64; newer Python jobs use `macos-latest`. To verify the minimum supported version on a Mac where `/usr/bin/python3 --version` reports 3.9.6, run the Python checks below with `/usr/bin/python3` instead of `python3`. Node.js is a developer test dependency, not a requirement for normal plugin use.
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_*.py'
-node --test tests/*.test.cjs
+node --test
 node --check src/obsidian_tldraw_bridge/runtime/bridge.cjs
 node --check src/obsidian_tldraw_bridge/runtime/loader.cjs
 python3 scripts/build_plugin.py --check
 ```
+
+Node discovers `*.test.cjs` files without shell wildcard expansion, so the same
+command works in POSIX shells and PowerShell 7. Tests use platform temporary
+directories; preview test outputs do not require `/tmp` or elevated privileges.
 
 These checks do not require a running Obsidian instance. They cover:
 
@@ -22,7 +29,8 @@ These checks do not require a running Obsidian instance. They cover:
 | --- | --- |
 | Agent operation API | Shared validation before connecting; named edit schemas; scoped, bounded observations and revision-pinned pagination; structured failures and non-executing receipt queries. |
 | Freehand drawing | Authored curves preserve geometry and pressure through point encoding; closed strokes accept fill and opacity in the same edit. Redraws reset omitted styles and preserve unrelated shapes. Invalid styles, open fills, and targets fail before edits. |
-| CLI transport | Code is passed as an argument rather than through a shell. Missing initial output can be recovered by polling. |
+| CLI transport | CLI output is captured in temporary regular files with independent reader/writer positions; concurrent inherited writes preserve the response; completion and timeout do not wait for inherited descendant output handles. A short, shell-free argv bootstrap reads a closed UTF-8 evaluation file; code size and content do not expand argv. Receiver cleanup failure does not block evaluation; pre-launch failures discard unsent files and final timeout diagnostics list all tracked remaining files. Acknowledged returns also trigger sender cleanup, while uncertain delivery retains unread files. Missing initial output can be recovered by polling. UTF-8 process responses, input files/stdin (with or without a UTF-8 BOM), and JSON stdout/stderr preserve Unicode independently of the locale. Invalid response encoding retains unknown outcome and request identity. |
+| Connection setup | Mocked macOS/Windows discovery without symlink privileges, explicit override precedence, Windows console selection, name/ID validation, wrong-vault rejection before runtime evaluation, staged doctor errors, disabled CLI detection, and a remaining-budget deadline shared by dispatch, polls and cleanup. |
 | Result handling | Edits default to compact net change counts over document records; full output is available explicitly, and state remains inspectable. Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
 | Note creation | Plugin-generated Markdown, existing-path and traversal rejection, saved editable session, retained creation after initialization failure, and request replay without duplicate creation. |
 | Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending GUI/source/shared notifications are reconciled before reads and revision checks without waiting for animation frames. Edits superseded during persistence return SAVE_CONFLICT; previews reject queued GUI changes during export. |
@@ -31,9 +39,76 @@ These checks do not require a running Obsidian instance. They cover:
 | Preview | Part and ID selections export only current-page shapes at the requested scale. Bounds crop the whole page with surrounding shapes. Invalid selections, bounds, and revision conflicts leave output files unchanged. |
 | Receipt capacity | The limit rejects new work while preserving retained results and their deduplication protection. |
 | Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. |
-| Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
+| Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders preserve UTF-8 source bytes, generate the manifest with LF line endings, and exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
 
 If the plugin package is stale, regenerate it with `python3 scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
+
+## Live test setup
+
+Use macOS with Python 3.9.6+, running Obsidian Desktop, its enabled official CLI,
+and tldraw 1.31.0 or 1.32.0. Windows can also run these checks; its command
+substitutions are shown below. If CLI discovery fails, update the Obsidian
+installer or select the actual official CLI path; do not point at the GUI.
+
+Choose the registered vault explicitly. `--vault` accepts its name or ID, not a
+filesystem path. The examples use a vault named `Documents`; substitute the
+user's chosen registered vault. `doctor` uses automatic CLI discovery:
+
+macOS, using a suitable `python3` environment:
+
+```sh
+python3 --version
+python3 bridge.py --vault 'Documents' doctor
+python3 tests/live_transport.py --vault 'Documents'
+```
+
+To list registered vaults when PATH registration is absent on macOS:
+
+```sh
+'/Applications/Obsidian.app/Contents/MacOS/obsidian-cli' vaults verbose
+```
+
+For Windows, use PowerShell 7 and the console executable `Obsidian.com`. From the
+selected Python environment, the equivalent commands are:
+
+```powershell
+$bridgePython = 'python' # Or the absolute path to the selected python.exe.
+& $bridgePython --version
+& $bridgePython bridge.py --vault 'Documents' doctor
+& $bridgePython tests/live_transport.py --vault 'Documents'
+```
+
+Both sequences end with the self-contained transport check described below.
+For a standard per-user Windows installation without PATH registration:
+
+```powershell
+& "$env:LOCALAPPDATA\Programs\Obsidian\Obsidian.com" vaults verbose
+```
+
+For a custom installation, pass `--obsidian` to the bridge or set `OBSIDIAN_CLI`
+in the current shell. The environment variable also works for live scripts that
+have no `--obsidian` option. See [connection diagnostics](../integrations/codex/skills/obsidian-tldraw/references/operations.md#cli-discovery-and-connection-diagnostics).
+
+Before tests that take `--path`, create a dedicated tldraw Markdown test diagram
+using the existing plugin. Their examples assume `Bridge test diagram.md`.
+These tests edit that diagram or temporary copies; do not use a production note.
+Scripts that create their own notes are identified below. PNG-producing scripts
+default to the OS temporary directory; an explicit `--output` must have an
+existing parent. Preview files remain available for visual inspection.
+
+## Evaluation transport integration check
+
+```sh
+python3 tests/live_transport.py --vault Documents
+```
+
+Pass `--obsidian <official-CLI-executable>` when explicit CLI selection is needed.
+Creates its own temporary note and verifies a large Unicode `apply` payload and
+script containing quotes, newlines and backslashes, saved records, recovery after
+lost dispatch output, retained-ID replay, changed-request rejection, and short CLI
+bootstrap arguments. Removes its temporary note, session and consumed evaluation
+files. This opt-in check requires a running Obsidian instance and supported tldraw;
+it is separate from the automated Node-based transport checks.
 
 ## Freehand integration check
 
@@ -69,17 +144,10 @@ python3 tests/live_reload.py --vault Documents --path 'Bridge test diagram.md' -
 
 This mode creates a temporary diagram copy, selects a new second page, reloads the runtime, and checks the parent page of a newly created shape. The copy is deleted after the check; the source diagram is not edited.
 
-## Live test prerequisites
-
-Use macOS with Python 3.9.6+, running Obsidian Desktop, the enabled official CLI, and a supported tldraw plugin version. Create a dedicated tldraw Markdown test diagram using the existing plugin. Do not use a production diagram.
-
-Specify the vault and its relative diagram path explicitly. The examples below assume a vault named `Documents` and an existing file named `Bridge test diagram.md`.
-
 ## Single-document integration test
 
 ```sh
-python3 tests/live.py --vault Documents --path 'Bridge test diagram.md' \
-  --output /tmp/obsidian-tldraw-test.png
+python3 tests/live.py --vault Documents --path 'Bridge test diagram.md'
 ```
 
 The test loads a fresh runtime copy to avoid stale Obsidian require cache entries. It verifies:
@@ -107,6 +175,13 @@ This script uses the normal runtime path, where runtime source updates are detec
 
 ## Cleanup and manual validation
 
+Inspect exported PNGs for text, curves, fill and cropping. To check GUI
+synchronization, edit the dedicated test note in the GUI and confirm the change
+through the bridge, then confirm a saved bridge edit appears in the GUI and
+Markdown.
+
 After live tests, confirm that temporary shapes and documents are gone, the original grid size is restored, and dedicated sessions are closed. Compare persistent diagram records with the pre-test baseline when validating cleanup. A failed test can also fail during cleanup; inspect its output and the diagram before rerunning it.
 
-Automated checks and SDK integration tests do not establish that plugin UI installation or mouse-driven GUI editing works end to end. Validate those workflows separately. Private API compatibility also requires a live run against each plugin version being evaluated. See [Known limitations](known-limitations.md) for current boundaries, including asynchronous scripts, external side effects, file lifecycle changes, and runtime updates.
+See [Known limitations](known-limitations.md) for implementation boundaries,
+including asynchronous scripts, external side effects, file lifecycle changes,
+and runtime updates.

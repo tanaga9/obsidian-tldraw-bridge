@@ -9,9 +9,9 @@ from .api import Bridge
 
 def parser():
     p = argparse.ArgumentParser(description="Operate local Obsidian tldraw Markdown diagrams.")
-    p.add_argument("--vault", required=True, help="Obsidian vault name or id")
+    p.add_argument("--vault", required=True, help="Obsidian vault name or id (not a filesystem path)")
     p.add_argument("--obsidian", help="Obsidian CLI executable")
-    p.add_argument("--timeout", type=float, default=30)
+    p.add_argument("--timeout", type=float, default=30, help="Total dispatch/poll timeout in seconds (default: 30)")
     p.add_argument("--request-id", help="Idempotent request id; reuse only with identical arguments")
     sub = p.add_subparsers(dest="command", required=True)
     sub.add_parser("doctor")
@@ -62,6 +62,30 @@ def parser():
     return p
 
 
+def _read_input(path):
+    if path != "-":
+        return Path(path).read_text(encoding="utf-8-sig")
+    # Decode redirected input independently of Python's locale or stdio settings.
+    buffer = getattr(sys.stdin, "buffer", None)
+    if buffer is not None:
+        return buffer.read().decode("utf-8-sig")
+    source = sys.stdin.read()
+    return source[1:] if source.startswith("\ufeff") else source
+
+
+def _print_json(value, stream):
+    text = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
+    buffer = getattr(stream, "buffer", None)
+    if buffer is not None:
+        stream.flush()
+        buffer.write(text.encode("utf-8"))
+        buffer.flush()
+    else:
+        # In-process callers may supply text-only streams such as StringIO.
+        stream.write(text)
+        stream.flush()
+
+
 def main(argv=None):
     options = parser().parse_args(argv)
     try:
@@ -74,7 +98,7 @@ def main(argv=None):
         if options.command in ("apply", "batch", "script", "freehand"):
             if options.full:
                 args["full"] = True
-            source = sys.stdin.read() if options.input == "-" else Path(options.input).read_text()
+            source = _read_input(options.input)
             if options.command in ("apply", "batch"):
                 data = json.loads(source)
                 args["operations"] = data["operations"] if isinstance(data, dict) else data
@@ -105,9 +129,9 @@ def main(argv=None):
             result = bridge.status(options.id)
         else:
             result = bridge.call(options.command, args, options.request_id)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        _print_json(result, sys.stdout)
         return 0
     except (BridgeError, OSError, ValueError, KeyError) as exc:
         error = exc if isinstance(exc, BridgeError) else BridgeError(str(exc), code="INVALID_INPUT", outcome="not_applied")
-        print(json.dumps({"error": error.as_dict()}, ensure_ascii=False), file=sys.stderr)
+        _print_json({"error": error.as_dict()}, sys.stderr)
         return 1

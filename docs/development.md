@@ -1,6 +1,10 @@
 # Development and distribution
 
 These steps are for maintainers. Plugin users do not need to run them.
+macOS is the primary development target; examples use `python3` from the selected
+Python environment, or its absolute interpreter path when needed. On Windows,
+use PowerShell 7 or newer and substitute a verified Python 3.9.6+ command such
+as `python` or `py -3`.
 
 ## Compatibility policy
 
@@ -21,7 +25,7 @@ python3 scripts/build_plugin.py
 python3 scripts/build_plugin.py --check
 ```
 
-The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/`. The generated package at `plugins/obsidian-tldraw-bridge/` is included in the repository and referenced by the marketplace. Regenerate it after changing the canonical sources; `--check` detects stale bundled files. Both package builders exclude `.DS_Store` recursively, and the plugin consistency check ignores it in existing output directories. Source metadata files are left untouched.
+The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/`. The generated package at `plugins/obsidian-tldraw-bridge/` is included in the repository and referenced by the marketplace. Regenerate it after changing the canonical sources; `--check` detects stale bundled files. Both package builders exclude `.DS_Store` recursively, and the plugin consistency check ignores it in existing output directories. Source metadata files are left untouched. Git checks text files out with LF line endings on all operating systems (`.gitattributes`); the generated JSON manifest is UTF-8 with LF as well. Keep canonical sources and bundled copies under that policy so a clean checkout passes `--check` on every CI OS.
 
 ## Maintaining diagramming guidance
 
@@ -42,7 +46,7 @@ For local distribution testing, register the repository's marketplace:
 codex plugin marketplace add /absolute/path/to/obsidian-tldraw-bridge
 ```
 
-This is a developer workflow. Public directory publication and installation through the plugin UI remain unverified. The package layout follows the [official OpenAI plugin documentation](https://developers.openai.com/plugins/build/plugins).
+This is a developer workflow. The package layout follows the [official OpenAI plugin documentation](https://developers.openai.com/plugins/build/plugins).
 
 ## Build the standalone Skill
 
