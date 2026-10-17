@@ -19,6 +19,7 @@ class CliDiscoveryTest(unittest.TestCase):
         self.commands = {}
         for patcher in (
             patch.dict("os.environ", {}, clear=True),
+            patch("obsidian_tldraw_bridge.obsidian.sys.platform", "darwin"),
             patch("obsidian_tldraw_bridge.obsidian.DEFAULT_CLI", self.default),
             patch("obsidian_tldraw_bridge.obsidian.shutil.which", side_effect=self.commands.get),
         ):
@@ -55,10 +56,11 @@ class CliDiscoveryTest(unittest.TestCase):
         self.file(self.default)
         link = self.root / "bin/obsidian"
         link.parent.mkdir()
-        link.symlink_to(target)
         self.commands["obsidian"] = str(link)
         self.commands["obsidian-cli"] = str(self.default)
-        self.assertEqual(find_cli(), str(target.resolve()))
+        resolve = Path.resolve
+        with patch.object(Path, "resolve", autospec=True, side_effect=lambda p: target if p == link else resolve(p)):
+            self.assertEqual(find_cli(), str(target.resolve()))
 
     def test_legacy_registration_uses_cli_in_same_bundle(self):
         gui = self.root / "Other.app/Contents/MacOS/Obsidian"
@@ -67,9 +69,10 @@ class CliDiscoveryTest(unittest.TestCase):
         self.file(cli)
         self.file(self.default)
         link = self.root / "obsidian"
-        link.symlink_to(gui)
         self.commands["obsidian"] = str(link)
-        self.assertEqual(find_cli(), str(cli.resolve()))
+        resolve = Path.resolve
+        with patch.object(Path, "resolve", autospec=True, side_effect=lambda p: gui if p == link else resolve(p)):
+            self.assertEqual(find_cli(), str(cli.resolve()))
 
     def test_legacy_gui_without_cli_is_skipped(self):
         self.commands["obsidian"] = self.file(self.root / "Old.app/Contents/MacOS/Obsidian")
@@ -127,7 +130,7 @@ class TransportTest(unittest.TestCase):
     def test_dispatch_poll_and_forget_use_loader_with_runtime_path(self):
         client = self.client()
         with patch.object(client, "evaluate", side_effect=[None, {"status":"complete", "result":{}}, {"forgotten":True}]) as evaluate:
-            client.call("doctor")
+            client.call("saved")
             calls = [item.args[0] for item in evaluate.call_args_list]
             for code in calls:
                 self.assertIn("loader.cjs", code)

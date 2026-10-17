@@ -39,7 +39,7 @@ class PayloadTransportTest(unittest.TestCase):
 const fs = require('node:fs');
 const input = JSON.parse(fs.readFileSync(0, 'utf8'));
 const consumedPath = input.path;
-const app = { label: 'scope preserved' };
+const app = { label: 'scope preserved', vault: { getName: () => 'Vault with spaces' }, appId: 'vault-id' };
 if(input.denyCleanup) fs.unlinkSync=()=>{throw new Error('simulated sharing violation')};
 process.stdout.write('=> ' + eval(input.code) + '\n');
 """
@@ -132,10 +132,15 @@ process.stdout.write('=> ' + eval(input.code) + '\n');
 
     def test_empty_output_deadline_reports_all_remaining_files(self):
         result = subprocess.CompletedProcess([], 0, b"", b"")
-        with patch("obsidian_tldraw_bridge.obsidian.Client._run_cli", return_value=result), \
-                patch("time.monotonic", side_effect=[0, 0, 31]), patch("time.sleep"):
+        now = [0.0]
+        def invoke(argv, **kwargs):
+            if len(list(self.directory.iterdir())) >= 2:
+                now[0] = 31.0
+            return result
+        with patch("obsidian_tldraw_bridge.obsidian.Client._run_cli", side_effect=invoke), \
+                patch("time.monotonic", side_effect=lambda: now[0]), patch("time.sleep"):
             with self.assertRaises(BridgeError) as raised:
-                self.client.call("doctor", {}, "unacknowledged-job")
+                self.client.call("saved", {}, "unacknowledged-job")
         error = raised.exception
         paths = sorted(str(path) for path in self.directory.iterdir())
         self.assertEqual(len(paths), 2)  # Dispatch and poll.
@@ -146,7 +151,7 @@ process.stdout.write('=> ' + eval(input.code) + '\n');
     def test_real_launch_failure_discards_unsent_file(self):
         self.client.executable = str(self.directory / "nonexistent-cli")
         with self.assertRaises(BridgeError) as raised:
-            self.client.call("doctor", {}, "not-started")
+            self.client.call("saved", {}, "not-started")
         self.assertIn("Could not start", str(raised.exception))
         self.assertNotIn("evaluationFiles", raised.exception.details)
         self.assertEqual(list(self.directory.iterdir()), [])

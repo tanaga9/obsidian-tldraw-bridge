@@ -4,6 +4,43 @@ Use `capabilities` to discover the runtime's API version, named operations and l
 Registered shape types are reported after opening a document. Props still follow
 the installed SDK; use `state` for exact records when compact observation is insufficient.
 
+## CLI discovery and connection diagnostics
+
+Use a vault name or ID for `--vault`. Filesystem paths are rejected before CLI
+execution; resolve a user-supplied path against `vaults verbose` and confirm the
+intended registered vault when ambiguous. Runtime dispatch, receipt queries and
+cleanup verify the connected app's vault name/ID before loading the runtime.
+A mismatch returns `VAULT_MISMATCH`; it does not establish the outcome of a
+previous attempt in another vault.
+
+CLI selection uses `--obsidian`, then `OBSIDIAN_CLI`, then PATH registrations,
+then standard installation locations. An explicit override does not silently
+fall back. On Windows, discovery prefers `Obsidian.com`, maps a PATH GUI
+registration to the same installation's `.com`, and searches the per-user
+`LOCALAPPDATA/Programs/Obsidian` and system `ProgramFiles/Obsidian` locations.
+An explicit `Obsidian.exe` is rejected; select `Obsidian.com` instead. On macOS,
+PATH registrations retain priority, a legacy GUI registration selects the CLI in
+that app bundle, and `/Applications/Obsidian.app/Contents/MacOS/obsidian-cli` is
+the fallback. Custom installations use an explicit official CLI path.
+
+Run `doctor` when connection setup is uncertain. Successful results retain the
+runtime doctor fields and add `checks` for CLI discovery, evaluation connectivity,
+vault identity, plugin availability/support and runtime response. Failures report
+`details.stage` and completed checks when available. `CLI_NOT_FOUND` identifies
+discovery failure; `CLI_EXECUTABLE_REQUIRED` identifies an explicit Windows GUI;
+`CLI_DISABLED` identifies the official disabled-CLI message;
+`CLI_CONNECTION_FAILED` covers a failed or missing diagnostic response;
+`TLDRAW_UNAVAILABLE` asks to install/enable the plugin; `TLDRAW_UNSUPPORTED`
+reports the runtime's support decision. A connection failure alone does not prove
+that Obsidian is stopped: check local execution permissions as described below.
+
+`--timeout` is one client wait budget for doctor probing (if requested), dispatch,
+polling and best-effort automatic receipt cleanup. Each CLI invocation receives
+only the remaining budget. If cleanup has no budget left, the completed result
+still succeeds and the receipt can remain retained. The budget does not cancel
+already delivered work in Obsidian. On an unknown outcome, recover using the same
+request ID; increasing the timeout does not make blind retries safe.
+
 ## CLI connection failures in Codex
 
 ```text

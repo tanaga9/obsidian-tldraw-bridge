@@ -9,9 +9,9 @@ from .api import Bridge
 
 def parser():
     p = argparse.ArgumentParser(description="Operate local Obsidian tldraw Markdown diagrams.")
-    p.add_argument("--vault", required=True, help="Obsidian vault name or id")
+    p.add_argument("--vault", required=True, help="Obsidian vault name or id (not a filesystem path)")
     p.add_argument("--obsidian", help="Obsidian CLI executable")
-    p.add_argument("--timeout", type=float, default=30)
+    p.add_argument("--timeout", type=float, default=30, help="Total dispatch/poll timeout in seconds (default: 30)")
     p.add_argument("--request-id", help="Idempotent request id; reuse only with identical arguments")
     sub = p.add_subparsers(dest="command", required=True)
     sub.add_parser("doctor")

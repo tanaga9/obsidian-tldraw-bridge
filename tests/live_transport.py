@@ -64,8 +64,8 @@ with patch('obsidian_tldraw_bridge.obsidian.Client._run_cli', side_effect=invoke
         arguments = {'path': actual, 'revision': state['revision'], 'code': code}
         evaluate = c.evaluate
         lost = [False]
-        def lose_dispatch_output(source, missing_ok=False):
-            result = evaluate(source, missing_ok)
+        def lose_dispatch_output(source, missing_ok=False, **kwargs):
+            result = evaluate(source, missing_ok, **kwargs)
             if '.dispatch(app,' in source and not lost[0]:
                 lost[0] = True
                 return None
