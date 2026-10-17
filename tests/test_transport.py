@@ -59,7 +59,7 @@ class CliDiscoveryTest(unittest.TestCase):
         self.commands["obsidian"] = str(link)
         self.commands["obsidian-cli"] = str(self.default)
         resolve = Path.resolve
-        with patch.object(Path, "resolve", autospec=True, side_effect=lambda p: target if p == link else resolve(p)):
+        with patch.object(Path, "resolve", autospec=True, side_effect=lambda p: resolve(target) if p == link else resolve(p)):
             self.assertEqual(find_cli(), str(target.resolve()))
 
     def test_legacy_registration_uses_cli_in_same_bundle(self):
@@ -71,7 +71,7 @@ class CliDiscoveryTest(unittest.TestCase):
         link = self.root / "obsidian"
         self.commands["obsidian"] = str(link)
         resolve = Path.resolve
-        with patch.object(Path, "resolve", autospec=True, side_effect=lambda p: gui if p == link else resolve(p)):
+        with patch.object(Path, "resolve", autospec=True, side_effect=lambda p: resolve(gui) if p == link else resolve(p)):
             self.assertEqual(find_cli(), str(cli.resolve()))
 
     def test_legacy_gui_without_cli_is_skipped(self):

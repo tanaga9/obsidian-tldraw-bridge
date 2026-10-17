@@ -84,7 +84,7 @@ class PreviewCommandTest(unittest.TestCase):
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--bounds',
                                        '-10', '20', '200', '150', '--output', self.crop]), 0)
-            self.assertEqual(client.return_value.call.call_args.args[1]['output'], self.crop)
+            self.assertEqual(client.return_value.call.call_args.args[1]['output'], str(Path(self.crop).resolve()))
             self.assertEqual(client.return_value.call.call_args.args[1]['bounds'],
                              {'x': -10, 'y': 20, 'w': 200, 'h': 150})
 
@@ -104,7 +104,7 @@ class PreviewCommandTest(unittest.TestCase):
                 self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--part', 'detail',
                                        '--scale', '3', '--output', self.detail]), 0)
             args = client.return_value.call.call_args.args[1]
-            self.assertEqual(args['output'], self.detail)
+            self.assertEqual(args['output'], str(Path(self.detail).resolve()))
             self.assertEqual(args['part'], 'detail')
             self.assertEqual(args['scale'], 3)
 
