@@ -38,6 +38,9 @@ Keep diagramming guidance inside the canonical Skill's [references](../integrati
 
 After knowledge-only changes, rebuild the plugin, run `python3 scripts/build_plugin.py --check`, and run `python3 -m unittest discover -s tests -p 'test_package.py'`. Package tests check that local Markdown references are self-contained and reachable from `SKILL.md`. These checks do not establish drawing quality; live tests are needed for runtime changes.
 
+Local notes and demo files go in `workspace/` (drawings in `workspace/drawings/`).
+Both `/workspace/` and local Obsidian settings in `/.obsidian/` are ignored by Git.
+
 ## Local distribution testing
 
 For local distribution testing, register the repository's marketplace:

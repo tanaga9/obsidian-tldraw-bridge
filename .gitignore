@@ -5,3 +5,7 @@ __pycache__/
 build/
 dist/
 .venv/
+
+# Local Obsidian vault configuration, installed plugins, and personal content.
+/.obsidian/
+/workspace/
