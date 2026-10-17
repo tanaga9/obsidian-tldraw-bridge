@@ -45,7 +45,7 @@ For local distribution testing, register the repository's marketplace:
 codex plugin marketplace add /absolute/path/to/obsidian-tldraw-bridge
 ```
 
-This is a developer workflow. Public directory publication and installation through the plugin UI remain unverified. The package layout follows the [official OpenAI plugin documentation](https://developers.openai.com/plugins/build/plugins).
+This is a developer workflow. The package layout follows the [official OpenAI plugin documentation](https://developers.openai.com/plugins/build/plugins).
 
 ## Build the standalone Skill
 

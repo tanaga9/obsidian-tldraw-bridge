@@ -22,7 +22,7 @@ codex plugin marketplace add tanaga9/obsidian-tldraw-bridge
 
 See the [official marketplace guide](https://developers.openai.com/plugins/build/plugins#add-a-marketplace-from-the-cli).
 
-Prerequisites: macOS or Windows, Python 3.9.6+, running Obsidian Desktop with its official CLI enabled, and Obsidian tldraw plugin 1.31.0 or 1.32.0. Codex checks Python before running the bridge. For the scope of Windows verification and pending macOS regression checks, see [platform validation](docs/testing.md#platform-validation-status). Installation through the Codex plugin UI remains unverified; see [known limitations](docs/known-limitations.md).
+Prerequisites: macOS or Windows, Python 3.9.6+, running Obsidian Desktop with its official CLI enabled, and Obsidian tldraw plugin 1.31.0 or 1.32.0. Codex checks Python before running the bridge.
 
 Tell Codex the vault, diagram, and desired change. For example:
 

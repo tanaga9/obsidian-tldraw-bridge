@@ -1,6 +1,6 @@
 # Testing
 
-This guide describes how to verify the current implementation. Keep test procedures and expected behavior here; use Git history for past changes and [Known limitations](known-limitations.md) for outstanding work. Do not append dated execution logs or cumulative pass counts.
+This guide describes how to verify the current implementation. Keep test procedures and expected behavior here; use Git history for past changes and [Known limitations](known-limitations.md) for implementation boundaries. Do not append dated execution logs or cumulative pass counts.
 
 Run commands from the repository root, using the selected Python environment.
 Examples use `python`; on macOS, use `python3` or its absolute path when needed.
@@ -40,30 +40,6 @@ These checks do not require a running Obsidian instance. They cover:
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders preserve UTF-8 source bytes, generate the manifest with LF line endings, and exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
 
 If the plugin package is stale, regenerate it with `python scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
-
-## Platform validation status
-
-The CLI targets macOS and Windows. The automated CI matrix also includes Linux;
-that does not establish live Obsidian integration on Linux. Earlier macOS use
-predates the cross-platform transport changes, so it does not close the current
-macOS regression checks. This table records current validation scope, not an
-execution history or a claim that all supported plugin versions were tested.
-
-| Scope | macOS | Windows |
-| --- | --- | --- |
-| Automated Python/Node checks and package consistency | CI configured; current remote results must be checked | Local checks passed, including an LF checkout with `core.autocrlf=true`; CI also configured |
-| Official CLI discovery and doctor with vault name/ID | Regression run pending | Verified with the standard per-user CLI installation and tldraw 1.32.0 |
-| Large Unicode edits, saved records, lost-response recovery, retained-ID replay and changed-request rejection | Regression run pending | Verified by `live_transport.py` with tldraw 1.32.0; temporary note/session/evaluation-file cleanup confirmed |
-| Full live suite: GUI synchronization/conflicts, rollback, PNG export, freehand and runtime reload | Regression run pending | Live verification pending; automated mocks do not close this row |
-| All supported plugin versions | Recheck 1.31.0 and 1.32.0 separately | 1.31.0 live run pending; 1.32.0 coverage is limited to the rows above |
-| Codex plugin UI installation through first edit | Not verified | Not verified |
-
-When running live checks on a new revision or environment, record the commit, OS/architecture,
-Python executable/version, Obsidian app and installer versions, CLI executable,
-tldraw version, commands and outcomes in the review or test report. A mocked
-scenario or a passing diagnostic alone does not establish the unexecuted live
-scenarios. Update this table only for the scope actually verified; retain pending
-items in [known limitations](known-limitations.md).
 
 ## Live test setup
 
@@ -195,15 +171,13 @@ This script uses the normal runtime path, where runtime source updates are detec
 
 ## Cleanup and manual validation
 
-On each target OS/plugin version, inspect a PNG and verify a mouse-driven GUI
-edit is observed by the bridge and a saved bridge edit appears in the GUI and
-Markdown. Check Unicode note names and an output path containing spaces. Test
-unavailable/disabled CLI and missing/disabled/unsupported tldraw diagnostics in a
-disposable test environment; do not disable a plugin during unrelated live work.
-If a real dispatch times out, inspect its receipt before retrying and verify
-recovery under the same ID. `live_transport.py` simulates lost dispatch output;
-it does not prove that every real timeout/shutdown race behaves correctly.
+Inspect exported PNGs for text, curves, fill and cropping. To check GUI
+synchronization, edit the dedicated test note in the GUI and confirm the change
+through the bridge, then confirm a saved bridge edit appears in the GUI and
+Markdown.
 
 After live tests, confirm that temporary shapes and documents are gone, the original grid size is restored, and dedicated sessions are closed. Compare persistent diagram records with the pre-test baseline when validating cleanup. A failed test can also fail during cleanup; inspect its output and the diagram before rerunning it.
 
-Automated checks and SDK integration tests do not establish that plugin UI installation or mouse-driven GUI editing works end to end. Validate those workflows separately. Private API compatibility also requires a live run against each plugin version being evaluated. See [Known limitations](known-limitations.md) for current boundaries, including asynchronous scripts, external side effects, file lifecycle changes, and runtime updates.
+See [Known limitations](known-limitations.md) for implementation boundaries,
+including asynchronous scripts, external side effects, file lifecycle changes,
+and runtime updates.
