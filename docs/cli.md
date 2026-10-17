@@ -34,6 +34,26 @@ Always specify the vault; diagram paths are vault-relative `.md` paths. `apply`,
 `batch`, `freehand`, and `script` accept `--input -` for standard input. Results
 are JSON; handled errors are JSON on standard error with exit code 1.
 
+## Choosing a vault
+
+The [official Obsidian CLI](https://obsidian.md/help/cli#vaults) lists known vaults
+without selecting a target:
+
+```sh
+obsidian vaults verbose
+```
+
+`vaults` lists names; `verbose` includes paths. Use the executable resolved by
+[connection discovery](#connection-and-sessions) if `obsidian` is not registered
+on PATH. This is an official CLI command, not a bridge subcommand; it lists known
+vaults rather than searching the filesystem for every vault.
+
+When multiple vaults exist and the target is at all uncertain, agents must ask
+before running vault-scoped commands. Offer candidates ordered by estimated
+likelihood, with distinguishing paths; wait for the user's selection. An active
+vault or a high-ranked candidate does not replace confirmation. Reuse an explicit
+choice for the same task. If discovery fails, ask rather than guessing.
+
 ## Commands and contracts
 
 [Operations and recovery](../integrations/codex/skills/obsidian-tldraw/references/operations.md)

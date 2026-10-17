@@ -4,6 +4,24 @@ Use `capabilities` to discover the runtime's API version, named operations and l
 Registered shape types are reported after opening a document. Props still follow
 the installed SDK; use `state` for exact records when compact observation is insufficient.
 
+## CLI connection failures in Codex
+
+```text
+The CLI is unable to find Obsidian. Please make sure Obsidian is running and try again.
+```
+
+Codex sandbox restrictions can cause this message even while Obsidian is running.
+The same `obsidian-cli vaults verbose` command has been verified to fail inside
+the sandbox and succeed outside it. Restricted local interprocess communication
+is the likely mechanism; the message alone does not establish that Obsidian is stopped.
+
+If the command works in the user's terminal, check the agent's execution permissions
+before recommending an app restart or CLI reconfiguration. Where permitted, use the
+execution tool's approval/escalation mechanism to retry this read-only command
+outside the sandbox. Do not bypass restrictions or replay edits blindly; use request
+status/recovery for uncertain mutations. If escalation is unavailable, explain the
+restriction and ask the user to run the diagnostic command.
+
 ## Observe before editing
 
 `observe <path>` reads the dedicated Editor's current page without changing the
