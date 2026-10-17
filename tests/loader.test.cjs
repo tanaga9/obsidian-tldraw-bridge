@@ -36,6 +36,7 @@ function fixture(t) {
             if(app.unsaved) {job.status='failed';job.error='Timed out waiting for Markdown persistence';}
             else {app.documents.delete(args.path);pages.delete(args.path);app.events.push('close-${version}');job.result={closed:true};}
           }
+          if(action==='structured-failure') {job.status='failed';job.error='save unavailable';job.failure={code:'SAVE_UNCONFIRMED',message:job.error,outcome:'applied',details:{revision:'after-edit'}};}
           if(action==='edit') {app.edits++;job.result={version:${version},edits:app.edits,page:pages.get(args.path)};}
           jobs.set(id,job);return JSON.stringify(job);
         },
@@ -183,4 +184,15 @@ test('failed reopen is isolated, reported, retriable, and dismissible',async t=>
   await h.run('doctor')
   await h.run('close',{path:'a.md'})
   assert.deepEqual((await h.run('doctor')).reloadErrors,[])
+})
+
+
+test('loader preserves structured failure and applied revision in retained receipts',async t=>{
+  const h=fixture(t)
+  await assert.rejects(h.run('structured-failure',{},'failed-edit'),/save unavailable/)
+  const job=JSON.parse(loader.poll(h.app,h.filename,'failed-edit'))
+  assert.equal(job.failure.code,'SAVE_UNCONFIRMED')
+  assert.equal(job.failure.outcome,'applied')
+  assert.equal(job.failure.details.revision,'after-edit')
+  assert.deepEqual(JSON.parse(loader.dispatch(h.app,h.filename,'structured-failure',{},'failed-edit')),job)
 })

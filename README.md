@@ -44,6 +44,13 @@ For a concise overview of tldraw apps, the SDK, file formats, comparisons with d
 
 The Skill includes concise [diagramming guidance](integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md): a diagram selection table, project conventions, and Obsidian tldraw implementation notes. Both plugin and standalone builds include it. Familiar diagram types use established conventions rather than bundled tutorials. See [development guidance](docs/development.md) when extending these notes.
 
+## Agent operation API
+
+The CLI uses a shared Python operation layer with `capabilities`, compact `observe`,
+named `apply` operations, and retained-request `status`. Errors distinguish edits
+that were not applied, applied edits whose saving is unconfirmed, and unknown
+outcomes. See the [API contract](docs/api.md) and [CLI reference](docs/cli.md).
+
 ## Advanced SDK operations
 
 `script <path> --revision <revision> --input layout.js` runs synchronous JavaScript with access to `editor`, `app`, `plugin`, and `require`. For example:
@@ -52,7 +59,7 @@ The Skill includes concise [diagramming guidance](integrations/codex/skills/obsi
 editor.alignShapes([...editor.getCurrentPageShapeIds()], 'left');
 ```
 
-Edits return a compact summary containing the path, revision, selected page, net record change counts, and persistence result. Inspect full records with `state`, or add `--full` to `batch` or `script` to include them in the edit result. See the [operation reference](integrations/codex/skills/obsidian-tldraw/references/operations.md) for details. Scripts run with Obsidian's local privileges and are not sandboxed. Use code you write or review.
+Edits return a compact summary containing the path, revision, selected page, net record change counts, and persistence result. Use `observe` for compact current-page context, `state` for full records, or add `--full` to `apply`, `batch`, or `script` to include them in the edit result. See the [operation reference](integrations/codex/skills/obsidian-tldraw/references/operations.md) for details. Scripts run with Obsidian's local privileges and are not sandboxed. Use code you write or review.
 
 If synchronous code throws, the bridge restores Store records using the history mark and the pre-execution records. Asynchronous scripts and delayed edits through timers are unsupported. Rejecting a returned Promise does not cancel already scheduled work. Side effects outside the Store, such as filesystem changes, are not restored.
 

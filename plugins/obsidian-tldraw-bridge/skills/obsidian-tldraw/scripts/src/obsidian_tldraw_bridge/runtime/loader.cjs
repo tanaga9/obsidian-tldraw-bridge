@@ -38,7 +38,7 @@ async function invoke(runtime, app, action, args) {
     const job = JSON.parse(runtime.poll(app, id))
     if (job.status !== 'running') {
       runtime.forget(app, id)
-      if (job.status === 'failed') throw new Error(job.error)
+      if (job.status === 'failed') throw Object.assign(new Error(job.error), job.failure)
       return job.result
     }
     await delay()
@@ -106,14 +106,14 @@ module.exports = {
     const request = JSON.stringify([action, args])
     if (ctx.jobs.has(id)) {
       const job = ctx.jobs.get(id)
-      if (job.request !== request) throw new Error('Job id already used for another request')
+      if (job.request !== request) throw Object.assign(new Error('Job id already used for another request'), { code: 'REQUEST_ID_REUSED', outcome: 'not_applied' })
       return JSON.stringify(job)
     }
     // Receipts from before the update still own their ids, including running jobs.
     const previous = retained(ctx, app, id)
     if (previous) return previous.runtime.dispatch(app, action, args, id)
-    if ([...ctx.jobs.values()].some(job => job.status === 'running')) throw new Error('CLI job still running')
-    if (ctx.jobs.size >= 128) throw new Error('Receipt capacity reached: use the CLI forget command to release completed request ids')
+    if ([...ctx.jobs.values()].some(job => job.status === 'running')) throw Object.assign(new Error('CLI job still running'), { code: 'RUNTIME_BUSY', outcome: 'not_applied' })
+    if (ctx.jobs.size >= 128) throw Object.assign(new Error('Receipt capacity reached: use the CLI forget command to release completed request ids'), { code: 'RECEIPT_CAPACITY', outcome: 'not_applied' })
     const job = { id, request, status: 'running' }
     ctx.jobs.set(id, job)
     Promise.resolve().then(async () => {
@@ -134,20 +134,24 @@ module.exports = {
       return action === 'doctor' ? { ...result, reloadErrors: [...ctx.reloadErrors.values()] } : result
     }).then(
       result => { job.result = result; job.status = 'complete' },
-      error => { job.error = error?.message || String(error); job.status = 'failed' }
+      error => {
+        job.error = error?.message || String(error); job.status = 'failed'
+        job.failure = { code: error?.code || 'RUNTIME_ERROR', message: job.error, outcome: error?.outcome || 'unknown',
+          ...(error?.details ? { details: error.details } : {}) }
+      }
     )
     return JSON.stringify(job)
   },
   poll(app, filename, id) {
     const ctx = context(app, filename)
     const job = ctx.jobs.get(id) || retained(ctx, app, id)?.job
-    if (!job) throw new Error('Unknown CLI job')
+    if (!job) throw Object.assign(new Error('Unknown CLI job'), { code: 'REQUEST_NOT_FOUND', outcome: 'unknown' })
     return JSON.stringify(job)
   },
   forget(app, filename, id) {
     const ctx = context(app, filename)
     const job = ctx.jobs.get(id)
-    if (job?.status === 'running') throw new Error('CLI job still running')
+    if (job?.status === 'running') throw Object.assign(new Error('CLI job still running'), { code: 'RUNTIME_BUSY', outcome: 'not_applied' })
     if (job) return JSON.stringify({ forgotten: ctx.jobs.delete(id) })
     const previous = retained(ctx, app, id)
     return previous ? previous.runtime.forget(app, id) : JSON.stringify({ forgotten: false })

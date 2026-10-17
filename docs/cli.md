@@ -1,6 +1,6 @@
 # CLI reference
 
-Direct CLI use is intended for development and debugging. It is not part of the plugin user's setup.
+The CLI is an adapter over the shared [operation API](api.md). Agents execute it through the bundled Skill; users do not need to install a separate CLI package.
 
 Commands, arguments, and JSON input/output formats have no backward-compatibility guarantee and may change without prior notice or a deprecation period. Use this version's reference and `--help`; see the [compatibility policy](development.md#compatibility-policy).
 
@@ -10,24 +10,40 @@ Run these commands from the repository root; package installation is not require
 
 ```sh
 python3 bridge.py --vault Documents doctor
+python3 bridge.py --vault Documents capabilities
 python3 bridge.py --vault Documents --request-id create-example create 'Drawings/example.md'
-python3 bridge.py --vault Documents state 'Drawings/example.md'
+python3 bridge.py --vault Documents observe 'Drawings/example.md'
 ```
 
-Use the `revision` returned by `state` when submitting edits:
+Use the `revision` returned by `observe` when submitting edits:
 
 ```sh
-python3 bridge.py --vault Documents batch 'Drawings/example.md' \
-  --revision '<revision-from-state>' --input examples/create.json
+python3 bridge.py --vault Documents apply 'Drawings/example.md' \
+  --revision '<revision-from-observe>' --input examples/create.json
 python3 bridge.py --vault Documents preview 'Drawings/example.md' --output /tmp/example.png
 python3 bridge.py --vault Documents close 'Drawings/example.md'
 ```
 
-Use `--obsidian /path/to/executable` or the `OBSIDIAN_CLI` environment variable to override the Obsidian CLI location. Always specify the vault. Diagram paths are vault-relative `.md` paths. For `batch` and `script`, `--input -` reads from standard input. Results are JSON; handled errors are written as JSON to standard error with exit code 1.
+Use `--obsidian /path/to/executable` or the `OBSIDIAN_CLI` environment variable to override the Obsidian CLI location. Always specify the vault. Diagram paths are vault-relative `.md` paths. For `apply`, `batch`, `freehand`, and `script`, `--input -` reads from standard input. Results are JSON; handled errors are structured JSON on standard error with exit code 1. See [operations and recovery](../integrations/codex/skills/obsidian-tldraw/references/operations.md) for error codes and outcomes.
 
 Explicit `--obsidian` takes precedence over `OBSIDIAN_CLI`; an invalid override fails without switching installations. Automatic discovery checks `obsidian` on PATH, then `obsidian-cli` on PATH, then `/Applications/Obsidian.app/Contents/MacOS/obsidian-cli`. If an older PATH registration resolves to the app bundle's GUI executable, discovery selects its sibling `obsidian-cli` instead. Automatic discovery never falls back to launching that GUI executable; update the installer if the dedicated CLI is missing.
 
 Optional Python package installation with `python3 -m pip install .` exposes the `obsidian-tldraw` command. Normal plugin use does not require this installation.
+
+## Observation and request status
+
+`observe <path>` returns compact current-page shape summaries and touching bindings.
+Use `--ids <id> ...` or `--bounds X Y W H` to filter. Default `--limit` is 100;
+maximum is 500. Continue with `--offset <nextOffset>` and `--revision <revision> --page-id <currentPageId>`.
+A revision and page ID are required after the first page of results. This observes the dedicated
+Editor, not the human GUI selection. Text and bindings are bounded; use `state`
+for complete native records. Compact shapes include parent-local `localPosition`
+for position updates, alongside page-space bounds. See the [operation reference](../integrations/codex/skills/obsidian-tldraw/references/operations.md).
+
+`status <request-id>` inspects a retained receipt without re-executing the request.
+It returns running, complete, or failed status, along with the result or failure.
+Use it after a timeout, including one reporting an automatically generated ID.
+Receipts are in memory and disappear on Obsidian restart.
 
 ## Freehand drawing and detail previews
 
@@ -37,7 +53,7 @@ Optional Python package installation with `python3 -m pip install .` exposes the
 
 ## Edit results
 
-`batch` and `script` return a compact result by default:
+`apply`, `batch`, `script`, and `freehand` return a compact result by default:
 
 ```json
 {
@@ -51,7 +67,7 @@ Optional Python package installation with `python3 -m pip install .` exposes the
 
 `changes` counts the net differences in all persistent document records, including shapes, pages, bindings, assets, and document settings. Changes made and reversed within one edit count as zero; camera and selection changes are excluded. Counts describe the edit itself, rather than the number of requested operations.
 
-Use `state <path.md>` to inspect full records, or append `--full` to `batch` or `script` to include records and editor diagnostics in that edit's result. `--full` is part of the request: keep it unchanged when replaying an explicit request ID. Previously retained requests still return their original results. `create`, `open`, and `state` continue to return full document state.
+Use `state <path.md>` to inspect full records, or append `--full` to `apply`, `batch`, `script`, or `freehand` to include records and editor diagnostics in that edit's result. `--full` is part of the request: keep it unchanged when replaying an explicit request ID. Previously retained requests still return their original results. `create`, `open`, and `state` continue to return full document state.
 
 ## Create a note
 

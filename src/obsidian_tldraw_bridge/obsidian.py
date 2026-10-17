@@ -8,7 +8,18 @@ import time
 import uuid
 
 class BridgeError(RuntimeError):
-    pass
+    def __init__(self, message, code="BRIDGE_ERROR", outcome="unknown", request_id=None, details=None):
+        super().__init__(message)
+        self.code, self.outcome, self.request_id = code, outcome, request_id
+        self.details = details or {}
+
+    def as_dict(self):
+        result = {"code": self.code, "message": str(self), "outcome": self.outcome}
+        if self.request_id:
+            result["requestId"] = self.request_id
+        if self.details:
+            result["details"] = self.details
+        return result
 
 DEFAULT_CLI = Path("/Applications/Obsidian.app/Contents/MacOS/obsidian-cli")
 
@@ -45,6 +56,8 @@ class Client:
                                   text=True, capture_output=True, timeout=self.timeout)
         except subprocess.TimeoutExpired as exc:
             raise BridgeError("Obsidian CLI timed out; the request may still be running. Do not blindly repeat mutations.") from exc
+        except OSError as exc:
+            raise BridgeError("Could not invoke Obsidian CLI: " + str(exc)) from exc
         values = [line[3:] for line in proc.stdout.splitlines() if line.startswith("=> ")]
         if proc.returncode or (not values and not missing_ok):
             raise BridgeError("CLI evaluation failed: " + (proc.stdout + proc.stderr).strip())
@@ -59,9 +72,30 @@ class Client:
         loader = str(Path(__file__).resolve().parent / "runtime" / "loader.cjs")
         return f"require({json.dumps(loader)})", json.dumps(self.module)
 
+    def _runtime_evaluate(self, expression, request_id=None, missing_ok=False):
+        # Preserve admission/status errors as data instead of parsing CLI error text.
+        wrapped = ("(()=>{try{return " + expression + ";}catch(e){return JSON.stringify({_bridgeError:{"
+                   "code:e?.code||'RUNTIME_ERROR',message:e?.message||String(e),"
+                   "outcome:e?.outcome||'unknown'}})}})()")
+        try:
+            result = self.evaluate(wrapped, missing_ok)
+        except BridgeError as exc:
+            if exc.code != "BRIDGE_ERROR":
+                raise
+            raise BridgeError(str(exc), code="RESULT_UNKNOWN", request_id=request_id) from exc
+        if isinstance(result, dict) and "_bridgeError" in result:
+            error = result["_bridgeError"]
+            raise BridgeError(error["message"], code=error["code"], outcome=error["outcome"], request_id=request_id)
+        return result
+
+    def status(self, request_id):
+        loader, module = self._runtime()
+        job = self._runtime_evaluate(f"{loader}.poll(app,{module},{json.dumps(request_id)})", request_id)
+        return {key: value for key, value in job.items() if key != "request"}
+
     def forget(self, request_id):
         loader, module = self._runtime()
-        return self.evaluate(f"{loader}.forget(app,{module},{json.dumps(request_id)})")
+        return self._runtime_evaluate(f"{loader}.forget(app,{module},{json.dumps(request_id)})", request_id)
 
     def _release_automatic(self, job_id, request_id):
         if request_id is None:
@@ -76,15 +110,20 @@ class Client:
         job_id = request_id or "bridge-" + uuid.uuid4().hex
         loader, module = self._runtime()
         identity = json.dumps(job_id)
-        self.evaluate(f"{loader}.dispatch(app,{module},{json.dumps(action)},{json.dumps(args or {})},{identity})", True)
+        self._runtime_evaluate(f"{loader}.dispatch(app,{module},{json.dumps(action)},{json.dumps(args or {})},{identity})", job_id, True)
         deadline = time.monotonic() + self.timeout
         while time.monotonic() < deadline:
-            job = self.evaluate(f"{loader}.poll(app,{module},{identity})", True)
+            job = self._runtime_evaluate(f"{loader}.poll(app,{module},{identity})", job_id, True)
             if job and job.get("status") == "failed":
-                self._release_automatic(job_id, request_id)
-                raise BridgeError(job["error"] + " (request " + job_id + ")")
+                failure = job.get("failure", {})
+                if failure.get("outcome", "unknown") == "not_applied":
+                    self._release_automatic(job_id, request_id)
+                raise BridgeError(job["error"] + " (request " + job_id + ")",
+                                  code=failure.get("code", "BRIDGE_ERROR"),
+                                  outcome=failure.get("outcome", "unknown"), request_id=job_id,
+                                  details=failure.get("details"))
             if job and job.get("status") == "complete":
                 self._release_automatic(job_id, request_id)
                 return job["result"]
             time.sleep(0.1)
-        raise BridgeError("Request timed out; resume with the same --request-id: " + job_id)
+        raise BridgeError("Request timed out; use status or resume with the same --request-id: " + job_id, code="RESULT_UNKNOWN", request_id=job_id)

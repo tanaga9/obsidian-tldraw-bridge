@@ -142,10 +142,104 @@ class TransportTest(unittest.TestCase):
 
     def test_failed_automatic_results_are_released(self):
         client = self.client()
-        with patch.object(client,"evaluate",side_effect=[None,{"status":"failed","error":"conflict"},{"forgotten":True}]) as evaluate:
+        with patch.object(client,"evaluate",side_effect=[None,{"status":"failed","error":"conflict","failure":{"outcome":"not_applied"}},{"forgotten":True}]) as evaluate:
             with self.assertRaisesRegex(BridgeError,"conflict"):
                 client.call("batch")
             self.assertIn(".forget(app,",evaluate.call_args.args[0])
+
+
+class RequestRecoveryTest(unittest.TestCase):
+    client = TransportTest.client
+    def test_dispatch_timeout_reports_generated_identity(self):
+        client = self.client()
+        with patch.object(client, 'evaluate', side_effect=BridgeError('timeout')):
+            with self.assertRaises(BridgeError) as failure:
+                client.call('apply', {})
+        self.assertEqual(failure.exception.code, 'RESULT_UNKNOWN')
+        self.assertTrue(failure.exception.request_id.startswith('bridge-'))
+
+    def test_applied_failure_receipt_is_retained(self):
+        client = self.client()
+        failure = {'status': 'failed', 'error': 'not saved',
+                   'failure': {'code': 'SAVE_UNCONFIRMED', 'outcome': 'applied', 'details': {'revision': 'r'}}}
+        with patch.object(client, 'evaluate', side_effect=[None, failure]) as evaluate:
+            with self.assertRaises(BridgeError) as raised:
+                client.call('apply')
+            self.assertEqual(evaluate.call_count, 2)
+        self.assertEqual(raised.exception.outcome, 'applied')
+        self.assertEqual(raised.exception.details['revision'], 'r')
+
+    def test_status_does_not_dispatch_or_release_and_omits_script(self):
+        client = self.client()
+        with patch.object(client, 'evaluate', return_value={'id': 'x', 'status': 'running', 'request': 'script contents'}) as evaluate:
+            self.assertEqual(client.status('x'), {'id': 'x', 'status': 'running'})
+            self.assertEqual(evaluate.call_count, 1)
+            self.assertIn('.poll(', evaluate.call_args.args[0])
+
+class RuntimeAdmissionTest(unittest.TestCase):
+    client = TransportTest.client
+
+    def test_typed_admission_error_is_not_relabelled_as_transport_timeout(self):
+        client = self.client()
+        with patch.object(client, 'evaluate', return_value={'_bridgeError': {
+            'code': 'RUNTIME_BUSY', 'message': 'CLI job still running', 'outcome': 'not_applied'}}):
+            with self.assertRaises(BridgeError) as failure:
+                client.call('apply', {}, 'attempt')
+        self.assertEqual(failure.exception.code, 'RUNTIME_BUSY')
+        self.assertEqual(failure.exception.outcome, 'not_applied')
+        self.assertEqual(failure.exception.request_id, 'attempt')
+
+    def test_missing_receipt_does_not_look_like_an_unapplied_edit(self):
+        client = self.client()
+        with patch.object(client, 'evaluate', return_value={'_bridgeError': {
+            'code': 'REQUEST_NOT_FOUND', 'message': 'Unknown CLI job', 'outcome': 'unknown'}}):
+            with self.assertRaises(BridgeError) as failure:
+                client.status('missing')
+        self.assertEqual(failure.exception.code, 'REQUEST_NOT_FOUND')
+        self.assertEqual(failure.exception.outcome, 'unknown')
+
+
+class OsErrorRecoveryTest(unittest.TestCase):
+    client = TransportTest.client
+
+    def test_oserror_after_dispatch_keeps_unknown_outcome_and_request_id(self):
+        for identity in (None, 'edit-1'):
+            with self.subTest(identity=identity):
+                client = self.client()
+                dispatched = subprocess.CompletedProcess([], 0, '=> {"status":"running"}\n', '')
+                with patch('subprocess.run', side_effect=[dispatched, FileNotFoundError('CLI replaced')]) as run:
+                    with self.assertRaises(BridgeError) as failure:
+                        client.call('apply', {}, identity)
+                error = failure.exception
+                self.assertEqual(error.code, 'RESULT_UNKNOWN')
+                self.assertEqual(error.outcome, 'unknown')
+                if identity is None:
+                    self.assertTrue(error.request_id.startswith('bridge-'))
+                else:
+                    self.assertEqual(error.request_id, identity)
+                self.assertIn(json.dumps(error.request_id), run.call_args_list[0].args[0][-1])
+                self.assertEqual(run.call_count, 2)
+
+    def test_cleanup_oserror_preserves_successful_edit(self):
+        client = self.client()
+        saved = {'revision': 'after', 'persistence': {'saved': True}}
+        responses = [subprocess.CompletedProcess([], 0, '=> {"status":"running"}\n', ''),
+                     subprocess.CompletedProcess([], 0, '=> ' + json.dumps({'status': 'complete', 'result': saved}) + '\n', ''),
+                     PermissionError('CLI unavailable during cleanup')]
+        with patch('subprocess.run', side_effect=responses) as run:
+            self.assertEqual(client.call('apply'), saved)
+        self.assertEqual(run.call_count, 3)
+        self.assertIn('.forget(app,', run.call_args.args[0][-1])
+
+    def test_status_oserror_preserves_queried_id(self):
+        client = self.client()
+        with patch('subprocess.run', side_effect=PermissionError('CLI unavailable')):
+            with self.assertRaises(BridgeError) as failure:
+                client.status('edit-1')
+        self.assertEqual(failure.exception.code, 'RESULT_UNKNOWN')
+        self.assertEqual(failure.exception.request_id, 'edit-1')
+        self.assertEqual(failure.exception.outcome, 'unknown')
+
 
 if __name__ == "__main__":
     unittest.main()

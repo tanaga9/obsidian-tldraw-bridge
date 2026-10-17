@@ -253,7 +253,8 @@ test('save drains source and shared notifications before checking Markdown',asyn
   }}
   h.app.plugins.getPlugin=()=>({tlDataDocumentStoreManager:{storesManager:{storeGroupMap:new Map([['a.md',{main:{store:main}}]])}}})
   assert.equal((await h.access.saved(h.app,'a.md')).saved,true)
-  assert.deepEqual(flushed,['source','source listener removed','main','main listener removed'])
+  assert.deepEqual(flushed,['source','source listener removed','main','main listener removed',
+    'source','source listener removed','main','main listener removed'])
 })
 
 function createFixture() {
@@ -388,4 +389,147 @@ test('dispatch returns compact saved results by default and full records on requ
   assert.equal(full.persistence.saved,true)
   assert.equal(full.revision,compact.revision)
   assert.deepEqual(copy(full.changes),copy(compact.changes))
+})
+
+test('observe returns scoped text, page bounds, touching bindings and revision-pinned pagination',async()=>{
+  const h=setup()
+  h.values().find(r=>r.id==='shape:a').type='geo'
+  h.values().push({id:'shape:b',typeName:'shape',type:'text',props:{}},
+    {id:'binding:ab',typeName:'binding',fromId:'shape:a',toId:'shape:b',type:'arrow',props:{terminal:'end'}})
+  h.editor.getCurrentPageShapeIds=()=>['shape:b','shape:a']
+  h.editor.getShapePageBounds=id=>({x:id==='shape:a'?10:100,y:20,w:30,h:40})
+  h.editor.getShapeUtil=()=>({getText:shape=>shape.id==='shape:a'?'Exact label':'Other'})
+  const before=h.access.revision(h.editor)
+  const first=await h.invoke('observe',{path:'a.md',limit:1},'first')
+  assert.equal(first.total,2)
+  assert.equal(first.shapes[0].id,'shape:a')
+  assert.equal(first.shapes[0].text,'Exact label')
+  assert.equal(first.shapes[0].bounds.x,10)
+  assert.equal(first.bindings[0].toId,'shape:b')
+  assert.equal(first.nextOffset,1)
+  assert.equal(h.access.revision(h.editor),before)
+  const next=await h.invoke('observe',{path:'a.md',limit:1,offset:1,revision:first.revision,pageId:first.currentPageId},'next')
+  assert.equal(next.shapes[0].id,'shape:b')
+  assert.equal(next.nextOffset,null)
+  const crop=await h.invoke('observe',{path:'a.md',bounds:{x:0,y:0,w:50,h:100}},'crop')
+  assert.equal(crop.total,1)
+  h.editor.getCurrentPageId=()=> 'page:other'
+  await assert.rejects(h.invoke('observe',{path:'a.md',offset:1,revision:first.revision,pageId:first.currentPageId},'page-switch'),/Current page changed/)
+  h.editor.getCurrentPageId=()=> 'page:a'
+  h.editor.updateDocumentSettings({name:'concurrent edit'})
+  await assert.rejects(h.invoke('observe',{path:'a.md',offset:1,revision:first.revision,pageId:first.currentPageId},'stale'),/Revision conflict/)
+  const job=JSON.parse(h.api.poll(h.app,'stale'))
+  assert.equal(job.failure.code,'REVISION_CONFLICT')
+  assert.equal(job.failure.outcome,'not_applied')
+})
+
+test('named operations validate the whole batch before any edit and use existing persistence checks',async()=>{
+  const h=setup(), before=h.access.revision(h.editor)
+  await assert.rejects(h.invoke('apply',{path:'a.md',revision:before,operations:[
+    {op:'updateShapes',shapes:[{id:'shape:a',props:{color:'red'}}]},
+    {op:'alignShapes',ids:['shape:a'],alignment:'invalid'},
+  ]},'invalid'),/Invalid alignment/)
+  assert.equal(h.access.revision(h.editor),before)
+  h.app.vault.read=async()=>h.markdown(copy(h.values()))
+  const result=await h.invoke('apply',{path:'a.md',revision:before,operations:[
+    {op:'updateShapes',shapes:[{id:'shape:a',props:{color:'red'}}]},
+  ]},'valid')
+  assert.equal(result.persistence.saved,true)
+  assert.equal(result.changes.updated,1)
+})
+
+test('save failure reports applied revision and retains the result for recovery',async()=>{
+  const h=setup()
+  h.app.vault.read=async()=>{throw new Error('disk unavailable')}
+  const args={path:'a.md',revision:h.access.revision(h.editor),operations:[
+    {op:'updateShapes',shapes:[{id:'shape:a',props:{color:'red'}}]},
+  ]}
+  await assert.rejects(h.invoke('apply',args,'save-failure'),/disk unavailable/)
+  const job=JSON.parse(h.api.poll(h.app,'save-failure'))
+  assert.equal(job.failure.code,'SAVE_UNCONFIRMED')
+  assert.equal(job.failure.outcome,'applied')
+  assert.equal(job.failure.details.revision,h.access.revision(h.editor))
+  assert.equal(JSON.parse(h.api.dispatch(h.app,'apply',args,'save-failure')).status,'failed')
+})
+
+
+test('apply can pin the current page even when a page switch leaves the revision unchanged',async()=>{
+  const h=setup(), before=h.access.revision(h.editor)
+  await assert.rejects(h.invoke('apply',{path:'a.md',revision:before,pageId:'page:old',
+    operations:[{op:'updateShapes',shapes:[{id:'shape:a',props:{color:'red'}}]}]},'wrong-page'),/Current page changed/)
+  assert.equal(h.access.revision(h.editor),before)
+  assert.equal(JSON.parse(h.api.poll(h.app,'wrong-page')).failure.code,'PAGE_CONFLICT')
+})
+
+function withPendingGui(h) {
+  let pending
+  const trace=[]
+  const peer={isSynchronizingToMain:()=>true,store:{listen:()=>{
+    trace.push('gui')
+    if(pending){ h.editor.updateShapes([pending]); pending=null }
+    return ()=>{}
+  }}}
+  const inactive={isSynchronizingToMain:()=>false,store:{listen:()=>{throw new Error('Read-only instance must not publish edits')}}}
+  const plugin={manifest:{version:'1.32.0'},tlDataDocumentStoreManager:{storesManager:{storeGroupMap:new Map([
+    ['a.md',{instances:[inactive,peer,{store:h.editor.store,isSynchronizingToMain:()=>true}],main:{store:{listen:()=>{
+      trace.push('main'); h.setDisk(h.values()); return ()=>{}
+    }}}}],
+  ])}}}
+  h.app.plugins.getPlugin=()=>plugin
+  return {queue:change=>{pending=change},trace}
+}
+
+test('pending GUI notifications are reconciled before revision checking, not after editing',async()=>{
+  const h=setup(), gui=withPendingGui(h), old=h.access.revision(h.editor)
+  gui.queue({id:'shape:a',props:{color:'green'}})
+  await assert.rejects(h.invoke('apply',{path:'a.md',revision:old,operations:[
+    {op:'updateShapes',shapes:[{id:'shape:a',props:{color:'red'}}]},
+  ]},'pending-gui'),/Revision conflict/)
+  assert.equal(h.editor.getShape('shape:a').props.color,'green')
+  assert.equal(JSON.parse(h.api.poll(h.app,'pending-gui')).failure.code,'REVISION_CONFLICT')
+  assert.ok(gui.trace.indexOf('gui')<gui.trace.indexOf('main'))
+})
+
+test('state and observe include pending GUI edits and expose parent-local positions',async()=>{
+  const h=setup(), gui=withPendingGui(h)
+  h.editor.getShapePageBounds=()=>({x:150,y:260,w:80,h:40})
+  h.editor.getShapeUtil=()=>({getText:()=>''})
+  gui.queue({id:'shape:a',x:50,y:60,props:{color:'green'}})
+  const observed=await h.invoke('observe',{path:'a.md'},'pending-observe')
+  assert.equal(observed.shapes[0].props.color,'green')
+  assert.deepEqual(copy(observed.shapes[0].localPosition),{x:50,y:60})
+  assert.equal(observed.shapes[0].bounds.x,150)
+  gui.queue({id:'shape:a',props:{color:'orange'}})
+  const current=await h.invoke('state',{path:'a.md'},'pending-state')
+  assert.equal(current.records.find(r=>r.id==='shape:a').props.color,'orange')
+})
+
+test('a change during persistence cannot turn a superseded edit into successful completion',async()=>{
+  const h=setup(), before=h.access.revision(h.editor)
+  let changed=false
+  h.app.vault.read=async()=>{
+    if(!changed){changed=true; h.editor.updateShapes([{id:'shape:a',props:{color:'green'}}])}
+    return h.markdown(copy(h.values()))
+  }
+  await assert.rejects(h.invoke('apply',{path:'a.md',revision:before,operations:[
+    {op:'updateShapes',shapes:[{id:'shape:a',props:{color:'red'}}]},
+  ]},'save-conflict'),/changed while saving/)
+  const receipt=JSON.parse(h.api.poll(h.app,'save-conflict'))
+  assert.equal(receipt.failure.code,'SAVE_CONFLICT')
+  assert.equal(receipt.failure.outcome,'applied')
+  assert.notEqual(receipt.failure.details.revision,receipt.failure.details.actualRevision)
+  assert.equal(h.editor.getShape('shape:a').props.color,'green')
+})
+
+test('preview detects GUI notifications queued during asynchronous export',async()=>{
+  const h=setup(), gui=withPendingGui(h), dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-peer-preview-'))
+  const output=path.join(dir,'existing.png');fs.writeFileSync(output,'original')
+  h.editor.toImage=async()=>{
+    gui.queue({id:'shape:a',props:{color:'green'}})
+    return {blob:{arrayBuffer:async()=>Buffer.from('stale')},width:1,height:1}
+  }
+  try {
+    await assert.rejects(h.invoke('preview',{path:'a.md',output},'pending-preview'),/Revision conflict/)
+    assert.equal(fs.readFileSync(output,'utf8'),'original')
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })

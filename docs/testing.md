@@ -20,11 +20,12 @@ These checks do not require a running Obsidian instance. They cover:
 
 | Area | Expected behavior |
 | --- | --- |
+| Agent operation API | Shared validation before connecting; named edit schemas; scoped, bounded observations and revision-pinned pagination; structured failures and non-executing receipt queries. |
 | Freehand drawing | Authored curves preserve geometry and pressure through point encoding; closed strokes accept fill and opacity in the same edit. Redraws reset omitted styles and preserve unrelated shapes. Invalid styles, open fills, and targets fail before edits. |
 | CLI transport | Code is passed as an argument rather than through a shell. Missing initial output can be recovered by polling. |
 | Result handling | Edits default to compact net change counts over document records; full output is available explicitly, and state remains inspectable. Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
 | Note creation | Plugin-generated Markdown, existing-path and traversal rejection, saved editable session, retained creation after initialization failure, and request replay without duplicate creation. |
-| Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending source/shared notifications are processed without waiting for animation frames. |
+| Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending GUI/source/shared notifications are reconciled before reads and revision checks without waiting for animation frames. Edits superseded during persistence return SAVE_CONFLICT; previews reject queued GUI changes during export. |
 | Synchronous rollback | Failed edits restore records, including history-ignored changes, without leaving forward changes queued for other Editors. |
 | Exceptions | Arbitrary thrown values become failed jobs with readable errors; subsequent requests remain usable. |
 | Preview | Part and ID selections export only current-page shapes at the requested scale. Bounds crop the whole page with surrounding shapes. Invalid selections, bounds, and revision conflicts leave output files unchanged. |
@@ -48,7 +49,7 @@ Uses an existing dedicated test note. Creates a uniquely named frame and two str
 python3 tests/live_create.py --vault Documents
 ```
 
-This check creates a uniquely named folder and Markdown note through `create`, verifies an empty editable document, request replay, duplicate rejection, and a compact saved shape edit followed by full-state inspection, then closes the session and removes its temporary note and folder. It uses fresh runtime and loader copies so cached code does not affect the check.
+This check creates a uniquely named folder and Markdown note through `create`, verifies an empty editable document, request replay, duplicate rejection, and a named saved shape edit, compact observation, capabilities, retained status, structured stale-revision rejection, full-state inspection, position edits from compact observations, five deferred-GUI conflict rejections, and a GUI change injected during saving, then closes the session and removes its temporary note and folder. It uses fresh runtime and loader copies so cached code does not affect the check.
 
 ## Runtime reload integration check
 

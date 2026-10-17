@@ -68,7 +68,7 @@ function runWithRollback(editor, label, callback) {
           editor.run(() => editor.store.applyDiff(diff, { runCallbacks: false }), { history: 'ignore' })
         }
       } catch (rollbackError) {
-        failure = new Error(`${errorMessage(error)}; record restoration failed: ${errorMessage(rollbackError)}`)
+        failure = fault('ROLLBACK_FAILED', `${errorMessage(error)}; record restoration failed: ${errorMessage(rollbackError)}`, 'unknown')
       }
     }
   })
@@ -79,9 +79,114 @@ function runWithRollback(editor, label, callback) {
 const jobs = new WeakMap()
 let sequence = 0
 
-function state(app, path) {
+// The AI-facing contract is independent of CLI parsing and transport.
+const operationFields = {
+  createShapes: { shapes: 'array' }, updateShapes: { shapes: 'array' }, deleteShapes: { ids: 'array' },
+  createBindings: { bindings: 'array' }, deleteBindings: { ids: 'array' },
+  alignShapes: { ids: 'array', alignment: ['left', 'center-horizontal', 'right', 'top', 'center-vertical', 'bottom'] },
+  distributeShapes: { ids: 'array', axis: ['horizontal', 'vertical'] },
+  setCurrentPage: { pageId: 'string' }, undo: {}, redo: {},
+}
+function fault(code, message, outcome = 'not_applied', details) {
+  return Object.assign(new Error(message), { code, outcome, details })
+}
+function failureInfo(error, fallback = 'not_applied') {
+  try {
+    return { code: typeof error?.code === 'string' ? error.code : 'OPERATION_FAILED',
+      message: errorMessage(error), outcome: error?.outcome || fallback,
+      ...(error?.details ? { details: error.details } : {}) }
+  } catch (_) { return { code: 'OPERATION_FAILED', message: errorMessage(error), outcome: 'unknown' } }
+}
+function capabilities(app) {
+  const plugin = app.plugins.getPlugin('tldraw')
+  return { apiVersion: 1, pluginVersion: plugin?.manifest.version ?? null,
+    supported: ['1.31.0','1.32.0'].includes(plugin?.manifest.version),
+    actions: ['doctor','capabilities','create','open','observe','state','apply','batch','script','saved','preview','close'],
+    operations: operationFields, coordinates: { observeBounds: 'page', shapePosition: 'parent-local' }, observation: 'dedicated-editor-current-page',
+    limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4 },
+    guarantees: { revisionRequiredForEdits: true, persistenceChecked: true, synchronousStoreRollback: true,
+      humanEditLock: false, arbitraryScriptCancellation: false, receiptsSurviveRestart: false },
+    shapeTypes: [...sessionsFor(app).values()][0]?.editor.shapeUtils
+      ? Object.keys([...sessionsFor(app).values()][0].editor.shapeUtils).sort() : null,
+    shapeTypesNote: 'Open a document to discover registered types; shape props follow its installed SDK.',
+  }
+}
+function namedOperations(operations) {
+  if (!Array.isArray(operations) || !operations.length || operations.length > 1000) {
+    throw fault('INVALID_INPUT', 'Apply must contain 1-1000 operations')
+  }
+  return operations.map((op, index) => {
+    const fields = op && typeof op.op === 'string' && Object.hasOwn(operationFields, op.op) ? operationFields[op.op] : null
+    if (!fields || Object.keys(op).some(key => key !== 'op' && !Object.hasOwn(fields, key))) {
+      throw fault('INVALID_INPUT', 'Unknown operation or argument', 'not_applied', { operationIndex: index })
+    }
+    const args = Object.entries(fields).map(([key, type]) => {
+      const value = op[key]
+      const valid = Array.isArray(type) ? type.includes(value) : type === 'array'
+        ? Array.isArray(value) && value.length > 0 : typeof value === 'string' && value.length > 0
+      if (!valid) throw fault('INVALID_INPUT', `Invalid ${key} for ${op.op}`, 'not_applied', { operationIndex: index })
+      return value
+    })
+    const prefix = op.op === 'deleteBindings' ? 'binding:' : 'shape:'
+    if (op.ids && op.ids.some(id => typeof id !== 'string' || !id.startsWith(prefix))) {
+      throw fault('INVALID_INPUT', `Expected ${prefix} IDs`, 'not_applied', { operationIndex: index })
+    }
+    return { method: op.op, args }
+  })
+}
+function observe(app, args) {
+  const session = sessionFor(app, args.path), editor = session.editor
+  flushPendingChanges(app, session)
+  if (args.revision) assertRevision(app, session, args.revision)
+  const limit = args.limit ?? 100, offset = args.offset ?? 0
+  if (!Number.isInteger(limit) || limit < 1 || limit > 500 || !Number.isInteger(offset) || offset < 0 || (offset && (!args.revision || !args.pageId))) {
+    throw fault('INVALID_INPUT', 'Observe requires limit 1-500, offset >= 0, and revision/pageId for subsequent pages')
+  }
+  if (args.ids !== undefined && args.bounds !== undefined) throw fault('INVALID_INPUT', 'Choose ids or bounds')
+  if (args.pageId !== undefined && args.pageId !== editor.getCurrentPageId()) {
+    throw fault('PAGE_CONFLICT', 'Current page changed; observe again before continuing')
+  }
+  const pageIds = [...editor.getCurrentPageShapeIds()].sort()
+  if (args.ids !== undefined && (!Array.isArray(args.ids) || !args.ids.length || args.ids.some(id => !pageIds.includes(id)))) {
+    throw fault('INVALID_INPUT', 'Observe IDs must exist on the current page')
+  }
+  const b = args.bounds
+  if (b !== undefined && (!b || !['x','y','w','h'].every(k => Number.isFinite(b[k])) || b.w <= 0 || b.h <= 0)) {
+    throw fault('INVALID_INPUT', 'Bounds must be finite with positive width and height')
+  }
+  const shapeBounds = id => {
+    const box = editor.getShapePageBounds(id)
+    return box ? { x: box.x, y: box.y, w: box.w, h: box.h } : null
+  }
+  let ids = args.ids ?? pageIds
+  if (b) ids = ids.filter(id => {
+    const box = shapeBounds(id)
+    return box && box.x <= b.x+b.w && box.x+box.w >= b.x && box.y <= b.y+b.h && box.y+box.h >= b.y
+  })
+  const total = ids.length, selected = ids.slice(offset, offset + limit), selectedSet = new Set(selected)
+  const all = records(editor)
+  const bindings = all.filter(r => r.typeName === 'binding' && (selectedSet.has(r.fromId) || selectedSet.has(r.toId)))
+  return { path: session.path, revision: revision(editor), currentPageId: editor.getCurrentPageId(),
+    coordinateSpace: 'page', source: 'dedicated-editor',
+    pages: all.filter(r => r.typeName === 'page').map(r => ({ id: r.id, name: r.name })),
+    shapes: selected.map(id => {
+      const shape = editor.getShape(id)
+      const text = editor.getShapeUtil(shape).getText?.(shape)
+      return { id, type: shape.type, parentId: shape.parentId, bounds: shapeBounds(id),
+        localPosition: { x: shape.x, y: shape.y },
+        localRotation: shape.rotation, opacity: shape.opacity, index: shape.index, isLocked: shape.isLocked,
+        props: Object.fromEntries(['geo','color','fill','dash','size','font','align','verticalAlign'].filter(k => shape.props?.[k] !== undefined).map(k => [k,shape.props[k]])), ...(typeof text === 'string' ? { text: text.slice(0,2000), textTruncated: text.length > 2000 } : {}) }
+    }),
+    bindings: bindings.slice(0,500).map(r => ({ id: r.id, type: r.type, fromId: r.fromId, toId: r.toId, props: r.props })),
+    total, offset, nextOffset: offset + selected.length < total ? offset + selected.length : null,
+    bindingsTruncated: bindings.length > 500,
+  }
+}
+
+function state(app, path, reconcile = true) {
   const session = sessionFor(app, path)
   if (!session || session.editor.isDisposed) throw new Error('No CLI Editor session')
+  if (reconcile) flushPendingChanges(app, session)
   const current = app.plugins.getPlugin('tldraw')?.currTldrawEditor
   return {
     path: session.path,
@@ -197,11 +302,12 @@ function close(app, path) {
 const methods = new Set(['createShapes', 'updateShapes', 'deleteShapes', 'createBindings',
   'deleteBindings', 'groupShapes', 'ungroupShapes', 'alignShapes', 'distributeShapes', 'rotateShapesBy', 'resizeShape', 'reparentShapes', 'createPage', 'updatePage', 'deletePage', 'setCurrentPage', 'undo', 'redo'])
 
-function assertRevision(session, expected) {
-  if (!expected || revision(session.editor) !== expected) throw new Error('Revision conflict: read state and re-plan before editing')
+function assertRevision(app, session, expected) {
+  flushPendingChanges(app, session)
+  if (!expected || revision(session.editor) !== expected) throw fault('REVISION_CONFLICT', 'Revision conflict: read state and re-plan before editing', 'not_applied', { expectedRevision: expected ?? null, actualRevision: revision(session.editor) })
 }
 function editResult(app, path, before, full) {
-  const result = state(app, path)
+  const result = state(app, path, false)
   const previous = new Map(before.map(record => [record.id, record]))
   const changes = { added: 0, updated: 0, removed: 0 }
   for (const record of result.records) {
@@ -217,7 +323,7 @@ function editResult(app, path, before, full) {
 
 function batch(app, path, operations, expected, full = false) {
   const session = sessionFor(app, path)
-  assertRevision(session, expected)
+  assertRevision(app, session, expected)
   if (!Array.isArray(operations) || !operations.length || operations.length > 1000) throw new Error('Batch must contain 1-1000 operations')
   for (const op of operations) {
     if (!op || !methods.has(op.method) || !Array.isArray(op.args) || typeof session.editor[op.method] !== 'function') throw new Error('Unsupported operation')
@@ -233,20 +339,24 @@ function batch(app, path, operations, expected, full = false) {
 }
 function script(app, path, code, expected, full = false) {
   const session = sessionFor(app, path)
-  assertRevision(session, expected)
+  assertRevision(app, session, expected)
   if (typeof code !== 'string' || !code.trim()) throw new Error('Script is empty')
   const editor = session.editor
   // Trusted synchronous code, not a sandbox. A returned Promise is detected only
   // after execution: this check cannot cancel already scheduled work.
   const before = JSON.parse(JSON.stringify(records(editor)))
   const fn = new Function('editor', 'app', 'plugin', 'require', code)
-  runWithRollback(editor, 'Obsidian tldraw bridge script', () => {
+  try { runWithRollback(editor, 'Obsidian tldraw bridge script', () => {
     const result = fn(editor, app, app.plugins.getPlugin('tldraw'), require)
     if (result && typeof result.then === 'function') {
       Promise.resolve(result).catch(() => {})
       throw new Error('Scripts must be synchronous; scheduled work cannot be cancelled')
     }
   })
+  } catch (error) {
+    throw fault('SCRIPT_FAILED', errorMessage(error), 'unknown', { storeRevision: revision(editor),
+      recovery: 'Inspect state; script side effects outside the Store cannot be restored.' })
+  }
   return editResult(app, path, before, full)
 }
 
@@ -268,19 +378,35 @@ function flushPendingChanges(app, session) {
     const stop = store.listen(() => {}, { scope: 'document' })
     stop()
   }
+  const group = app.plugins.getPlugin('tldraw')?.tlDataDocumentStoreManager
+    ?.storesManager.storeGroupMap.get(session.file.path)
+  // A GUI source can have user changes queued until the next animation frame.
+  // Publish those before inspecting the dedicated Editor or sending its changes.
+  // Read-only/unsynchronized instances must not publish their private state.
+  for (const instance of group?.instances ?? []) {
+    if (instance.store !== session.editor.store && instance.isSynchronizingToMain()) flush(instance.store)
+  }
   flush(session.editor.store)
-  const main = app.plugins.getPlugin('tldraw')?.tlDataDocumentStoreManager
-    ?.storesManager.storeGroupMap.get(session.file.path)?.main.store
-  if (main && main !== session.editor.store) flush(main)
+  if (group?.main.store && group.main.store !== session.editor.store) flush(group.main.store)
 }
 
-async function saved(app, path) {
+async function saved(app, path, expectedRevision) {
   const session = sessionFor(app, path)
   if (!session) throw new Error('No session')
+  const assertSavedRevision = () => {
+    if (expectedRevision && revision(session.editor) !== expectedRevision) {
+      throw fault('SAVE_CONFLICT', 'Document changed while saving; inspect the current state before continuing', 'applied',
+        { path: session.path, revision: expectedRevision, actualRevision: revision(session.editor),
+          recovery: 'Observe current state and check saved; do not reapply this edit.' })
+    }
+  }
   const deadline = Date.now() + 10000
   while (Date.now() < deadline) {
     flushPendingChanges(app, session)
+    assertSavedRevision()
     const text = await app.vault.read(session.file)
+    flushPendingChanges(app, session)
+    assertSavedRevision()
     const document = parseMarkdown(text)
     const actual = JSON.stringify(documentRecords(session.editor, document.raw.records))
     const expected = JSON.stringify(records(session.editor))
@@ -297,12 +423,34 @@ async function execute(app, action, args) {
       supported: ['1.31.0','1.32.0'].includes(plugin?.manifest.version),
       documents: [...sessionsFor(app).keys()]}
   }
+  if (action === 'capabilities') return capabilities(app)
+  if (action === 'observe') return observe(app, args)
   if (action === 'create') return create(app, args.path)
   if (action === 'open') return open(app, args.path, args.currentPageId)
   if (action === 'state') return state(app, args.path)
+  if (action === 'apply') {
+    if (args.pageId !== undefined && args.pageId !== sessionFor(app,args.path).editor.getCurrentPageId()) {
+      throw fault('PAGE_CONFLICT', 'Current page changed; observe again before editing')
+    }
+    args = { ...args, operations: namedOperations(args.operations) }
+    action = 'batch'
+  }
   if (action === 'batch' || action === 'script') {
-    const result = action === 'batch' ? batch(app,args.path,args.operations,args.revision,args.full) : script(app,args.path,args.code,args.revision,args.full)
-    return {...result, persistence: await saved(app,args.path)}
+    let result
+    try {
+      result = action === 'batch' ? batch(app,args.path,args.operations,args.revision,args.full) : script(app,args.path,args.code,args.revision,args.full)
+    } catch (error) {
+      if (error?.code) throw error
+      const unchanged = revision(sessionFor(app,args.path).editor) === args.revision
+      throw fault('OPERATION_FAILED', errorMessage(error), unchanged ? 'not_applied' : 'unknown')
+    }
+    try {
+      return {...result, persistence: await saved(app,args.path,result.revision)}
+    } catch (error) {
+      if (error?.code === 'SAVE_CONFLICT') throw error
+      throw fault('SAVE_UNCONFIRMED', errorMessage(error), 'applied', { path: args.path, revision: result.revision,
+        currentPageId: result.currentPageId, changes: result.changes, recovery: 'Inspect state and saved; do not reapply the edit.' })
+    }
   }
   if (action === 'saved') return saved(app, args.path)
   if (action === 'close') {
@@ -311,7 +459,8 @@ async function execute(app, action, args) {
   }
   if (action === 'preview') {
     const session = sessionFor(app, args.path)
-    if (args.revision) assertRevision(session,args.revision)
+    flushPendingChanges(app, session)
+    if (args.revision) assertRevision(app, session,args.revision)
     const editor = session.editor
     const capturedRevision = revision(editor)
     const pageIds = [...editor.getCurrentPageShapeIds()]
@@ -339,7 +488,8 @@ async function execute(app, action, args) {
       ...(bounds ? { bounds, padding: 0 } : {}),
     })
     const bytes = Buffer.from(await blob.arrayBuffer())
-    if (revision(editor) !== capturedRevision) throw new Error('Revision conflict during preview: read state and export again')
+    flushPendingChanges(app, session)
+    if (revision(editor) !== capturedRevision) throw fault('REVISION_CONFLICT', 'Revision conflict during preview: read state and export again')
     require('node:fs').writeFileSync(args.output, bytes)
     return { path: args.output, width, height, revision: capturedRevision }
   }
@@ -354,27 +504,27 @@ module.exports = {
     const id = requestedId || `job-${++sequence}`
     const request = JSON.stringify([action,args])
     if (queue.has(id)) {
-      if (queue.get(id).request !== request) throw new Error('Job id already used for another request')
+      if (queue.get(id).request !== request) throw fault('REQUEST_ID_REUSED', 'Job id already used for another request')
       return JSON.stringify(queue.get(id))
     }
-    if ([...queue.values()].some(job => job.status === 'running')) throw new Error('CLI job still running')
-    if (queue.size >= MAX_JOBS) throw new Error('Receipt capacity reached: use the CLI forget command to release completed request ids')
+    if ([...queue.values()].some(job => job.status === 'running')) throw fault('RUNTIME_BUSY', 'CLI job still running')
+    if (queue.size >= MAX_JOBS) throw fault('RECEIPT_CAPACITY', 'Receipt capacity reached: use the CLI forget command to release completed request ids')
     const job = { id, request, status: 'running' }
     queue.set(id, job)
     Promise.resolve().then(() => execute(app, action, args)).then(
       result => { job.result = result; job.status = 'complete' },
-      error => { job.status = 'failed'; job.error = errorMessage(error) }
+      error => { job.status = 'failed'; job.error = errorMessage(error); job.failure = failureInfo(error, action === 'create' ? 'unknown' : 'not_applied') }
     )
     return JSON.stringify(job)
   },
   poll(app, id) {
     const job = jobs.get(app)?.get(id)
-    if (!job) throw new Error('Unknown CLI job')
+    if (!job) throw fault('REQUEST_NOT_FOUND', 'Unknown CLI job', 'unknown')
     return JSON.stringify(job)
   },
   forget(app, id) {
     const job = jobs.get(app)?.get(id)
-    if (job?.status === 'running') throw new Error('CLI job still running')
+    if (job?.status === 'running') throw fault('RUNTIME_BUSY', 'CLI job still running')
     return JSON.stringify({ forgotten: jobs.get(app)?.delete(id) ?? false })
   },
 }
