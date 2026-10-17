@@ -98,6 +98,13 @@ sys.exit(cli.main(['--vault', 'Vault', 'script', 'plan.md', '--revision', 'r', '
 
 
 class UnicodeTransportTest(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        patcher = patch("obsidian_tldraw_bridge.obsidian.tempfile.tempdir", directory.name)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def client(self):
         with patch("obsidian_tldraw_bridge.obsidian.find_cli", return_value=sys.executable):
             return Client("Vault")
@@ -108,19 +115,19 @@ class UnicodeTransportTest(unittest.TestCase):
                 "sys.stderr.buffer.write(bytes.fromhex(" + repr(stderr.hex()) + ")); "
                 "sys.exit(" + str(returncode) + ")")
         run = subprocess.run
-        return lambda argv, **kwargs: run([sys.executable, "-c", code], **kwargs)
+        return lambda argv, **kwargs: run([sys.executable, "-c", code], capture_output=True, **kwargs)
 
     def test_utf8_stdout_and_stderr_decode_with_real_pipes(self):
         value = {"path": "図解/日本語 🌿.md"}
         stdout = ("=> " + json.dumps(value, ensure_ascii=False) + "\n").encode("utf-8")
         stderr = "日本語の警告 🌿".encode("utf-8")
-        with patch("subprocess.run", side_effect=self.process(stdout, stderr)) as run:
+        with patch("obsidian_tldraw_bridge.obsidian.Client._run_cli", side_effect=self.process(stdout, stderr)) as run:
             self.assertEqual(self.client().evaluate("null"), value)
             self.assertNotIn("text", run.call_args.kwargs)
 
     def test_unicode_cli_failure_keeps_diagnostic_text(self):
         message = "接続失敗 🌿"
-        with patch("subprocess.run", side_effect=self.process(b"", message.encode("utf-8"), 1)):
+        with patch("obsidian_tldraw_bridge.obsidian.Client._run_cli", side_effect=self.process(b"", message.encode("utf-8"), 1)):
             with self.assertRaisesRegex(BridgeError, message):
                 self.client().evaluate("null")
 
@@ -132,7 +139,7 @@ class UnicodeTransportTest(unittest.TestCase):
                 def run(argv, **kwargs):
                     first = next(responses, None)
                     return first if first is not None else invalid(argv, **kwargs)
-                with patch("subprocess.run", side_effect=run):
+                with patch("obsidian_tldraw_bridge.obsidian.Client._run_cli", side_effect=run):
                     with self.assertRaises(BridgeError) as raised:
                         self.client().call("apply", {}, "unicode-edit")
                 error = raised.exception

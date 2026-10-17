@@ -22,6 +22,23 @@ outside the sandbox. Do not bypass restrictions or replay edits blindly; use req
 status/recovery for uncertain mutations. If escalation is unavailable, explain the
 restriction and ask the user to run the diagnostic command.
 
+## Evaluation files
+
+The local CLI sends evaluation code through a closed UTF-8 temporary file and a
+short argv bootstrap. Obsidian reads the file, attempts to remove it, and evaluates
+its contents even if that cleanup fails. The sender also retries cleanup after an
+acknowledged response. Files are removed when the CLI process cannot be started. Runtime requests, revisions and request IDs keep their normal meaning;
+the temporary filename is not part of request identity.
+
+If delivery is unacknowledged, including a timeout or empty output, an unread file may remain.
+Errors include `details.evaluationFiles` when tracked files remain, including all
+unacknowledged dispatch/poll files at the final request timeout. Consumed files are
+removed from that list. A delayed receiver
+can still consume it; use request status/recovery before abandoning that attempt.
+If the attempt is abandoned and no receiver can still execute it (for example after
+Obsidian has exited), its remaining evaluation file can be removed. Do not replay
+an evaluation file manually: it may contain an edit with a retained request ID.
+
 ## Observe before editing
 
 `observe <path>` reads the dedicated Editor's current page without changing the

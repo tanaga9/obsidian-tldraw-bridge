@@ -22,7 +22,7 @@ These checks do not require a running Obsidian instance. They cover:
 | --- | --- |
 | Agent operation API | Shared validation before connecting; named edit schemas; scoped, bounded observations and revision-pinned pagination; structured failures and non-executing receipt queries. |
 | Freehand drawing | Authored curves preserve geometry and pressure through point encoding; closed strokes accept fill and opacity in the same edit. Redraws reset omitted styles and preserve unrelated shapes. Invalid styles, open fills, and targets fail before edits. |
-| CLI transport | Code is passed as an argument rather than through a shell. Missing initial output can be recovered by polling. UTF-8 process responses, input files/stdin (with or without a UTF-8 BOM), and JSON stdout/stderr preserve Unicode independently of the locale. Invalid response encoding retains unknown outcome and request identity. |
+| CLI transport | CLI output is captured in temporary regular files with independent reader/writer positions; concurrent inherited writes preserve the response; completion and timeout do not wait for inherited descendant output handles. A short, shell-free argv bootstrap reads a closed UTF-8 evaluation file; code size and content do not expand argv. Receiver cleanup failure does not block evaluation; pre-launch failures discard unsent files and final timeout diagnostics list all tracked remaining files. Acknowledged returns also trigger sender cleanup, while uncertain delivery retains unread files. Missing initial output can be recovered by polling. UTF-8 process responses, input files/stdin (with or without a UTF-8 BOM), and JSON stdout/stderr preserve Unicode independently of the locale. Invalid response encoding retains unknown outcome and request identity. |
 | Result handling | Edits default to compact net change counts over document records; full output is available explicitly, and state remains inspectable. Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
 | Note creation | Plugin-generated Markdown, existing-path and traversal rejection, saved editable session, retained creation after initialization failure, and request replay without duplicate creation. |
 | Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending GUI/source/shared notifications are reconciled before reads and revision checks without waiting for animation frames. Edits superseded during persistence return SAVE_CONFLICT; previews reject queued GUI changes during export. |
@@ -34,6 +34,20 @@ These checks do not require a running Obsidian instance. They cover:
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
 
 If the plugin package is stale, regenerate it with `python3 scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
+
+## Evaluation transport integration check
+
+```sh
+python3 tests/live_transport.py --vault Documents
+```
+
+Pass `--obsidian <official-CLI-executable>` when explicit CLI selection is needed.
+Creates its own temporary note and verifies a large Unicode `apply` payload and
+script containing quotes, newlines and backslashes, saved records, recovery after
+lost dispatch output, retained-ID replay, changed-request rejection, and short CLI
+bootstrap arguments. Removes its temporary note, session and consumed evaluation
+files. This opt-in check requires a running Obsidian instance and supported tldraw;
+it is separate from the automated Node-based transport checks.
 
 ## Freehand integration check
 
