@@ -12,7 +12,15 @@ Codex → Skill → Bridge CLI → Official Obsidian CLI → Dedicated Editor
 
 ## Setup and usage
 
-Install the `obsidian-tldraw-bridge` plugin in Codex. It bundles the Skill and bridge code; no separate Python package installation or build is needed.
+In the Codex desktop app, open the plugin browser and install `obsidian-tldraw-bridge` from the **Obsidian tldraw Bridge** marketplace. The plugin bundles the Skill and bridge code; no manual clone, build, or Python package installation is needed.
+
+For first-time access, register the GitHub marketplace once, then return to the app to install:
+
+```sh
+codex plugin marketplace add tanaga9/obsidian-tldraw-bridge
+```
+
+See the [official marketplace guide](https://developers.openai.com/plugins/build/plugins#add-a-marketplace-from-the-cli).
 
 Prerequisites: macOS, Python 3.9.6+, running Obsidian Desktop with its official CLI enabled, and Obsidian tldraw plugin 1.31.0 or 1.32.0. Codex checks Python before running the bridge. Installation through the Codex plugin UI remains unverified; see [known limitations](docs/known-limitations.md).
 
