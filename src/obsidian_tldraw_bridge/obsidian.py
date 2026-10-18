@@ -169,7 +169,9 @@ class Client:
             # Decode explicitly so response encoding never depends on the locale.
             stdout = proc.stdout.decode("utf-8")
             stderr = proc.stderr.decode("utf-8")
-            values = [line[3:] for line in stdout.splitlines() if line.startswith("=> ")]
+            # Split LF/CRLF output without treating Unicode characters inside
+            # JSON strings (NEL, line separator, paragraph separator) as framing.
+            values = [line[3:] for line in stdout.split("\n") if line.startswith("=> ")]
             if values:
                 delivery = "acknowledged"
         except _CliLaunchError as exc:

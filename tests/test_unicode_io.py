@@ -125,6 +125,37 @@ class UnicodeTransportTest(unittest.TestCase):
             self.assertEqual(self.client().evaluate("null"), value)
             self.assertNotIn("text", run.call_args.kwargs)
 
+    def test_unicode_separators_in_json_are_not_response_line_endings(self):
+        for separator in ('\u0085', '\u2028', '\u2029'):
+            for ending in ('\n', '\r\n'):
+                with self.subTest(separator=ascii(separator), ending=repr(ending)):
+                    value = {'text': '前半' + separator + '後半 🌿'}
+                    stdout = ('CLI warning' + ending + '=> ' +
+                              json.dumps(value, ensure_ascii=False) + ending).encode('utf-8')
+                    with patch.object(Client, '_run_cli', side_effect=self.process(stdout)):
+                        self.assertEqual(self.client().evaluate('null'), value)
+
+    def test_unicode_separators_survive_dispatch_poll_and_status(self):
+        for separator in ('\u0085', '\u2028', '\u2029'):
+            with self.subTest(separator=ascii(separator)):
+                text = '前半' + separator + '後半'
+                result = {'text': text, 'revision': 'after-edit', 'persistence': {'saved': True}}
+                request = json.dumps(['apply', {'text': text}], ensure_ascii=False)
+                running = {'id': 'unicode-edit', 'status': 'running', 'request': request}
+                complete = {**running, 'status': 'complete', 'result': result}
+                outputs = iter(('=> ' + json.dumps(job, ensure_ascii=False) + '\n').encode('utf-8')
+                               for job in (running, complete, complete))
+
+                def run(argv, **kwargs):
+                    return self.process(next(outputs))(argv, **kwargs)
+
+                with patch.object(Client, '_run_cli', side_effect=run) as invoke:
+                    client = self.client()
+                    self.assertEqual(client.call('apply', {'text': text}, 'unicode-edit'), result)
+                    self.assertEqual(client.status('unicode-edit'),
+                                     {key: value for key, value in complete.items() if key != 'request'})
+                    self.assertEqual(invoke.call_count, 3)
+
     def test_unicode_cli_failure_keeps_diagnostic_text(self):
         message = "接続失敗 🌿"
         with patch("obsidian_tldraw_bridge.obsidian.Client._run_cli", side_effect=self.process(b"", message.encode("utf-8"), 1)):

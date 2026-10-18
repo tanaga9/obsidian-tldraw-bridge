@@ -42,6 +42,10 @@ These checks do not require a running Obsidian instance. They cover:
 | Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. Missing or non-function runtime exports are rejected before closing sessions; corrected code can load without restarting. |
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders preserve UTF-8 source bytes, generate the manifest with LF line endings, and exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
 
+CLI response tests cover LF and CRLF framing while preserving U+0085, U+2028,
+and U+2029 inside JSON strings, including dispatch, result polling, and retained
+request status.
+
 If the plugin package is stale, regenerate it with `python3 scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
 
 ## Live test setup
