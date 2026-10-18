@@ -180,6 +180,20 @@ request receipt; replay unchanged bytes and arguments under the same request ID.
 Revision and current page are checked again after asynchronous decoding, so
 GUI edits or a page switch cannot redirect a pending insertion.
 
+## Image preview
+
+`preview <path> --output <absolute-image-path>` exports WebP by default, without an
+intermediate PNG or external converter. Use `--format png` for lossless PNG output. `quality` is a finite number from 0 to 1, defaults to 0.9
+for WebP, and is rejected for PNG. The output filename does not select the format.
+The Python API accepts the same `format` and `quality` fields.
+
+Existing `ids`, `part`, `bounds`, `scale` and `revision` options apply to both
+formats. Preview includes a light background. The result reports `path`,
+`format`, logical `width`/`height`, and the captured `revision`; the SDK's default
+raster pixel ratio is 2, so actual image pixel dimensions are twice the reported
+logical dimensions. Rendering failures, encoder fallback to a different format, and
+revision conflicts leave existing output files unchanged.
+
 ## Advanced SDK access
 
 `batch` exposes these SDK Editor methods with positional `args`: createShapes,

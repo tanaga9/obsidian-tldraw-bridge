@@ -43,7 +43,7 @@ class Bridge:
             "image-info": {"file", "maxDimension", "format", "quality", "maxBytes"},
             "insert-image": {"path", "revision", "file", "x", "y", "width", "height", "parentId", "pageId", "shapeId", "full",
                              "maxDimension", "format", "quality", "maxBytes"},
-            "preview": {"path", "revision", "output", "ids", "bounds", "part", "scale"},
+            "preview": {"path", "revision", "output", "ids", "bounds", "part", "scale", "format", "quality"},
         }
         if not isinstance(action, str) or action not in fields:
             invalid("Unknown action")
@@ -110,6 +110,12 @@ class Bridge:
             if offset and (not args.get("revision") or not args.get("pageId")):
                 invalid("Observe pagination requires revision and pageId")
         if action == "preview":
+            if args.get('format', 'webp') not in ('png', 'webp'):
+                invalid("Preview format must be png or webp")
+            if 'quality' in args and (isinstance(args['quality'], bool) or not isinstance(args['quality'], (int, float))
+                                     or not 0 <= args['quality'] <= 1 or not math.isfinite(args['quality'])
+                                     or args.get('format', 'webp') != 'webp'):
+                invalid("Preview quality must be between 0 and 1 and is only supported for WebP")
             scale = args.get("scale", 1)
             if isinstance(scale, bool) or not isinstance(scale, (int, float)) or not 0 < scale <= 4:
                 invalid("Preview scale must be greater than 0 and at most 4")

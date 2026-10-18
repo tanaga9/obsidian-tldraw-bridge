@@ -12,6 +12,23 @@ from obsidian_tldraw_bridge.cli import main
 
 
 class SharedApiTest(unittest.TestCase):
+    def test_preview_format_and_quality_validation(self):
+        factory = Mock()
+        bridge = Bridge('V', client_factory=factory)
+        for extra in ({'format': 'jpeg'}, {'format': None},
+                      {'format': 'png', 'quality': .8},
+                      *[{'format': 'webp', 'quality': q} for q in (True, None, '0.9', float('nan'), float('inf'), -1, 2, 10**1000)]):
+            with self.subTest(extra=extra), self.assertRaises(BridgeError) as failure:
+                bridge.call('preview', {'path': 'a.md', 'output': str(Path.cwd() / 'test.webp'), **extra})
+            self.assertEqual(failure.exception.code, 'INVALID_INPUT')
+        factory.assert_not_called()
+        for quality in (0, .9, 1):
+            bridge.call('preview', {'path': 'a.md', 'output': str(Path.cwd() / 'test.webp'),
+                                    'format': 'webp', 'quality': quality})
+            self.assertEqual(factory.return_value.call.call_args.args[1]['quality'], quality)
+        bridge.call('preview', {'path': 'a.md', 'output': str(Path.cwd() / 'default.webp'), 'quality': .7})
+        self.assertEqual(factory.return_value.call.call_args.args[1]['quality'], .7)
+
     def test_validation_is_available_without_cli_or_transport(self):
         factory = Mock()
         bridge = Bridge('V', client_factory=factory)

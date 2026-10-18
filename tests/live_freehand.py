@@ -81,12 +81,12 @@ try:
         assert 'non-draw shape' in str(error)
     assert state()['revision'] == current['revision']
     output = str(Path(a.output).resolve())
-    preview = c.call('preview', {**base, 'part': part, 'scale': 3, 'output': output})
+    preview = c.call('preview', {**base, 'part': part, 'scale': 3, 'format': 'png', 'output': output})
     assert Path(output).read_bytes().startswith(b'\x89PNG')
     assert preview['revision'] == current['revision']
     context_output = str(Path(output).with_name(Path(output).stem + '-context.png'))
     context = c.call('preview', {**base, 'bounds': {'x': 2020, 'y': 2020, 'w': 160, 'h': 100},
-                                 'scale': 2, 'output': context_output})
+                                 'scale': 2, 'format': 'png', 'output': context_output})
     assert Path(context_output).read_bytes().startswith(b'\x89PNG')
     assert (context['width'], context['height']) == (320, 200)
     assert state()['revision'] == current['revision']

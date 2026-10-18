@@ -44,6 +44,10 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
   editing documents. Insertion adds this report as `image` in its result. See
   [image insertion](cli.md#image-insertion) for sizing, storage, and result fields.
 - `status(id)` reads a retained receipt; `forget(id)` releases it and its deduplication protection.
+- `preview` accepts `format` (`webp` by default, or explicit `png`) and optional WebP
+  `quality` (0–1, default 0.9), alongside its selection, scale, revision and output
+  options. Format is explicit, not inferred from the output filename. The result
+  includes `format`, `path`, logical `width`/`height`, and the captured `revision`.
 - Failures raise `BridgeError`; `as_dict()` exposes the same fields as CLI `error` objects.
 
 Paths, revisions, image file types/layout, observation/preview options, and freehand input are validated

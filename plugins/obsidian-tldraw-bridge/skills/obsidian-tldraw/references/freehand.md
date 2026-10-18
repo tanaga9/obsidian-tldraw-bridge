@@ -28,9 +28,9 @@ relative output paths below resolve against the process working directory.
 
 ```sh
 python3 "<skill-directory>/scripts/bridge.py" --vault <vault> --request-id stroke-pass-1 freehand study.md --revision <revision> --input strokes.json
-python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --part detail --scale 3 --output detail.png
-python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --ids shape:curve-a --scale 4 --output stroke.png
-python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --bounds 80 100 180 160 --scale 3 --output context.png
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --part detail --scale 3 --output detail.webp
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --ids shape:curve-a --scale 4 --output stroke.webp
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> preview study.md --bounds 80 100 180 160 --scale 3 --output context.webp
 ```
 
 Start with the overall structure, inspect the whole drawing, then refine one part at a time. Keep stable IDs across redraws and tag related strokes with a part. Inspect the relevant detail after changing it and the whole drawing after changing its layout. Do not automatically replace a request for directly authored strokes with image generation or contour extraction.

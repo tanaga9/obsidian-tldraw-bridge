@@ -74,6 +74,8 @@ def parser():
     region.add_argument("--bounds", nargs=4, type=float, metavar=("X", "Y", "W", "H"),
                         help="Crop the full current page to this page-coordinate rectangle, including surrounding shapes")
     preview.add_argument("--scale", type=float, default=1, help="Export scale, greater than 0 and at most 4")
+    preview.add_argument("--format", choices=('png', 'webp'), help="Output format (default: webp; not inferred from the filename)")
+    preview.add_argument("--quality", type=float, help="WebP encoding quality 0–1 (default 0.9); not supported with --format png")
     return p
 
 
@@ -147,6 +149,10 @@ def main(argv=None):
                 args["pageId"] = options.page_id
         if options.command == "preview":
             args["output"] = options.output
+            if options.format is not None:
+                args['format'] = options.format
+            if options.quality is not None:
+                args['quality'] = options.quality
             if options.scale != 1:
                 args["scale"] = options.scale
             if options.part is not None:

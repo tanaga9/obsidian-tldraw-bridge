@@ -114,7 +114,26 @@ return {webp:canvas.toDataURL('image/webp'),jpeg:canvas.toDataURL('image/jpeg'),
         transformed_asset = next(asset for asset in assets if asset['id'] == processed['assetId'])
         assert transformed_asset['props']['mimeType'] == 'image/webp'
         assert (transformed_asset['props']['w'], transformed_asset['props']['h']) == (80, 48)
-        c.call('preview', {'path': path, 'output': str(Path(options.output).resolve())})
+        png_output = Path(options.output).resolve()
+        png_preview = bridge.call('preview', {'path': path, 'revision': reopened['revision'], 'format': 'png', 'output': str(png_output)})
+        assert png_preview['format'] == 'png' and png_output.read_bytes().startswith(b'\x89PNG\r\n\x1a\n')
+        webp_output = png_output.with_suffix('.webp')
+        webp_preview = bridge.call('preview', {'path': path, 'revision': reopened['revision'], 'ids': ['shape:images-frame'],
+                                             'output': str(webp_output)})
+        raw = webp_output.read_bytes()
+        assert webp_preview['format'] == 'webp' and raw[:4] == b'RIFF' and raw[8:12] == b'WEBP'
+        webp_info = bridge.call('image-info', {'file': str(webp_output)})
+        assert webp_info['source']['mimeType'] == 'image/webp'
+        assert webp_info['source']['width'] > 0 and webp_info['source']['height'] > 0
+        cli_output = Path(directory) / 'cli-preview.webp'
+        result = subprocess.run([sys.executable, str(ROOT / 'bridge.py'), '--vault', options.vault,
+                                 '--timeout', '60', 'preview', path, '--quality', '.7',
+                                 '--revision', reopened['revision'], '--output', str(cli_output)],
+                                capture_output=True, encoding='utf-8', check=True)
+        assert json.loads(result.stdout)['format'] == 'webp'
+        assert cli_output.read_bytes()[:4] == b'RIFF' and cli_output.read_bytes()[8:12] == b'WEBP'
+        assert c.call('state', {'path': path})['revision'] == reopened['revision']
+        print('Explicit PNG, default API WebP, and CLI WebP with quality override decoded; document unchanged; WebP: ' + str(webp_output), flush=True)
         print('Size limit/corrupt input rejected; original and processed images retained; preview: ' + options.output, flush=True)
     finally:
         if created:

@@ -90,7 +90,7 @@ try:
     finally:
         current=c.call("state",args)
         c.call("script",args|{"revision":current["revision"],"code":f'editor.updateDocumentSettings({{gridSize:{document["gridSize"]}}});'})
-    preview=c.call("preview",args|{"output":str(Path(a.output).resolve())})
+    preview=c.call("preview",args|{"format":"png","output":str(Path(a.output).resolve())})
     assert Path(preview["path"]).read_bytes().startswith(b"\x89PNG")
     print(json.dumps({"passed":["CRUD/persistence","idempotent-retry","revision-conflict","undo","redo","script-rollback","SDK-script","document-rollback","arbitrary-exception-shared-store-and-persistence","document-only-save","PNG"],"preview":preview},indent=2))
 finally:

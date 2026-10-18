@@ -34,7 +34,7 @@ accepted). Using a file avoids shell-specific multiline quoting:
 
 ```sh
 python3 bridge.py --vault Documents --request-id edit-example apply 'Drawings/example.md' --revision '<revision-from-observe>' --page-id '<currentPageId>' --input operations.json
-python3 bridge.py --vault Documents preview 'Drawings/example.md' --output example.png
+python3 bridge.py --vault Documents preview 'Drawings/example.md' --output example.webp
 python3 bridge.py --vault Documents close 'Drawings/example.md'
 ```
 
@@ -81,7 +81,7 @@ SDK access, result fields, errors, persistence, and request-ID recovery.
 | Freehand drawing | `freehand <path> --revision <revision> --input <file>`; see [drawing input](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) |
 | Inspect an image | `image-info --file <image> [--max-dimension N --format webp --quality Q]` |
 | Insert PNG/WebP/JPEG | `insert-image <path> --revision <revision> --file <image> [--x X --y Y --width W --height H]` |
-| PNG preview | `preview <path> --output <png> [--part <part> \| --ids <id> ...] [--scale <number>]`; scale defaults to 1, maximum 4 |
+| PNG/WebP preview | `preview <path> --output <image> [--format png\|webp] [--quality <0–1>] [--part <part> \| --ids <id> ...] [--scale <number>]`; WebP and scale 1 are defaults, maximum scale 4 |
 | Check persistence | `saved <path>` |
 | Inspect/release a receipt | `status <request-id>` / `forget <request-id>` |
 
@@ -197,3 +197,15 @@ dismiss before reopening. Other documents remain usable. Changes to `loader.cjs`
 itself require restarting Obsidian.
 
 Optional `python3 -m pip install .` exposes the `obsidian-tldraw` command.
+
+## WebP preview
+
+```sh
+python3 bridge.py --vault Documents preview 'Drawings/example.md' --format webp --quality 0.9 --output example.webp
+```
+
+WebP is the default, at quality 0.9. Use `--format png` for lossless PNG output.
+Format is not inferred from the filename. `--quality` accepts 0–1 for WebP
+(including when `--format` is omitted) and is rejected with `--format png`.
+Selection, bounds, scale, and revision checks work with both formats. The result
+includes `format`; output remains unchanged on render or revision failures.

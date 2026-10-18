@@ -37,7 +37,7 @@ These checks do not require a running Obsidian instance. They cover:
 | Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending GUI/source/shared notifications are reconciled before reads and revision checks without waiting for animation frames. Edits superseded during persistence return SAVE_CONFLICT; previews reject queued GUI changes during export. |
 | Synchronous rollback | Failed edits restore records, including history-ignored changes, without leaving forward changes queued for other Editors. |
 | Exceptions | Arbitrary thrown values become failed jobs with readable errors; subsequent requests remain usable. |
-| Preview | Part and ID selections export only current-page shapes at the requested scale. Bounds crop the whole page with surrounding shapes. Invalid selections, bounds, and revision conflicts leave output files unchanged. |
+| Preview | WebP defaults, explicit PNG export, format/quality validation, and encoder fallback checks. Part and ID selections export only current-page shapes at the requested scale. Bounds crop the whole page with surrounding shapes. Invalid selections, bounds, and revision conflicts leave output files unchanged. |
 | Receipt capacity | The limit rejects new work while preserving retained results and their deduplication protection. |
 | Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. Missing or non-function runtime exports are rejected before closing sessions; corrected code can load without restarting. |
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders preserve UTF-8 source bytes, generate the manifest with LF line endings, and exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
@@ -138,8 +138,9 @@ python3 tests/live_images.py --vault Documents
 Creates real PNG/WebP/JPEG fixtures with the installed browser's canvas encoders,
 then inserts them through the CLI and shared Python API. Verifies persistence,
 cross-adapter request replay, read-only inspection, opt-in resizing/conversion,
-source preservation, byte-limit/corrupt-input rejection, reopening, and a PNG
-preview. The generated fixture note and session are removed. The preview remains
+source preservation, byte-limit/corrupt-input rejection, reopening, explicit PNG
+preview, default API WebP export, and CLI WebP with a quality override. Real WebP previews are decoded with the
+browser to verify output dimensions; previews must leave the document unchanged. The generated fixture note and session are removed. The preview remains
 in the OS temporary directory (or the supplied `--output` path) for visual QA.
 No third-party Python imaging library is needed.
 

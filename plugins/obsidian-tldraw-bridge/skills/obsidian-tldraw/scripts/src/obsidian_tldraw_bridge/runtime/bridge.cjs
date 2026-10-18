@@ -136,6 +136,7 @@ function capabilities(app) {
     actions: ['doctor','capabilities','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','close'],
     imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
       optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
+    preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9 },
     operations: operationFields, coordinates: { observeBounds: 'page', shapePosition: 'parent-local' }, observation: 'dedicated-editor-current-page',
     limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4 },
     guarantees: { revisionRequiredForEdits: true, persistenceChecked: true, synchronousStoreRollback: true,
@@ -627,6 +628,12 @@ async function execute(app, action, args) {
     return close(app, args.path)
   }
   if (action === 'preview') {
+    const format = args.format === undefined ? 'webp' : args.format
+    if (!['png', 'webp'].includes(format)) throw fault('INVALID_INPUT', 'Preview format must be png or webp')
+    if (args.quality !== undefined && (typeof args.quality !== 'number' || !Number.isFinite(args.quality)
+      || args.quality < 0 || args.quality > 1 || format !== 'webp')) {
+      throw fault('INVALID_INPUT', 'Preview quality must be between 0 and 1 and is only supported for WebP')
+    }
     const session = sessionFor(app, args.path)
     flushPendingChanges(app, session)
     if (args.revision) assertRevision(app, session,args.revision)
@@ -654,14 +661,19 @@ async function execute(app, action, args) {
       bounds = Object.assign(sample.clone(), { x: b.x, y: b.y, w: b.w, h: b.h })
     }
     const { blob, width, height } = await editor.toImage(ids, {
-      format: 'png', scale, background: true,
+      format, scale, background: true,
+      ...(format === 'webp' ? { quality: args.quality ?? 0.9 } : {}),
       ...(bounds ? { bounds, padding: 0 } : {}),
     })
     const bytes = Buffer.from(await blob.arrayBuffer())
+    if (format === 'webp' && (blob.type !== 'image/webp' || bytes.toString('ascii', 0, 4) !== 'RIFF'
+      || bytes.toString('ascii', 8, 12) !== 'WEBP')) {
+      throw new Error('WebP export failed: the image encoder did not return WebP data')
+    }
     flushPendingChanges(app, session)
     if (revision(editor) !== capturedRevision) throw fault('REVISION_CONFLICT', 'Revision conflict during preview: read state and export again')
     require('node:fs').writeFileSync(args.output, bytes)
-    return { path: args.output, width, height, revision: capturedRevision }
+    return { path: args.output, width, height, format, revision: capturedRevision }
   }
   throw new Error('Unknown action')
 }

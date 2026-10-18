@@ -209,6 +209,35 @@ class PreviewCommandTest(unittest.TestCase):
                                            '--output', self.detail]), 1)
                 client.assert_not_called()
 
+    def test_webp_format_and_quality_are_forwarded(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client:
+            client.return_value.call.return_value = {}
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--format', 'webp',
+                                       '--quality', '0', '--ids', 'shape:a', '--output', self.detail]), 0)
+            args = client.return_value.call.call_args.args[1]
+            self.assertEqual(args['format'], 'webp')
+            self.assertEqual(args['quality'], 0)
+            self.assertEqual(args['ids'], ['shape:a'])
+
+    def test_default_format_accepts_quality_without_explicit_format(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client:
+            client.return_value.call.return_value = {}
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--quality', '0.7',
+                                       '--output', self.detail]), 0)
+            args = client.return_value.call.call_args.args[1]
+            self.assertEqual(args['quality'], 0.7)
+            self.assertNotIn('format', args)
+
+    def test_invalid_quality_fails_before_connecting(self):
+        for flags in (['--format', 'png', '--quality', '0.9'],
+                      *[['--format', 'webp', '--quality', value] for value in ('nan', 'inf', '-1', '1.1')]):
+            with self.subTest(flags=flags), patch('obsidian_tldraw_bridge.cli.Client') as client:
+                with contextlib.redirect_stderr(io.StringIO()):
+                    self.assertEqual(main(['--vault', 'V', 'preview', 'plan.md', '--output', self.detail, *flags]), 1)
+                client.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

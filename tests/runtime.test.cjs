@@ -100,18 +100,63 @@ test('preview fails without replacing an output file if export changes revision'
   fs.writeFileSync(output,'existing preview')
   h.editor.toImage=async()=>({blob:{arrayBuffer:async()=>{h.editor.updateDocumentSettings({name:'during export'});return Buffer.from('old image')}},width:1,height:1})
   try {
-    await assert.rejects(h.invoke('preview',{path:'a.md',revision:h.access.revision(h.editor),output}),/Revision conflict during preview/)
+    await assert.rejects(h.invoke('preview',{path:'a.md',format:'png',revision:h.access.revision(h.editor),output}),/Revision conflict during preview/)
     assert.equal(fs.readFileSync(output,'utf8'),'existing preview')
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
 
 test('unchanged preview writes bytes tagged with the captured revision',async()=>{
   const h=setup(), dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-preview-')),output=path.join(dir,'out.png')
-  h.editor.toImage=async()=>({blob:{arrayBuffer:async()=>Buffer.from('image')},width:1,height:1})
+  h.editor.toImage=async(ids,options)=>{
+    assert.equal(options.format,'png')
+    assert.equal(options.quality,undefined)
+    return {blob:{arrayBuffer:async()=>Buffer.from('image')},width:1,height:1}
+  }
   try {
     const before=h.access.revision(h.editor)
-    assert.equal((await h.invoke('preview',{path:'a.md',output})).revision,before)
+    const result=await h.invoke('preview',{path:'a.md',format:'png',output})
+    assert.equal(result.revision,before)
+    assert.equal(result.format,'png')
     assert.equal(fs.readFileSync(output,'utf8'),'image')
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('WebP default and explicit export pass quality and selection to SDK',async()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-webp-')),output=path.join(dir,'out.webp')
+  const bytes=Buffer.from('RIFF1234WEBPencoded image')
+  try {
+    for(const format of [undefined,'webp'])for(const quality of [undefined,0,.7,1]){
+      const h=setup(),before=h.access.revision(h.editor)
+      assert.equal((await h.invoke('capabilities',{},'caps')).preview.defaultFormat,'webp')
+      h.editor.toImage=async(ids,options)=>{
+        assert.deepEqual(Array.from(ids),['shape:a'])
+        assert.equal(options.format,'webp')
+        assert.equal(options.quality,quality??.9)
+        assert.equal(options.scale,2)
+        return {blob:{type:'image/webp',arrayBuffer:async()=>bytes},width:200,height:100}
+      }
+      const result=await h.invoke('preview',{path:'a.md',ids:['shape:a'],scale:2,...(format===undefined?{}:{format}),...(quality===undefined?{}:{quality}),output})
+      assert.equal(result.format,'webp')
+      assert.equal(result.revision,before)
+      assert.equal(h.access.revision(h.editor),before)
+      assert.deepEqual(fs.readFileSync(output),bytes)
+    }
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('WebP encoder fallback, corrupt bytes and revision conflicts preserve the output',async()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-webp-fail-')),output=path.join(dir,'out.webp')
+  fs.writeFileSync(output,'original')
+  try {
+    for(const kind of ['mime','bytes','revision']){
+      const h=setup()
+      h.editor.toImage=async()=>({blob:{type:kind==='mime'?'image/png':'image/webp',arrayBuffer:async()=>{
+        if(kind==='revision')h.editor.updateDocumentSettings({name:'Changed'})
+        return Buffer.from(kind==='bytes'?'invalid image':'RIFF1234WEBPencoded image')
+      }},width:1,height:1})
+      await assert.rejects(h.invoke('preview',{path:'a.md',format:'webp',output}),kind==='revision'?/Revision conflict/:/WebP export failed/)
+      assert.equal(fs.readFileSync(output,'utf8'),'original')
+    }
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
 
@@ -125,7 +170,7 @@ test('part preview exports only tagged current-page strokes at the requested sca
     return {blob:{arrayBuffer:async()=>Buffer.from('detail')},width:300,height:300}
   }
   try {
-    await h.invoke('preview',{path:'a.md',part:'detail',scale:3,output})
+    await h.invoke('preview',{path:'a.md',format:'png',part:'detail',scale:3,output})
     assert.deepEqual(received,{ids:['shape:a'],scale:3})
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
@@ -137,10 +182,12 @@ test('bad preview selections and scales leave existing output untouched',async()
     for(const args of [{ids:[]},{ids:['shape:missing']},{part:'missing'},{ids:['shape:a'],part:'detail'},
       {bounds:{x:0,y:0,w:0,h:20}},{bounds:{x:NaN,y:0,w:20,h:20}},
       {bounds:{x:0,y:0,w:20,h:20},part:'detail'},{bounds:null},
-      {scale:0},{scale:5},{scale:NaN}]){
+      {scale:0},{scale:5},{scale:NaN},{format:'jpeg'},{format:null},
+      {quality:NaN},{format:'png',quality:.8},{format:'webp',quality:NaN},
+      {format:'webp',quality:true},{format:'webp',quality:-1},{format:'webp',quality:2}]){
       const h=setup()
       h.editor.toImage=async()=>{throw new Error('Unexpected render')}
-      await assert.rejects(h.invoke('preview',{path:'a.md',output,...args}),error=>!error.message.includes('Unexpected render'))
+      await assert.rejects(h.invoke('preview',{path:'a.md',format:'png',output,...args}),error=>!error.message.includes('Unexpected render'))
       assert.equal(fs.readFileSync(output,'utf8'),'original')
     }
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
@@ -159,7 +206,7 @@ test('bounds preview includes surrounding shapes and crops without changing cach
   try {
     const before=h.access.revision(h.editor)
     const bounds={x:100,y:120,w:200,h:150}
-    const result=await h.invoke('preview',{path:'a.md',bounds,output})
+    const result=await h.invoke('preview',{path:'a.md',format:'png',bounds,output})
     assert.deepEqual(received.ids,['shape:a','shape:b'])
     for(const key of ['x','y','w','h'])assert.equal(received.bounds[key],bounds[key])
     assert.equal(received.padding,0)
@@ -553,7 +600,7 @@ test('batch checks every requested SDK method before applying any edits',()=>{
 
 test('preview reports a missing export API without changing records',async()=>{
   const h=setup(), before=h.access.revision(h.editor)
-  await assert.rejects(h.invoke('preview',{path:'a.md',output:'unused.png'}),/editor.toImage/)
+  await assert.rejects(h.invoke('preview',{path:'a.md',format:'png',output:'unused.png'}),/editor.toImage/)
   assert.equal(h.access.revision(h.editor),before)
 })
 
@@ -904,7 +951,7 @@ test('preview detects GUI notifications queued during asynchronous export',async
     return {blob:{arrayBuffer:async()=>Buffer.from('stale')},width:1,height:1}
   }
   try {
-    await assert.rejects(h.invoke('preview',{path:'a.md',output},'pending-preview'),/Revision conflict/)
+    await assert.rejects(h.invoke('preview',{path:'a.md',format:'png',output},'pending-preview'),/Revision conflict/)
     assert.equal(fs.readFileSync(output,'utf8'),'original')
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })

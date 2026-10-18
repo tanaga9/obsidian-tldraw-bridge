@@ -34,15 +34,18 @@ The plugin display name is **Obsidian Tldraw Bridge**, defined in `scripts/build
 The README uses [architecture.webp](diagrams/architecture.webp), rendered from the
 editable Obsidian tldraw note [architecture.md](diagrams/architecture.md). Open the
 note in Obsidian with the tldraw plugin, edit the diagram, and render the named
-`README architecture` frame as PNG with a light background. Use the bridge's
-`preview` with the frame ID to export a temporary PNG, then convert it to WebP
-at 1920 pixels wide with quality 90 and sharp YUV conversion:
+`README architecture` frame directly to WebP with a light background:
 
 ```sh
-cwebp -resize 1920 0 -q 90 -sharp_yuv /tmp/architecture.png -o docs/diagrams/architecture.webp
+python3 bridge.py --vault obsidian-tldraw-bridge open docs/diagrams/architecture.md
+python3 bridge.py --vault obsidian-tldraw-bridge preview docs/diagrams/architecture.md --ids shape:readme-architecture --format webp --quality 0.9 --scale 0.6666666666666666 --output docs/diagrams/architecture.webp
+python3 bridge.py --vault obsidian-tldraw-bridge close docs/diagrams/architecture.md
 ```
 
-Commit the note and WebP together; keep intermediate PNGs outside the repository.
+The SDK raster pixel ratio is 2. For this 1440-pixel-wide frame, scale 2/3
+produces a 1920-pixel-wide WebP. Substitute the registered vault containing your
+checkout. No intermediate PNG or external image converter is required.
+Commit the note and WebP together.
 Verify the rendered image for clipping and readable labels at README width.
 The WebP is a flattened preview; the note remains the editable source.
 
