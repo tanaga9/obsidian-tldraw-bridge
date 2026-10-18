@@ -29,6 +29,15 @@ The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/
 
 The plugin display name is **Obsidian Tldraw Bridge**, defined in `scripts/build_plugin.py` under `extensions.com.openai.interface.displayName`. The stable plugin identifier and package directory remain `obsidian-tldraw-bridge`. The marketplace title is set separately in `.agents/plugins/marketplace.json`.
 
+## README architecture diagram
+
+The README uses [architecture.svg](diagrams/architecture.svg), exported from the
+editable Obsidian tldraw note [architecture.md](diagrams/architecture.md). Open the
+note in Obsidian with the tldraw plugin, edit the diagram, and export the named
+`README architecture` frame as SVG with a light background. Replace the SVG and
+commit both files together. Verify the exported image for clipping and readable
+labels at README width.
+
 ## Maintaining diagramming guidance
 
 Keep diagramming guidance inside the canonical Skill's [references](../integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md) so both builds remain self-contained.
