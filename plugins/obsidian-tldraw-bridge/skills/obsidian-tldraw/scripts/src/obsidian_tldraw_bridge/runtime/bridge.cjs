@@ -97,10 +97,41 @@ function failureInfo(error, fallback = 'not_applied') {
       ...(error?.details ? { details: error.details } : {}) }
   } catch (_) { return { code: 'OPERATION_FAILED', message: errorMessage(error), outcome: 'unknown' } }
 }
+const testedPluginVersions = ['1.31.0', '1.32.0']
+const pluginFunctions = ['getFontOverrides', 'tlDataDocumentStoreManager.register',
+  'tlDataDocumentStoreManager.storesManager.storeGroupMap.get']
+function missingFunctions(object, paths, prefix) {
+  return paths.filter(path => typeof path.split('.').reduce((value, key) => value?.[key], object) !== 'function')
+    .map(path => `${prefix}.${path}`)
+}
+function requireFunctions(object, paths, prefix) {
+  const missingCapabilities = missingFunctions(object, paths, prefix)
+  if (missingCapabilities.length) throw fault('TLDRAW_UNSUPPORTED',
+    `Required tldraw APIs are unavailable: ${missingCapabilities.join(', ')}`, 'not_applied', { missingCapabilities })
+}
+function pluginSupport(plugin) {
+  const pluginVersion = plugin?.manifest?.version ?? null
+  const missingCapabilities = missingFunctions(plugin, pluginFunctions, 'plugin')
+  return { pluginVersion, supported: !!plugin && missingCapabilities.length === 0,
+    testedPluginVersions, versionTested: testedPluginVersions.includes(pluginVersion), missingCapabilities }
+}
+function requirePlugin(app) {
+  const plugin = app.plugins.getPlugin('tldraw')
+  if (!plugin) throw fault('TLDRAW_UNAVAILABLE', 'Install and enable the tldraw community plugin')
+  requireFunctions(plugin, pluginFunctions, 'plugin')
+  return plugin
+}
+function requireEditor(editor) {
+  requireFunctions(editor, ['getCurrentPageId', 'dispose',
+    'store.allRecords', 'store.listen', 'store.scopedTypes.document.has'], 'editor')
+}
+function requireEditing(editor) {
+  requireFunctions(editor, ['run', 'markHistoryStoppingPoint', 'bailToMark',
+    'store.getStoreSnapshot', 'store.applyDiff'], 'editor')
+}
 function capabilities(app) {
   const plugin = app.plugins.getPlugin('tldraw')
-  return { apiVersion: 1, pluginVersion: plugin?.manifest.version ?? null,
-    supported: ['1.31.0','1.32.0'].includes(plugin?.manifest.version),
+  return { apiVersion: 1, ...pluginSupport(plugin),
     actions: ['doctor','capabilities','create','open','observe','state','apply','batch','script','saved','preview','close'],
     operations: operationFields, coordinates: { observeBounds: 'page', shapePosition: 'parent-local' }, observation: 'dedicated-editor-current-page',
     limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4 },
@@ -210,6 +241,7 @@ async function acquireSeed(app, plugin, file) {
   const previousLeaf = app.workspace.activeLeaf
   const candidate = plugin.currTldrawEditor
   if (candidate && !candidate.isDisposed) return { seed: candidate, bootstrap: 'live-existing-editor' }
+  requireFunctions(plugin, ['openTldrFile'], 'plugin')
   await plugin.openTldrFile(file, 'new-tab', 'tldraw-view')
   const deadline = Date.now() + 8000
   while (Date.now() < deadline) {
@@ -228,8 +260,8 @@ async function create(app, path) {
     || path.split('/').some(part => !part || part === '.' || part === '..') || path.split('/').at(-1) === '.md') {
     throw new Error('Use a vault-relative Markdown path without traversal')
   }
-  const plugin = app.plugins.getPlugin('tldraw')
-  if (!['1.31.0', '1.32.0'].includes(plugin?.manifest.version)) throw new Error('Unsupported tldraw plugin version')
+  const plugin = requirePlugin(app)
+  requireFunctions(plugin, ['createTldrFile', 'openTldrFile'], 'plugin')
   if (app.vault.getAbstractFileByPath(path)) throw new Error(`File or folder already exists: ${path}`)
   if (sessionsFor(app).has(path)) throw new Error(`Close the existing session before creating: ${path}`)
   const parts = path.split('/')
@@ -248,23 +280,26 @@ async function create(app, path) {
 
 async function open(app, path, currentPageId) {
   if (sessionsFor(app).has(path)) return state(app, path)
-  const plugin = app.plugins.getPlugin('tldraw')
-  if (!['1.31.0', '1.32.0'].includes(plugin?.manifest.version)) throw new Error('Unsupported tldraw plugin version')
+  const plugin = requirePlugin(app)
   const file = app.vault.getAbstractFileByPath(path)
   if (!file || file.extension !== 'md') throw new Error('Markdown document required')
   const text = await app.vault.read(file)
   parseMarkdown(text)
   const { seed, bootstrap } = await acquireSeed(app, plugin, file)
-  const session = { path, seed, file, bootstrap, editor: null }
-  session.registration = plugin.tlDataDocumentStoreManager.register(
-    file, () => text, data => { session.serialized = data }, true
-  )
-  session.container = seed.getContainer().ownerDocument.createElement('div')
+  requireFunctions(seed, ['getContainer'], 'editor')
+  const ownerDocument = seed.getContainer()?.ownerDocument
+  requireFunctions(ownerDocument, ['createElement', 'body.appendChild'], 'editor.container.ownerDocument')
+  const session = { path, seed, file, bootstrap, editor: null, registration: null }
+  session.container = ownerDocument.createElement('div')
   session.container.className = 'tl-container codex-cli-session-probe'
   session.container.style.cssText = 'position:fixed;left:-10000px;top:0;width:800px;height:600px;pointer-events:none;'
   session.container.ownerDocument.body.appendChild(session.container)
   sessionsFor(app).set(path, session)
   try {
+    session.registration = plugin.tlDataDocumentStoreManager.register(
+      file, () => text, data => { session.serialized = data }, true
+    )
+    requireFunctions(session.registration, ['syncToMain', 'unregister'], 'registration')
     session.editor = new seed.constructor({
       store: session.registration.documentStore.store,
       shapeUtils: Object.values(seed.shapeUtils).filter(u => u && u.constructor.type !== 'group').map(u => u.constructor),
@@ -277,13 +312,25 @@ async function open(app, path, currentPageId) {
       getContainer: () => session.container,
       fontAssetUrls: plugin.getFontOverrides(),
     })
+    requireEditor(session.editor)
     if (currentPageId) {
+      requireFunctions(session.editor, ['getPage', 'setCurrentPage'], 'editor')
       if (!session.editor.getPage(currentPageId)) throw new Error(`Previous page no longer exists: ${currentPageId}`)
       session.editor.setCurrentPage(currentPageId)
     }
     return state(app, path)
   } catch (error) {
-    close(app, path)
+    // Initialization can fail because a new plugin lacks a cleanup API too.
+    // Still release every resource whose API is available.
+    const cleanupErrors = []
+    for (const [target, method, args] of [[session.registration, 'syncToMain', [false]],
+      [session.editor, 'dispose', []], [session.registration, 'unregister', []], [session.container, 'remove', []]]) {
+      try { if (typeof target?.[method] === 'function') target[method](...args) }
+      catch (cleanupError) { cleanupErrors.push(errorMessage(cleanupError)) }
+    }
+    sessionsFor(app).delete(path)
+    if (cleanupErrors.length) throw fault(error?.code || 'OPERATION_FAILED', errorMessage(error), 'unknown',
+      { ...error?.details, cleanupErrors })
     throw error
   }
 }
@@ -326,9 +373,11 @@ function batch(app, path, operations, expected, full = false) {
   assertRevision(app, session, expected)
   if (!Array.isArray(operations) || !operations.length || operations.length > 1000) throw new Error('Batch must contain 1-1000 operations')
   for (const op of operations) {
-    if (!op || !methods.has(op.method) || !Array.isArray(op.args) || typeof session.editor[op.method] !== 'function') throw new Error('Unsupported operation')
+    if (!op || !methods.has(op.method) || !Array.isArray(op.args)) throw new Error('Unsupported operation')
+    requireFunctions(session.editor, [op.method], 'editor')
   }
   const editor = session.editor
+  requireEditing(editor)
   const before = JSON.parse(JSON.stringify(records(editor)))
   const history = operations.some(op => ['undo','redo'].includes(op.method))
   if (history && operations.length !== 1) throw new Error('Undo/redo must be a separate batch')
@@ -342,6 +391,7 @@ function script(app, path, code, expected, full = false) {
   assertRevision(app, session, expected)
   if (typeof code !== 'string' || !code.trim()) throw new Error('Script is empty')
   const editor = session.editor
+  requireEditing(editor)
   // Trusted synchronous code, not a sandbox. A returned Promise is detected only
   // after execution: this check cannot cancel already scheduled work.
   const before = JSON.parse(JSON.stringify(records(editor)))
@@ -419,8 +469,7 @@ async function saved(app, path, expectedRevision) {
 async function execute(app, action, args) {
   if (action === 'doctor') {
     const plugin = app.plugins.getPlugin('tldraw')
-    return {vault: app.vault.getName(), pluginVersion: plugin?.manifest.version ?? null,
-      supported: ['1.31.0','1.32.0'].includes(plugin?.manifest.version),
+    return {vault: app.vault.getName(), ...pluginSupport(plugin),
       documents: [...sessionsFor(app).keys()]}
   }
   if (action === 'capabilities') return capabilities(app)
@@ -462,6 +511,7 @@ async function execute(app, action, args) {
     flushPendingChanges(app, session)
     if (args.revision) assertRevision(app, session,args.revision)
     const editor = session.editor
+    requireFunctions(editor, ['toImage'], 'editor')
     const capturedRevision = revision(editor)
     const pageIds = [...editor.getCurrentPageShapeIds()]
     if ([args.ids, args.part, args.bounds].filter(value => value !== undefined).length > 1) throw new Error('Choose ids, part, or bounds, not more than one')

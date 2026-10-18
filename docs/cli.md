@@ -9,7 +9,7 @@ use this version's `--help` and [compatibility policy](development.md#compatibil
 Run from the repository root with the selected Python 3.9.6+ environment.
 Examples target macOS and use `python3`; use the selected environment's absolute
 interpreter path when needed. On Windows, substitute a verified Python 3.9.6+
-command such as `python` or `py -3`; in PowerShell 7, invoke a quoted interpreter
+command such as `python` or `py -3`; in PowerShell, invoke a quoted interpreter
 path with `&`. Create a note, then observe its revision and page:
 
 ```sh

@@ -45,7 +45,9 @@ function setup() {
     getCurrentPageId:()=> 'page:a',
   }
   const markdown=records=>'```json !!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!\n'+JSON.stringify({raw:{records}})+'\n!!!_END_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!'
-  const app={vault:{getName:()=> 'test',read:async()=>markdown(disk)},plugins:{getPlugin:()=>({manifest:{version:'1.32.0'}})},workspace:{getActiveFile:()=>null,getLeavesOfType:()=>[]}}
+  const plugin={manifest:{version:'1.32.0'},openTldrFile:async()=>{},getFontOverrides:()=>({}),
+    tlDataDocumentStoreManager:{register:()=>{},storesManager:{storeGroupMap:new Map()}}}
+  const app={vault:{getName:()=> 'test',read:async()=>markdown(disk)},plugins:{getPlugin:()=>plugin},workspace:{getActiveFile:()=>null,getLeavesOfType:()=>[]}}
   access.sessionsFor(app).set('a.md',{path:'a.md',file:{path:'a.md'},editor,seed:editor})
   async function invoke(action,args={},id='job') {
     api.dispatch(app,action,args,id)
@@ -57,7 +59,7 @@ function setup() {
     }
     throw new Error('Test job did not finish')
   }
-  return {api,access,editor,app,invoke,values:()=>values,markdown,setDisk:value=>{disk=copy(value)}}
+  return {api,access,editor,app,plugin,invoke,values:()=>values,markdown,setDisk:value=>{disk=copy(value)}}
 }
 
 test('document scope drives revisions and includes custom persistent types',()=>{
@@ -262,6 +264,7 @@ function createFixture() {
   const files = new Map()
   const calls = []
   const plugin = {
+    ...h.plugin,
     manifest: {version:'1.32.0'},
     async createTldrFile(filename, options) {
       calls.push({filename,options})
@@ -315,11 +318,130 @@ test('create refuses unsafe paths even when called without CLI validation',async
   }
 })
 
-test('create checks plugin compatibility before writing',async()=>{
+test('create allows untested versions with the required plugin APIs',async()=>{
   const h=createFixture()
-  h.plugin.manifest.version='0.0.0'
-  await assert.rejects(h.invoke('create',{path:'plan.md'}),/Unsupported/)
-  assert.equal(h.calls.length,0)
+  h.plugin.manifest.version='99.0.0'
+  assert.equal((await h.invoke('create',{path:'plan.md'})).created,true)
+})
+
+test('create checks required APIs before writing, including for tested versions',async()=>{
+  for(const name of ['createTldrFile','openTldrFile','getFontOverrides']) {
+    const h=createFixture()
+    delete h.plugin[name]
+    await assert.rejects(h.invoke('create',{path:'plan.md'}),new RegExp(`plugin.${name}`))
+    assert.equal(h.calls.length,0)
+    assert.equal(h.files.size,0)
+    const job=JSON.parse(h.api.poll(h.app,'job'))
+    assert.equal(job.failure.code,'TLDRAW_UNSUPPORTED')
+    assert.equal(job.failure.outcome,'not_applied')
+  }
+})
+
+test('doctor and capabilities distinguish API availability from tested versions',async()=>{
+  for(const version of ['1.31.0','1.32.0','99.0.0']) {
+    const h=setup()
+    h.plugin.manifest.version=version
+    for(const action of ['doctor','capabilities']) {
+      const result=await h.invoke(action,{},action)
+      assert.equal(result.supported,true)
+      assert.equal(result.versionTested,version!=='99.0.0')
+      assert.deepEqual(result.testedPluginVersions,['1.31.0','1.32.0'])
+      assert.deepEqual(result.missingCapabilities,[])
+    }
+  }
+  const h=setup()
+  delete h.plugin.tlDataDocumentStoreManager.register
+  const result=await h.invoke('doctor')
+  assert.equal(result.supported,false)
+  assert.deepEqual(result.missingCapabilities,['plugin.tlDataDocumentStoreManager.register'])
+})
+
+function openFixture() {
+  const h=setup(), cleanup=[]
+  const file={path:'new.md',extension:'md'}
+  h.app.vault.getAbstractFileByPath=()=>file
+  const document={body:{appendChild:()=>{}},createElement:()=>({
+    ownerDocument:document,style:{},remove:()=>cleanup.push('container'),
+  })}
+  Object.assign(h.editor,{
+    shapeUtils:{geo:{constructor:class Geo {}}},bindingUtils:{},assetUtils:{},root:{children:{}},
+    getContainer:()=>({ownerDocument:document}),getPage:()=>({id:'page:a'}),setCurrentPage:()=>{},
+    getShapeUtil:()=>({}),getShapePageBounds:()=>({}),dispose:()=>cleanup.push('editor'),
+    constructor:function Editor(options) {return {...h.editor,store:options.store}},
+  })
+  h.plugin.currTldrawEditor=h.editor
+  const registration={documentStore:{store:h.editor.store},syncToMain:()=>{},unregister:()=>cleanup.push('registration')}
+  h.plugin.tlDataDocumentStoreManager.register=()=>registration
+  return Object.assign(h,{registration,cleanup})
+}
+
+test('open allows an untested version and verifies the Editor APIs',async()=>{
+  const h=openFixture()
+  h.plugin.manifest.version='99.0.0'
+  const result=await h.invoke('open',{path:'new.md'})
+  assert.equal(result.pluginVersion,'99.0.0')
+  assert.equal(result.dedicatedEditor,true)
+  assert.equal((await h.invoke('saved',{path:'new.md'},'saved')).saved,true)
+})
+
+test('open and read work without editing APIs or the view-opening API when an Editor is live',async()=>{
+  const h=openFixture()
+  delete h.plugin.openTldrFile
+  delete h.editor.run
+  delete h.editor.markHistoryStoppingPoint
+  delete h.editor.bailToMark
+  delete h.editor.store.getStoreSnapshot
+  delete h.editor.store.applyDiff
+  assert.equal((await h.invoke('doctor',{},'doctor')).supported,true)
+  const result=await h.invoke('open',{path:'new.md'},'open')
+  assert.equal((await h.invoke('saved',{path:'new.md'},'saved')).saved,true)
+  assert.equal((await h.invoke('observe',{path:'new.md'},'observe')).shapes.length,1)
+  await assert.rejects(h.invoke('apply',{path:'new.md',revision:result.revision,operations:[
+    {op:'updateShapes',shapes:[{id:'shape:a',props:{color:'red'}}]},
+  ]},'edit'),/editor.store.applyDiff/)
+  await assert.rejects(h.invoke('script',{path:'new.md',revision:result.revision,
+    code:'app.scriptExecuted = true'},'script'),/editor.store.applyDiff/)
+  assert.equal(h.app.scriptExecuted,undefined)
+  assert.equal((await h.invoke('state',{path:'new.md'},'state')).revision,result.revision)
+})
+
+test('open requires the view-opening API only when no Editor is live',async()=>{
+  const h=openFixture()
+  delete h.plugin.currTldrawEditor
+  delete h.plugin.openTldrFile
+  await assert.rejects(h.invoke('open',{path:'new.md'}),/plugin.openTldrFile/)
+  assert.equal(h.access.sessionsFor(h.app).has('new.md'),false)
+})
+
+test('open reports missing core Editor APIs and releases the session',async()=>{
+  const h=openFixture()
+  delete h.editor.getCurrentPageId
+  await assert.rejects(h.invoke('open',{path:'new.md'}),/editor.getCurrentPageId/)
+  assert.deepEqual(h.cleanup,['editor','registration','container'])
+  assert.equal(h.access.sessionsFor(h.app).has('new.md'),false)
+})
+
+test('open cleans up an incompatible registration and preserves the API error',async()=>{
+  const h=openFixture()
+  delete h.registration.syncToMain
+  await assert.rejects(h.invoke('open',{path:'new.md'}),/registration.syncToMain/)
+  assert.deepEqual(h.cleanup,['registration','container'])
+  assert.equal(h.access.sessionsFor(h.app).has('new.md'),false)
+})
+
+test('batch checks every requested SDK method before applying any edits',()=>{
+  const h=setup(), before=h.access.revision(h.editor)
+  assert.throws(()=>h.access.batch(h.app,'a.md',[
+    {method:'updateShapes',args:[[{id:'shape:a',props:{color:'red'}}]]},
+    {method:'rotateShapesBy',args:[['shape:a'],1]},
+  ],before),/editor.rotateShapesBy/)
+  assert.equal(h.access.revision(h.editor),before)
+})
+
+test('preview reports a missing export API without changing records',async()=>{
+  const h=setup(), before=h.access.revision(h.editor)
+  await assert.rejects(h.invoke('preview',{path:'a.md',output:'unused.png'}),/editor.toImage/)
+  assert.equal(h.access.revision(h.editor),before)
 })
 
 test('create reports actual plugin-assigned path if a competing creation takes the requested name',async()=>{

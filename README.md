@@ -24,7 +24,14 @@ See the [official marketplace guide](https://developers.openai.com/plugins/build
 
 macOS is the primary target; Windows support is also available.
 
-Prerequisites: Python 3.9.6+, running Obsidian Desktop with its official CLI enabled, and Obsidian tldraw plugin 1.31.0 or 1.32.0. Codex checks Python before running the bridge.
+Prerequisites:
+
+- Obsidian Desktop is installed and running with the target vault open.
+- The Obsidian **tldraw** plugin is installed and enabled in that vault.
+- Obsidian's official CLI is enabled and available on the same computer.
+- Python 3.9.6+ is available. Codex checks it before running the bridge.
+
+Tested with tldraw 1.31.0 and 1.32.0. Other versions are allowed; the bridge checks required APIs at runtime and reports any missing functionality.
 
 Tell Codex the vault, diagram, and desired change. For example:
 

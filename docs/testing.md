@@ -5,7 +5,7 @@ This guide describes how to verify the current implementation. Keep test procedu
 Run commands from the repository root, using the selected Python environment.
 macOS is the primary target; examples use `python3` or the selected environment's
 absolute interpreter path. On Windows, substitute a verified Python 3.9.6+ command
-such as `python` or `py -3` in PowerShell 7.
+such as `python` or `py -3` in PowerShell.
 
 ## Automated checks
 
@@ -20,7 +20,7 @@ python3 scripts/build_plugin.py --check
 ```
 
 Node discovers `*.test.cjs` files without shell wildcard expansion, so the same
-command works in POSIX shells and PowerShell 7. Tests use platform temporary
+command works in POSIX shells and PowerShell. Tests use platform temporary
 directories; preview test outputs do not require `/tmp` or elevated privileges.
 
 These checks do not require a running Obsidian instance. They cover:
@@ -30,7 +30,7 @@ These checks do not require a running Obsidian instance. They cover:
 | Agent operation API | Shared validation before connecting; named edit schemas; scoped, bounded observations and revision-pinned pagination; structured failures and non-executing receipt queries. |
 | Freehand drawing | Authored curves preserve geometry and pressure through point encoding; closed strokes accept fill and opacity in the same edit. Redraws reset omitted styles and preserve unrelated shapes. Invalid styles, open fills, and targets fail before edits. |
 | CLI transport | CLI output is captured in temporary regular files with independent reader/writer positions; concurrent inherited writes preserve the response; completion and timeout do not wait for inherited descendant output handles. A short, shell-free argv bootstrap reads a closed UTF-8 evaluation file; code size and content do not expand argv. Receiver cleanup failure does not block evaluation; pre-launch failures discard unsent files and final timeout diagnostics list all tracked remaining files. Acknowledged returns also trigger sender cleanup, while uncertain delivery retains unread files. Missing initial output can be recovered by polling. UTF-8 process responses, input files/stdin (with or without a UTF-8 BOM), and JSON stdout/stderr preserve Unicode independently of the locale. Invalid response encoding retains unknown outcome and request identity. |
-| Connection setup | Mocked macOS/Windows discovery without symlink privileges, explicit override precedence, Windows console selection, name/ID validation, wrong-vault rejection before runtime evaluation, staged doctor errors, disabled CLI detection, and a remaining-budget deadline shared by dispatch, polls and cleanup. |
+| Connection setup | Mocked macOS/Windows discovery without symlink privileges, explicit override precedence, Windows console selection, name/ID validation, wrong-vault rejection before runtime evaluation, staged doctor errors, disabled CLI detection, and a remaining-budget deadline shared by dispatch, polls and cleanup. Untested plugin versions are allowed; missing plugin, Editor, and operation APIs are reported by name, with edits rejected before execution where possible. |
 | Result handling | Edits default to compact net change counts over document records; full output is available explicitly, and state remains inspectable. Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
 | Note creation | Plugin-generated Markdown, existing-path and traversal rejection, saved editable session, retained creation after initialization failure, and request replay without duplicate creation. |
 | Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending GUI/source/shared notifications are reconciled before reads and revision checks without waiting for animation frames. Edits superseded during persistence return SAVE_CONFLICT; previews reject queued GUI changes during export. |
@@ -46,7 +46,8 @@ If the plugin package is stale, regenerate it with `python3 scripts/build_plugin
 ## Live test setup
 
 Use macOS with Python 3.9.6+, running Obsidian Desktop, its enabled official CLI,
-and tldraw 1.31.0 or 1.32.0. Windows can also run these checks; its command
+and the tldraw plugin enabled. Versions 1.31.0 and 1.32.0 have been tested;
+other versions are allowed when the required APIs are available. Windows can also run these checks; its command
 substitutions are shown below. If CLI discovery fails, update the Obsidian
 installer or select the actual official CLI path; do not point at the GUI.
 
@@ -68,7 +69,7 @@ To list registered vaults when PATH registration is absent on macOS:
 '/Applications/Obsidian.app/Contents/MacOS/obsidian-cli' vaults verbose
 ```
 
-For Windows, use PowerShell 7 and the console executable `Obsidian.com`. From the
+For Windows, use PowerShell and the console executable `Obsidian.com`. From the
 selected Python environment, the equivalent commands are:
 
 ```powershell

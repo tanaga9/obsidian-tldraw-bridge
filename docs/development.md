@@ -3,7 +3,7 @@
 These steps are for maintainers. Plugin users do not need to run them.
 macOS is the primary development target; examples use `python3` from the selected
 Python environment, or its absolute interpreter path when needed. On Windows,
-use PowerShell 7 or newer and substitute a verified Python 3.9.6+ command such
+use PowerShell and substitute a verified Python 3.9.6+ command such
 as `python` or `py -3`.
 
 ## Compatibility policy

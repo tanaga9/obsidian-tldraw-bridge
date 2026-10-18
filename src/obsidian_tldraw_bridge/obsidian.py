@@ -297,9 +297,11 @@ class Client:
                               details={**exc.details, "stage": "runtime", "checks": checks}) from exc
         if checks is not None:
             if not result.get("supported"):
-                raise BridgeError("Unsupported tldraw plugin version: " + str(result.get("pluginVersion")),
+                missing = result.get("missingCapabilities", [])
+                raise BridgeError("Required tldraw APIs are unavailable: " + ", ".join(missing),
                                   code="TLDRAW_UNSUPPORTED", outcome="not_applied",
-                                  details={"stage": "plugin", "checks": checks, "pluginVersion": result.get("pluginVersion")})
+                                  details={"stage": "plugin", "checks": checks, "pluginVersion": result.get("pluginVersion"),
+                                           "missingCapabilities": missing})
             result = {**result, "checks": checks + [
                 {"stage": "plugin", "ok": True, "version": result["pluginVersion"]},
                 {"stage": "runtime", "ok": True}]}

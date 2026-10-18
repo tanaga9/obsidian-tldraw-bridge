@@ -33,7 +33,13 @@ discovery failure; `CLI_EXECUTABLE_REQUIRED` identifies an explicit Windows GUI;
 `CLI_DISABLED` identifies the official disabled-CLI message;
 `CLI_CONNECTION_FAILED` covers a failed or missing diagnostic response;
 `TLDRAW_UNAVAILABLE` asks to install/enable the plugin; `TLDRAW_UNSUPPORTED`
-reports the runtime's support decision. A connection failure alone does not prove
+reports missing required APIs in `details.missingCapabilities`, not an unrecognized version.
+`doctor` and `capabilities` report `supported` from the core plugin API checks,
+plus `testedPluginVersions` and `versionTested` as testing information only.
+Opening checks basic reading and persistence APIs; editing and image export check
+their additional APIs when used. An existing live Editor can be reused without
+the view-opening API. API presence does not guarantee behavioral compatibility.
+A connection failure alone does not prove
 that Obsidian is stopped: check local execution permissions as described below.
 
 `--timeout` is one client wait budget for doctor probing (if requested), dispatch,

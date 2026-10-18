@@ -10,6 +10,6 @@ Python 3.9.6+ is an environment prerequisite. The bridge does not bundle or inst
 | Automatic session recovery or forced disposal after file rename/deletion or disabling the existing plugin | Not implemented | If normal session closure cannot recover, restart Obsidian and reopen an existing document using its current path. This does not restore a deleted document. |
 | Updating the runtime loader itself | Requires restart | Drawing runtime source changes at the same installed path reload automatically after persistence checks. Changes to `loader.cjs` itself require restarting Obsidian. |
 | Cancelling or restoring arbitrary asynchronous scripts | Unsupported | Use synchronous scripts only. Detecting a Promise does not cancel already scheduled work. |
-| Automatically supporting SDK updates | Not implemented | Accept only the currently supported plugin versions; reject others. |
+| Compatibility with SDK updates | Not guaranteed | Tested with tldraw 1.31.0 and 1.32.0. Other versions are allowed; required APIs are checked at runtime. API presence does not guarantee compatible behavior. |
 
 Restoring Store records after a synchronous script failure is implemented and tested. Side effects outside the Store and full mutual exclusion with human GUI edits are outside the guarantee.

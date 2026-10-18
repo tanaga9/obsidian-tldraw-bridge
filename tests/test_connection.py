@@ -86,13 +86,26 @@ class ConnectionTest(unittest.TestCase):
         self.assertEqual((raised.exception.code, raised.exception.request_id), ('RESULT_UNKNOWN', 'check'))
         self.assertEqual(raised.exception.details['stage'], 'runtime')
 
-    def test_doctor_unsupported_version_uses_runtime_support_policy(self):
+    def test_doctor_allows_untested_version_with_required_apis(self):
+        result = {'supported': True, 'pluginVersion': '99.0', 'versionTested': False,
+                  'testedPluginVersions': ['1.31.0', '1.32.0'], 'missingCapabilities': []}
         with patch.object(self.client, 'evaluate', side_effect=[{**self.connected, 'pluginVersion': '99.0'}, None,
-                          {'status': 'complete', 'result': {'supported': False, 'pluginVersion': '99.0'}}]):
+                          {'status': 'complete', 'result': result}]):
+            doctor = self.client.call('doctor', request_id='check')
+        self.assertTrue(doctor['supported'])
+        self.assertFalse(doctor['versionTested'])
+
+    def test_doctor_reports_missing_apis_even_for_tested_version(self):
+        missing = ['plugin.tlDataDocumentStoreManager.register']
+        with patch.object(self.client, 'evaluate', side_effect=[self.connected, None,
+                          {'status': 'complete', 'result': {'supported': False, 'pluginVersion': '1.32.0',
+                                                         'missingCapabilities': missing}}]):
             with self.assertRaises(BridgeError) as raised:
                 self.client.call('doctor', request_id='check')
         self.assertEqual(raised.exception.code, 'TLDRAW_UNSUPPORTED')
-        self.assertEqual(raised.exception.details['pluginVersion'], '99.0')
+        self.assertEqual(raised.exception.details['pluginVersion'], '1.32.0')
+        self.assertEqual(raised.exception.details['missingCapabilities'], missing)
+        self.assertIn(missing[0], str(raised.exception))
 
     def test_disabled_cli_is_reported_without_polling_or_losing_identity(self):
         output = subprocess.CompletedProcess([], 0, b'Command line interface is not enabled. Please turn it on in Settings > General > Advanced.', b'')
