@@ -126,6 +126,39 @@ test('invalid updated code leaves the old sessions intact',async t=>{
   assert.equal((await h.run('edit')).version,2)
 })
 
+for (const exports of ['null', '{}',
+  ...['dispatch', 'poll', 'forget'].map(method => `({dispatch(){},poll(){},forget(){},${method}:true})`)]) {
+  test(`invalid runtime exports ${exports} preserve sessions and allow recovery`,async t=>{
+    const h=fixture(t)
+    await h.run('open',{path:'a.md'})
+    await h.run('select',{path:'a.md',page:'page:second'})
+    const retained=await h.run('edit',{path:'a.md'},'retained-edit')
+    fs.writeFileSync(h.filename,`module.exports = ${exports};`)
+    await assert.rejects(h.run('edit',{path:'a.md'},'invalid-update'),/Required runtime APIs are unavailable/)
+    const failure=JSON.parse(loader.poll(h.app,h.filename,'invalid-update')).failure
+    assert.equal(failure.code,'INVALID_RUNTIME')
+    assert.equal(failure.outcome,'not_applied')
+    assert.deepEqual(h.app.events,['open-1'])
+    assert.deepEqual([...h.app.documents],['a.md'])
+    assert.deepEqual(await h.run('edit',{path:'a.md'},'retained-edit'),retained)
+    assert.equal(h.app.edits,1)
+    h.write(2)
+    const result=await h.run('edit',{path:'a.md'})
+    assert.equal(result.version,2)
+    assert.equal(result.page,'page:second')
+    assert.equal(result.edits,2)
+    assert.deepEqual(h.app.events,['open-1','close-1','open-2'])
+  })
+}
+
+test('invalid initial runtime exports allow a corrected runtime to load',async t=>{
+  const h=fixture(t)
+  fs.writeFileSync(h.filename,'module.exports = {};')
+  await assert.rejects(h.run('doctor'),/Required runtime APIs are unavailable/)
+  h.write(2)
+  assert.equal((await h.run('doctor')).version,2)
+})
+
 test('loader serializes jobs and protects running receipts',async t=>{
   const h=fixture(t)
   const first=loader.dispatch(h.app,h.filename,'edit',{},'in-flight')

@@ -67,11 +67,16 @@ async function refresh(ctx, app, filename) {
   const source = fs.readFileSync(filename, 'utf8')
   const digest = crypto.createHash('sha256').update(source).digest('hex')
   if (ctx.digest !== digest) {
-    // Compile before closing anything, so invalid updates leave sessions intact.
+    // Compile and validate before closing anything or retaining the new runtime.
     const fresh = new Module(filename, module)
     fresh.filename = filename
     fresh.paths = Module._nodeModulePaths(path.dirname(filename))
     fresh._compile(source, filename)
+    const missing = ['dispatch', 'poll', 'forget'].filter(method => typeof fresh.exports?.[method] !== 'function')
+    if (missing.length) {
+      throw Object.assign(new Error(`Required runtime APIs are unavailable: ${missing.join(', ')}`),
+        { code: 'INVALID_RUNTIME', outcome: 'not_applied' })
+    }
     if (ctx.active) {
       const previous = await invoke(ctx.active, app, 'doctor', {})
       for (const document of previous.documents) {
