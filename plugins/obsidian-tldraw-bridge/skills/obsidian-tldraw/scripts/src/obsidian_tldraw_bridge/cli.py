@@ -88,8 +88,8 @@ def _read_input(path):
     return source[1:] if source.startswith("\ufeff") else source
 
 
-def _print_json(value, stream):
-    text = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
+def _print_json(value, stream, *, ensure_ascii=False):
+    text = json.dumps(value, ensure_ascii=ensure_ascii, indent=2) + "\n"
     buffer = getattr(stream, "buffer", None)
     if buffer is not None:
         stream.flush()
@@ -157,9 +157,33 @@ def main(argv=None):
             result = bridge.status(options.id)
         else:
             result = bridge.call(options.command, args, options.request_id)
-        _print_json(result, sys.stdout)
-        return 0
     except (BridgeError, OSError, ValueError, KeyError) as exc:
         error = exc if isinstance(exc, BridgeError) else BridgeError(str(exc), code="INVALID_INPUT", outcome="not_applied")
         _print_json({"error": error.as_dict()}, sys.stderr)
         return 1
+    # Output errors happen after execution and cannot make a completed edit
+    # unapplied. Keep the successful result, including when no receipt was retained.
+    try:
+        _print_json(result, sys.stdout)
+    except (OSError, ValueError) as exc:
+        if isinstance(exc, OSError):
+            # Discard pending output so shutdown does not retry a failed flush
+            # and append a traceback to the structured stderr diagnostic.
+            try:
+                close = getattr(sys.stdout, 'close', None)
+                if close is not None:
+                    close()
+            except (OSError, ValueError):
+                pass
+        mutating = options.command in {'create', 'open', 'close', 'apply', 'batch', 'script',
+                                       'freehand', 'insert-image', 'preview', 'forget'}
+        outcome = 'applied' if mutating else 'unknown' if options.command == 'status' else 'not_applied'
+        request_id = options.id if options.command in {'status', 'forget'} else options.request_id
+        error = BridgeError('Could not output completed command result: ' + str(exc),
+                            code='OUTPUT_FAILED', outcome=outcome, request_id=request_id,
+                            details={'command': options.command, 'result': result,
+                                     'recovery': 'The command completed. Inspect this result; do not repeat mutations.'})
+        # Escaping also preserves results that could not be encoded as UTF-8.
+        _print_json({'error': error.as_dict()}, sys.stderr, ensure_ascii=True)
+        return 1
+    return 0

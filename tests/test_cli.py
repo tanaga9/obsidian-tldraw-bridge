@@ -1,11 +1,13 @@
 import contextlib
 import io
 import json
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from obsidian_tldraw_bridge.cli import main
 
@@ -30,6 +32,97 @@ class CreateCommandTest(unittest.TestCase):
 
 
 class EditOutputTest(unittest.TestCase):
+    def test_real_broken_pipe_leaves_only_structured_stderr(self):
+        source = '''
+import sys
+sys.path.insert(0, sys.argv[1])
+from obsidian_tldraw_bridge import cli
+class FakeClient:
+    def __init__(self, *args): pass
+    def call(self, *args): return {'path': 'plan.md', 'created': True}
+cli.Client = FakeClient
+sys.exit(cli.main(['--vault', 'V', '--request-id', 'created-note', 'create', 'plan.md']))
+'''
+        reader, writer = os.pipe()
+        os.close(reader)
+        with os.fdopen(writer, 'wb') as output:
+            completed = subprocess.run([sys.executable, '-c', source,
+                                        str(Path(__file__).resolve().parents[1] / 'src')],
+                                       stdout=output, stderr=subprocess.PIPE)
+        self.assertEqual(completed.returncode, 1, completed.stderr)
+        failure = json.loads(completed.stderr)['error']
+        self.assertEqual((failure['code'], failure['outcome'], failure['requestId']),
+                         ('OUTPUT_FAILED', 'applied', 'created-note'))
+        self.assertEqual(failure['details']['result'], {'path': 'plan.md', 'created': True})
+
+    def test_output_io_failure_preserves_completed_edit_and_request_id(self):
+        result = {'path': 'plan.md', 'revision': 'after-edit', 'persistence': {'saved': True}}
+        for error in (OSError(28, 'No space left on device'), BrokenPipeError(32, 'Broken pipe')):
+            for phase in ('write', 'flush'):
+                for request_id in (None, 'completed-edit'):
+                    with self.subTest(error=type(error).__name__, phase=phase, request_id=request_id):
+                        output = Mock()
+                        getattr(output.buffer, phase).side_effect = error
+                        errors = io.StringIO()
+                        argv = ['--vault', 'V']
+                        if request_id:
+                            argv += ['--request-id', request_id]
+                        argv += ['script', 'plan.md', '--revision', 'before', '--input', '-']
+                        with patch('obsidian_tldraw_bridge.cli.Client') as client, \
+                                patch('sys.stdin', io.StringIO(';')), \
+                                contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
+                            client.return_value.call.return_value = result
+                            self.assertEqual(main(argv), 1)
+                            client.return_value.call.assert_called_once_with(
+                                'script', {'path': 'plan.md', 'revision': 'before', 'code': ';'}, request_id)
+                        failure = json.loads(errors.getvalue())['error']
+                        self.assertEqual((failure['code'], failure['outcome']), ('OUTPUT_FAILED', 'applied'))
+                        self.assertEqual(failure.get('requestId'), request_id)
+                        self.assertEqual(failure['details']['result'], result)
+                        self.assertEqual(failure['details']['command'], 'script')
+
+    def test_output_encoding_failure_preserves_result_in_error(self):
+        result = {'path': 'plan.md', 'revision': 'after-edit', 'text': '\ud800'}
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, \
+                patch('sys.stdin', io.StringIO(';')), \
+                io.TextIOWrapper(io.BytesIO(), encoding='utf-8') as output, \
+                io.TextIOWrapper(io.BytesIO(), encoding='utf-8') as errors, \
+                contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
+            client.return_value.call.return_value = result
+            self.assertEqual(main(['--vault', 'V', 'script', 'plan.md', '--revision', 'before', '--input', '-']), 1)
+            failure = json.loads(errors.buffer.getvalue())['error']
+            self.assertEqual((failure['code'], failure['outcome']), ('OUTPUT_FAILED', 'applied'))
+            self.assertEqual(failure['details']['result'], result)
+
+    def test_read_and_receipt_output_failures_preserve_their_results(self):
+        for command, argument, method, result, outcome, request_id in (
+                ('state', 'plan.md', 'call', {'revision': 'current'}, 'not_applied', None),
+                ('status', 'pending-edit', 'status', {'status': 'running'}, 'unknown', 'pending-edit'),
+                ('status', 'failed-edit', 'status', {'status': 'failed', 'failure': {'outcome': 'applied'}}, 'unknown', 'failed-edit'),
+                ('forget', 'old-edit', 'forget', {'forgotten': True}, 'applied', 'old-edit')):
+            with self.subTest(command=command, result=result):
+                output = Mock()
+                output.buffer.write.side_effect = BrokenPipeError(32, 'Broken pipe')
+                errors = io.StringIO()
+                with patch('obsidian_tldraw_bridge.cli.Client') as client, \
+                        contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
+                    getattr(client.return_value, method).return_value = result
+                    self.assertEqual(main(['--vault', 'V', command, argument]), 1)
+                    self.assertEqual(getattr(client.return_value, method).call_count, 1)
+                failure = json.loads(errors.getvalue())['error']
+                self.assertEqual((failure['code'], failure['outcome']), ('OUTPUT_FAILED', outcome))
+                self.assertEqual(failure.get('requestId'), request_id)
+                self.assertEqual(failure['details']['result'], result)
+
+    def test_input_file_io_failure_remains_unapplied(self):
+        with tempfile.TemporaryDirectory() as directory, patch('obsidian_tldraw_bridge.cli.Client') as client, \
+                contextlib.redirect_stderr(io.StringIO()) as errors:
+            self.assertEqual(main(['--vault', 'V', 'script', 'plan.md', '--revision', 'before',
+                                   '--input', str(Path(directory) / 'missing.js')]), 1)
+            client.assert_not_called()
+            failure = json.loads(errors.getvalue())['error']
+            self.assertEqual((failure['code'], failure['outcome']), ('INVALID_INPUT', 'not_applied'))
+
     def test_compact_and_full_edit_requests(self):
         for command, source in (('batch', '[]'), ('script', ';')):
             for full in (False, True):

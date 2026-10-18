@@ -46,6 +46,11 @@ CLI response tests cover LF and CRLF framing while preserving U+0085, U+2028,
 and U+2029 inside JSON strings, including dispatch, result polling, and retained
 request status.
 
+Output-failure tests cover full disks, broken pipes, write/flush failures, and
+encoding errors after successful execution. Completed results and explicit request
+IDs remain available in diagnostics; read-only commands and status queries do not
+claim that the underlying edit was applied. Input-file errors remain unapplied.
+
 If the plugin package is stale, regenerate it with `python3 scripts/build_plugin.py` and run the checks again. CI runs the automated checks; it does not run Obsidian integration tests.
 
 ## Live test setup

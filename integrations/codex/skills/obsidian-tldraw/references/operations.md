@@ -224,6 +224,12 @@ CLI errors have an `error` object with `code`, `message`, `outcome`, and, where
 available, `requestId` and `details`:
 
 - `INVALID_INPUT`: correct the input. The request was not applied.
+- `OUTPUT_FAILED`: the command completed, but its JSON result could not be
+  written to stdout. `details.result` retains that result and `requestId` is
+  included when supplied. Mutating commands report `applied`; read-only commands
+  report `not_applied`. For `status`, the outcome is `unknown` for the underlying
+  request; inspect the retained receipt in `details.result`. Do not repeat mutations
+  because of an output failure. Diagnostics escape Unicode if necessary.
 - `REVISION_CONFLICT` or `PAGE_CONFLICT`: observe again and re-plan; do not replay the stale edit.
 - `SAVE_CONFLICT` with outcome `applied`: the document changed during saving,
   so the original edit result cannot be confirmed as the persisted state. Inspect
