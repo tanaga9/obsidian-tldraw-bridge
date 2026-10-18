@@ -236,50 +236,6 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 172,
-				"y": 460,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-link-payload",
-				"type": "arrow",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"kind": "elbow",
-					"elbowMidPoint": 0.5,
-					"dash": "solid",
-					"size": "s",
-					"fill": "none",
-					"color": "grey",
-					"labelColor": "black",
-					"bend": 0,
-					"start": {
-						"x": 0,
-						"y": 0
-					},
-					"end": {
-						"x": 98,
-						"y": 150
-					},
-					"arrowheadStart": "none",
-					"arrowheadEnd": "arrow",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph"
-							}
-						]
-					},
-					"labelPosition": 0.5,
-					"font": "draw",
-					"scale": 1
-				},
-				"index": "a5zOMv",
-				"typeName": "shape"
-			},
-			{
 				"x": 140,
 				"y": 170,
 				"rotation": 0,
@@ -461,42 +417,6 @@ tags:
 					}
 				},
 				"index": "a1m7v",
-				"typeName": "shape"
-			},
-			{
-				"x": 20,
-				"y": 94,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-temp-note",
-				"type": "text",
-				"parentId": "shape:readme-temp",
-				"props": {
-					"color": "grey",
-					"size": "s",
-					"w": 240,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.75,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "May remain after uncertain delivery"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "a2OOf",
 				"typeName": "shape"
 			},
 			{
@@ -873,51 +793,6 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 32,
-				"y": 820,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-runtime-note",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "grey",
-					"size": "s",
-					"w": 550,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 1,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Runtime JavaScript is loaded into Obsidian."
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Existing tldraw plugin files are unchanged."
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "a7h36",
-				"typeName": "shape"
-			},
-			{
 				"x": 36,
 				"y": 205,
 				"rotation": 0,
@@ -1008,42 +883,6 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 50,
-				"y": 545,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-payload-label",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "grey",
-					"size": "s",
-					"w": 145,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.8,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "writes payload"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aAVyM",
-				"typeName": "shape"
-			},
-			{
 				"x": 36,
 				"y": 75,
 				"rotation": 0,
@@ -1114,24 +953,6 @@ tags:
 				},
 				"index": "a1M2b",
 				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-payload-end",
-				"type": "arrow",
-				"fromId": "shape:readme-link-payload",
-				"toId": "shape:readme-temp",
-				"props": {
-					"isPrecise": true,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0
-					},
-					"snap": "edge-point",
-					"terminal": "end"
-				},
-				"typeName": "binding"
 			},
 			{
 				"meta": {},
@@ -1282,51 +1103,6 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 20,
-				"y": 30,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-temp-body",
-				"type": "text",
-				"parentId": "shape:readme-temp",
-				"props": {
-					"color": "black",
-					"size": "s",
-					"w": 240,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 1,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Evaluation payload (.js)"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Obsidian reads + deletes"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "a1ZIn",
-				"typeName": "shape"
-			},
-			{
 				"x": 41,
 				"y": 250,
 				"rotation": 0,
@@ -1456,24 +1232,6 @@ tags:
 				},
 				"index": "a171I",
 				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-payload-start",
-				"type": "arrow",
-				"fromId": "shape:readme-link-payload",
-				"toId": "shape:readme-python",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 1
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
 			},
 			{
 				"x": 25,
@@ -1652,25 +1410,6 @@ tags:
 					}
 				},
 				"index": "a2dtA",
-				"typeName": "shape"
-			},
-			{
-				"x": 32,
-				"y": 610,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-temp",
-				"type": "frame",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"w": 280,
-					"h": 140,
-					"name": "OS temporary files",
-					"color": "grey"
-				},
-				"index": "a5xwA",
 				"typeName": "shape"
 			},
 			{
