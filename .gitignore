@@ -9,3 +9,7 @@ dist/
 # Local Obsidian vault configuration, installed plugins, and personal content.
 /.obsidian/
 /workspace/
+
+# Architecture icons are embedded in the tldraw note.
+/docs/diagrams/icons/*.png
+/docs/diagrams/icons/*.webp

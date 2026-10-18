@@ -31,12 +31,25 @@ The plugin display name is **Obsidian Tldraw Bridge**, defined in `scripts/build
 
 ## README architecture diagram
 
-The README uses [architecture.svg](diagrams/architecture.svg), exported from the
+The README uses [architecture.webp](diagrams/architecture.webp), rendered from the
 editable Obsidian tldraw note [architecture.md](diagrams/architecture.md). Open the
-note in Obsidian with the tldraw plugin, edit the diagram, and export the named
-`README architecture` frame as SVG with a light background. Replace the SVG and
-commit both files together. Verify the exported image for clipping and readable
-labels at README width.
+note in Obsidian with the tldraw plugin, edit the diagram, and render the named
+`README architecture` frame as PNG with a light background. Use the bridge's
+`preview` with the frame ID to export a temporary PNG, then convert it to WebP
+at 1920 pixels wide with quality 90 and sharp YUV conversion:
+
+```sh
+cwebp -resize 1920 0 -q 90 -sharp_yuv /tmp/architecture.png -o docs/diagrams/architecture.webp
+```
+
+Commit the note and WebP together; keep intermediate PNGs outside the repository.
+Verify the rendered image for clipping and readable labels at README width.
+The WebP is a flattened preview; the note remains the editable source.
+
+Generated icons are embedded in the note as 128-pixel transparent
+WebP images (quality 0.9); do not commit separate image copies. Source and usage notes and generation prompts are kept in
+[diagrams/icons](diagrams/icons/README.md). Extract embedded images from the note
+when needed for reuse, and update the note and rendered WebP together when replacing icons.
 
 ## Maintaining diagramming guidance
 
