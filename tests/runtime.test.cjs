@@ -260,7 +260,7 @@ test('save drains source and shared notifications before checking Markdown',asyn
 })
 
 function createFixture() {
-  const h = setup()
+  const h = openFixture()
   const files = new Map()
   const calls = []
   const plugin = {
@@ -276,9 +276,10 @@ function createFixture() {
     async openTldrFile(file, location, type) {
       calls.push({opened:file.path,location,type})
       if(h.openError) throw new Error(h.openError)
-      // Model the already-open session boundary; real Editor construction is
-      // exercised by the opt-in create integration test.
-      h.access.sessionsFor(h.app).set(file.path,{path:file.path,file,editor:h.editor,seed:h.editor})
+      plugin.currTldrawEditor=h.editor
+      const leaf={view:{file}}
+      h.app.workspace.getLeavesOfType=()=>[leaf]
+      return leaf
     },
   }
   h.app.plugins.getPlugin=()=>plugin
@@ -296,10 +297,9 @@ test('create delegates Markdown generation to plugin and returns saved editable 
   assert.equal(result.currentPageId,'page:a')
   assert.ok(result.revision)
   assert.deepEqual(copy(h.calls[0]),{filename:'project-plan.md',options:{foldername:'Drawings',inMarkdown:true}})
-  assert.deepEqual(h.calls[1],{opened:'Drawings/project-plan.md',location:'new-tab',type:'tldraw-view'})
   const replay=await h.invoke('create',{path:'Drawings/project-plan.md'},'create-plan')
   assert.equal(replay.revision,result.revision)
-  assert.equal(h.calls.length,2)
+  assert.equal(h.calls.length,1)
 })
 
 test('create refuses existing files or folders without changing them',async()=>{
@@ -325,7 +325,7 @@ test('create allows untested versions with the required plugin APIs',async()=>{
 })
 
 test('create checks required APIs before writing, including for tested versions',async()=>{
-  for(const name of ['createTldrFile','openTldrFile','getFontOverrides']) {
+  for(const name of ['createTldrFile','getFontOverrides']) {
     const h=createFixture()
     delete h.plugin[name]
     await assert.rejects(h.invoke('create',{path:'plan.md'}),new RegExp(`plugin.${name}`))
@@ -367,7 +367,7 @@ function openFixture() {
     shapeUtils:{geo:{constructor:class Geo {}}},bindingUtils:{},assetUtils:{},root:{children:{}},
     getContainer:()=>({ownerDocument:document}),getPage:()=>({id:'page:a'}),setCurrentPage:()=>{},
     getShapeUtil:()=>({}),getShapePageBounds:()=>({}),dispose:()=>cleanup.push('editor'),
-    constructor:function Editor(options) {return {...h.editor,store:options.store}},
+    constructor:function Editor(options) {return {...h.editor,isDisposed:false,store:options.store}},
   })
   h.plugin.currTldrawEditor=h.editor
   const registration={documentStore:{store:h.editor.store},syncToMain:()=>{},unregister:()=>cleanup.push('registration')}
@@ -413,6 +413,119 @@ test('open requires the view-opening API only when no Editor is live',async()=>{
   assert.equal(h.access.sessionsFor(h.app).has('new.md'),false)
 })
 
+test('create reuses a live Editor without opening or selecting a GUI tab',async()=>{
+  const h=createFixture(), selected={id:'user-tab'}
+  h.app.workspace.activeLeaf=selected
+  h.app.workspace.setActiveLeaf=()=>{throw new Error('Must not move focus')}
+  delete h.plugin.openTldrFile
+  const result=await h.invoke('create',{path:'plan.md'})
+  assert.equal(result.persistence.saved,true)
+  assert.equal(h.calls.length,1)
+  assert.equal(h.app.workspace.activeLeaf,selected)
+})
+
+test('create waits for metadata recognition without opening a GUI tab or creating twice',async()=>{
+  const h=createFixture()
+  let recognized=false, checks=0
+  h.plugin.isTldrawFile=()=>{checks++;return recognized}
+  h.plugin.openTldrFile=()=>{throw new Error('Must not open a GUI tab')}
+  h.api.dispatch(h.app,'create',{path:'plan.md'},'metadata')
+  setTimeout(()=>{recognized=true},10)
+  await new Promise(resolve=>setTimeout(resolve,150))
+  const job=JSON.parse(h.api.poll(h.app,'metadata'))
+  assert.equal(job.status,'complete',job.error)
+  assert.equal(job.result.persistence.saved,true)
+  assert.ok(checks>=2)
+  assert.equal(h.calls.length,1)
+})
+
+test('initialization opens one tab and preserves a user tab switch while waiting',async()=>{
+  const h=createFixture(), selected={id:'user-tab'}, leaf={id:'initialization-tab'}
+  delete h.plugin.currTldrawEditor
+  let opens=0
+  h.plugin.openTldrFile=async()=>{
+    opens++
+    h.plugin.currTldrawEditor=h.editor
+    h.app.workspace.activeLeaf=selected
+    return leaf
+  }
+  h.app.workspace.setActiveLeaf=()=>{throw new Error('Must not restore focus')}
+  const result=await h.invoke('create',{path:'plan.md'})
+  assert.equal(result.bootstrap,'opened-existing-view')
+  assert.equal(opens,1)
+  assert.equal(h.app.workspace.activeLeaf,selected)
+})
+
+test('closing an initialization tab before readiness stops without reopening and retains the note',async()=>{
+  const h=createFixture()
+  delete h.plugin.currTldrawEditor
+  let opens=0
+  h.plugin.openTldrFile=async()=>{opens++;return {id:'closed-tab'}}
+  h.app.workspace.getLeavesOfType=()=>[]
+  await assert.rejects(h.invoke('create',{path:'plan.md'}),/Created plan.md.*initialization tab was closed.*Use open/)
+  assert.equal(opens,1)
+  assert.ok(h.files.has('plan.md'))
+  assert.equal(h.access.sessionsFor(h.app).has('plan.md'),false)
+})
+
+test('closing the seed after capture does not break initialization or subsequent edits',async()=>{
+  const h=openFixture(), originalRead=h.app.vault.read
+  const updateShapes=h.editor.updateShapes
+  h.editor.updateShapes=changes=>{updateShapes(changes);h.setDisk(h.values())}
+  let reads=0
+  h.app.vault.read=async file=>{
+    if(++reads===2) {
+      h.editor.isDisposed=true
+      h.editor.getContainer=()=>{throw new Error('Disposed seed accessed')}
+      h.editor.shapeUtils=undefined
+      h.editor.bindingUtils=undefined
+      h.editor.assetUtils=undefined
+      h.editor.root=undefined
+      delete h.plugin.currTldrawEditor
+    }
+    return originalRead(file)
+  }
+  const result=await h.invoke('open',{path:'new.md'},'open')
+  assert.equal(result.guiEditorDisposed,true)
+  const applied=await h.invoke('apply',{path:'new.md',revision:result.revision,operations:[
+    {op:'updateShapes',shapes:[{id:'shape:a',props:{color:'red'}}]},
+  ]},'edit')
+  assert.equal(applied.persistence.saved,true)
+})
+
+test('initialization rereads Markdown after awaiting the GUI bootstrap',async()=>{
+  const h=openFixture(), read=h.app.vault.read
+  let reads=0, registeredText
+  h.app.vault.read=async file=>{
+    if(++reads===2) {
+      h.editor.updateDocumentSettings({name:'Saved while initializing'})
+      h.setDisk(h.values())
+    }
+    return read(file)
+  }
+  h.plugin.tlDataDocumentStoreManager.register=(file,getText)=>{
+    registeredText=getText()
+    return h.registration
+  }
+  await h.invoke('open',{path:'new.md'})
+  assert.match(registeredText,/Saved while initializing/)
+})
+
+test('a closed initialization window stops without registering or opening another tab',async()=>{
+  const h=openFixture(), read=h.app.vault.read
+  const document=h.editor.getContainer().ownerDocument
+  document.defaultView={closed:false}
+  let reads=0
+  h.app.vault.read=async file=>{
+    if(++reads===2) document.defaultView.closed=true
+    return read(file)
+  }
+  h.plugin.openTldrFile=()=>{throw new Error('Must not reopen a window')}
+  h.plugin.tlDataDocumentStoreManager.register=()=>{throw new Error('Must not register')}
+  await assert.rejects(h.invoke('open',{path:'new.md'}),/initialization window was closed/)
+  assert.equal(h.access.sessionsFor(h.app).has('new.md'),false)
+})
+
 test('open reports missing core Editor APIs and releases the session',async()=>{
   const h=openFixture()
   delete h.editor.getCurrentPageId
@@ -455,6 +568,7 @@ test('create reports actual plugin-assigned path if a competing creation takes t
 
 test('initialization failure retains created file and reports recovery path without recreating on replay',async()=>{
   const h=createFixture()
+  delete h.plugin.currTldrawEditor
   h.openError='Editor unavailable'
   await assert.rejects(h.invoke('create',{path:'plan.md'},'create-failed'),/Created plan.md.*Editor unavailable.*Use open/)
   assert.ok(h.files.has('plan.md'))

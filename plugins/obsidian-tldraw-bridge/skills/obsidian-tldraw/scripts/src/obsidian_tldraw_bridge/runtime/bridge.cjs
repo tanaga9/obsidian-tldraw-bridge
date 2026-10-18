@@ -25,6 +25,7 @@ function records(editor) {
 }
 // Bound retained receipts without silently expiring an idempotency key.
 const MAX_JOBS = 128
+const INITIALIZATION_TIMEOUT_MS = 8000
 
 function errorMessage(error) {
   // JavaScript can throw any value, including objects with throwing getters.
@@ -237,18 +238,33 @@ function state(app, path, reconcile = true) {
   }
 }
 
+function captureSeed(app, seed, bootstrap) {
+  // Capture SDK construction data synchronously. The user may close the seed
+  // tab during the next await; construction must not depend on its mutable data afterward.
+  requireFunctions(seed, ['getContainer'], 'editor')
+  return { seed, bootstrap, Editor: seed.constructor,
+    ownerDocument: app.workspace.containerEl?.ownerDocument ?? seed.getContainer()?.ownerDocument,
+    shapeUtils: Object.values(seed.shapeUtils).filter(u => u && u.constructor.type !== 'group').map(u => u.constructor),
+    bindingUtils: Object.values(seed.bindingUtils).filter(Boolean).map(u => u.constructor),
+    assetUtils: Object.values(seed.assetUtils).filter(Boolean).map(u => u.constructor),
+    tools: Object.values(seed.root.children).map(tool => tool.constructor),
+    text: seed.getTextOptions?.() ?? seed.options?.text,
+  }
+}
+
 async function acquireSeed(app, plugin, file) {
-  const previousLeaf = app.workspace.activeLeaf
   const candidate = plugin.currTldrawEditor
-  if (candidate && !candidate.isDisposed) return { seed: candidate, bootstrap: 'live-existing-editor' }
+  if (candidate && !candidate.isDisposed) return captureSeed(app, candidate, 'live-existing-editor')
   requireFunctions(plugin, ['openTldrFile'], 'plugin')
-  await plugin.openTldrFile(file, 'new-tab', 'tldraw-view')
-  const deadline = Date.now() + 8000
+  const leaf = await plugin.openTldrFile(file, 'new-tab', 'tldraw-view')
+  const deadline = Date.now() + INITIALIZATION_TIMEOUT_MS
   while (Date.now() < deadline) {
     const seed = plugin.currTldrawEditor
-    if (seed && !seed.isDisposed && Object.keys(seed.shapeUtils).length) {
-      if (previousLeaf) app.workspace.setActiveLeaf(previousLeaf, { focus: true })
-      return { seed, bootstrap: 'opened-existing-view' }
+    if (seed && !seed.isDisposed && Object.keys(seed.shapeUtils ?? {}).length) {
+      return captureSeed(app, seed, 'opened-existing-view')
+    }
+    if (leaf && !app.workspace.getLeavesOfType('tldraw-view').includes(leaf)) {
+      throw fault('EDITOR_UNAVAILABLE', 'The initialization tab was closed before its Editor became available; retry open when ready')
     }
     await new Promise(resolve => setTimeout(resolve, 100))
   }
@@ -261,15 +277,21 @@ async function create(app, path) {
     throw new Error('Use a vault-relative Markdown path without traversal')
   }
   const plugin = requirePlugin(app)
-  requireFunctions(plugin, ['createTldrFile', 'openTldrFile'], 'plugin')
+  requireFunctions(plugin, ['createTldrFile'], 'plugin')
   if (app.vault.getAbstractFileByPath(path)) throw new Error(`File or folder already exists: ${path}`)
   if (sessionsFor(app).has(path)) throw new Error(`Close the existing session before creating: ${path}`)
   const parts = path.split('/')
   const filename = parts.pop()
   const file = await plugin.createTldrFile(filename, { foldername: parts.join('/'), inMarkdown: true })
   try {
+    // The plugin's store manager identifies Markdown through Obsidian's
+    // metadata cache, which can lag behind vault.create without a GUI tab.
+    const deadline = Date.now() + INITIALIZATION_TIMEOUT_MS
+    while (typeof plugin.isTldrawFile === 'function' && !plugin.isTldrawFile(file)) {
+      if (Date.now() >= deadline) throw new Error('Timed out waiting for Obsidian to recognize the new tldraw note')
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
     if (sessionsFor(app).has(file.path)) throw new Error('A session already exists for the created path')
-    await plugin.openTldrFile(file, 'new-tab', 'tldraw-view')
     const result = await open(app, file.path)
     return { ...result, created: true, requestedPath: path, persistence: await saved(app, file.path) }
   } catch (error) {
@@ -283,11 +305,15 @@ async function open(app, path, currentPageId) {
   const plugin = requirePlugin(app)
   const file = app.vault.getAbstractFileByPath(path)
   if (!file || file.extension !== 'md') throw new Error('Markdown document required')
-  const text = await app.vault.read(file)
+  let text = await app.vault.read(file)
   parseMarkdown(text)
-  const { seed, bootstrap } = await acquireSeed(app, plugin, file)
-  requireFunctions(seed, ['getContainer'], 'editor')
-  const ownerDocument = seed.getContainer()?.ownerDocument
+  const captured = await acquireSeed(app, plugin, file)
+  const { seed, bootstrap, ownerDocument, Editor } = captured
+  // A GUI opened for initialization may have edited and saved this note while
+  // we waited. Register from fresh Markdown if its GUI store was then closed.
+  text = await app.vault.read(file)
+  parseMarkdown(text)
+  if (ownerDocument?.defaultView?.closed) throw fault('EDITOR_UNAVAILABLE', 'The initialization window was closed; retry open when ready')
   requireFunctions(ownerDocument, ['createElement', 'body.appendChild'], 'editor.container.ownerDocument')
   const session = { path, seed, file, bootstrap, editor: null, registration: null }
   session.container = ownerDocument.createElement('div')
@@ -300,15 +326,15 @@ async function open(app, path, currentPageId) {
       file, () => text, data => { session.serialized = data }, true
     )
     requireFunctions(session.registration, ['syncToMain', 'unregister'], 'registration')
-    session.editor = new seed.constructor({
+    session.editor = new Editor({
       store: session.registration.documentStore.store,
-      shapeUtils: Object.values(seed.shapeUtils).filter(u => u && u.constructor.type !== 'group').map(u => u.constructor),
-      bindingUtils: Object.values(seed.bindingUtils).filter(Boolean).map(u => u.constructor),
-      assetUtils: Object.values(seed.assetUtils).filter(Boolean).map(u => u.constructor),
-      tools: Object.values(seed.root.children).map(tool => tool.constructor),
+      shapeUtils: captured.shapeUtils,
+      bindingUtils: captured.bindingUtils,
+      assetUtils: captured.assetUtils,
+      tools: captured.tools,
       initialState: 'select',
       autoFocus: false,
-      options: { text: seed.getTextOptions?.() ?? seed.options?.text },
+      options: { text: captured.text },
       getContainer: () => session.container,
       fontAssetUrls: plugin.getFontOverrides(),
     })

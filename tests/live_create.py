@@ -69,6 +69,28 @@ with tempfile.TemporaryDirectory(prefix='bridge-live-create-') as directory:
         assert moved['persistence']['saved']
         assert c.call('observe', {'path': created_path, 'ids': [shape]})['shapes'][0]['localPosition']['x'] == position['x'] + 25
 
+        # Creation need not show the note. Open a GUI specifically for the
+        # following synchronization checks; never infer it from currTldrawEditor.
+        gui_slot = 'app[' + json.dumps('create-test-gui-' + identity) + ']'
+        c.evaluate('(()=>{' + gui_slot + '={status:"running"};'
+            'app.plugins.getPlugin("tldraw").openTldrFile(app.vault.getAbstractFileByPath('
+            + json.dumps(created_path) + '),"new-tab","tldraw-view")'
+            '.then(()=>{' + gui_slot + '={status:"complete"}})'
+            '.catch(e=>{' + gui_slot + '={status:"failed",error:String(e)}});})()', True)
+        try:
+            for _ in range(100):
+                gui = c.evaluate('JSON.stringify({...' + gui_slot + ',ready:!!app.plugins.getPlugin("tldraw")'
+                    '.currTldrawEditor?.getShape(' + json.dumps(shape) + ')})')
+                if gui['status'] == 'failed':
+                    raise RuntimeError(gui['error'])
+                if gui['status'] == 'complete' and gui['ready']:
+                    break
+                time.sleep(.1)
+            else:
+                raise RuntimeError('Fixture GUI did not open')
+        finally:
+            c.evaluate('JSON.stringify(delete ' + gui_slot + ')')
+
         # Real SDK notifications are deferred: mutate the GUI and dispatch in the
         # same eval turn, without an animation frame or sleep between them.
         for iteration in range(5):

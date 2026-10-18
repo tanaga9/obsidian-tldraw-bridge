@@ -42,6 +42,11 @@ the view-opening API. API presence does not guarantee behavioral compatibility.
 A connection failure alone does not prove
 that Obsidian is stopped: check local execution permissions as described below.
 
+`open` reports `EDITOR_UNAVAILABLE` if the initialization tab or window closes
+before its SDK construction data can be used. It is not reopened automatically.
+If `create` fails during initialization, its error reports the retained note's
+path and the initialization failure; use that path for recovery.
+
 `--timeout` is one client wait budget for doctor probing (if requested), dispatch,
 polling and best-effort automatic receipt cleanup. Each CLI invocation receives
 only the remaining budget. If cleanup has no budget left, the completed result

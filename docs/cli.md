@@ -91,7 +91,9 @@ until forgotten or Obsidian restarts.
 ## Note creation
 
 `create <path.md>` uses the plugin's current frontmatter, tags, and serialization
-settings, creates parent folders as needed, and opens a GUI tab and bridge session.
+settings, creates parent folders as needed, and opens a bridge session.
+It reuses a live GUI Editor for initialization; a new GUI tab is needed only
+when no live Editor is available.
 No revision is required. The result includes `created`, `path`, `requestedPath`,
 `currentPageId`, `revision`, records, and `persistence`; use its actual path and revision.
 
@@ -124,8 +126,12 @@ OS-specific commands and live checks, see [live test setup](testing.md#live-test
 retained request may still run after the CLI process times out. Recover using
 `status` and the same request ID before repeating an uncertain edit.
 
-Multiple document sessions are supported. SDK initialization may open a diagram
-tab and return focus to the previously active tab; the diagram tab stays open.
+Multiple document sessions are supported. SDK initialization reuses a live GUI
+Editor or opens one diagram tab when necessary. It does not restore focus or
+reopen a tab closed by the user. If the tab closes before its Editor can be
+captured, initialization stops; any newly created note is retained for recovery.
+After initialization, GUI tabs may be closed or switched without ending the
+bridge session. Showing a result in Obsidian is separate from creating or editing it.
 Bridge and GUI Editors have separate Undo histories. Reopen sessions after an
 Obsidian restart.
 
