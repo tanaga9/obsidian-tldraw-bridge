@@ -13,7 +13,12 @@ args = p.parse_args()
 manifest = {
     "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
     "name": "obsidian-tldraw-bridge", "version": "0.1.0",
-    "description": "Read and edit local Obsidian tldraw diagrams through a CLI and Skill."
+    "description": "Read and edit local Obsidian tldraw diagrams through a CLI and Skill.",
+    "extensions": {
+        "com.openai": {
+            "interface": {"displayName": "Obsidian Tldraw Bridge"}
+        }
+    }
 }
 def files(path):
     return {str(p.relative_to(path)):p.read_bytes() for p in path.rglob("*")

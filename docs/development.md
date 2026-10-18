@@ -27,6 +27,8 @@ python3 scripts/build_plugin.py --check
 
 The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/`. The generated package at `plugins/obsidian-tldraw-bridge/` is included in the repository and referenced by the marketplace. Regenerate it after changing the canonical sources; `--check` detects stale bundled files. Both package builders exclude `.DS_Store` recursively, and the plugin consistency check ignores it in existing output directories. Source metadata files are left untouched. Git checks text files out with LF line endings on all operating systems (`.gitattributes`); the generated JSON manifest is UTF-8 with LF as well. Keep canonical sources and bundled copies under that policy so a clean checkout passes `--check` on every CI OS.
 
+The plugin display name is **Obsidian Tldraw Bridge**, defined in `scripts/build_plugin.py` under `extensions.com.openai.interface.displayName`. The stable plugin identifier and package directory remain `obsidian-tldraw-bridge`. The marketplace title is set separately in `.agents/plugins/marketplace.json`.
+
 ## Maintaining diagramming guidance
 
 Keep diagramming guidance inside the canonical Skill's [references](../integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md) so both builds remain self-contained.

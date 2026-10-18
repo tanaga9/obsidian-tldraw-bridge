@@ -1,4 +1,4 @@
-# obsidian-tldraw-bridge
+# Obsidian Tldraw Bridge
 
 Edit local Obsidian tldraw diagrams with an AI agent while continuing to edit them in Obsidian. The bridge provides a CLI and a Codex plugin with a bundled Skill, without modifying the existing Obsidian tldraw plugin.
 
@@ -12,7 +12,7 @@ Codex → Skill → Bridge CLI → Official Obsidian CLI → Dedicated Editor
 
 ## Setup and usage
 
-In the Codex desktop app, open the plugin browser and install `obsidian-tldraw-bridge` from the **Obsidian tldraw Bridge** marketplace. The plugin bundles the Skill and bridge code; no manual clone, build, or Python package installation is needed.
+In the Codex desktop app, open the plugin browser and install **Obsidian Tldraw Bridge** from the **Obsidian Tldraw Bridge** marketplace. The plugin bundles the Skill and bridge code; no manual clone, build, or Python package installation is needed.
 
 For first-time access, register the GitHub marketplace once, then return to the app to install:
 

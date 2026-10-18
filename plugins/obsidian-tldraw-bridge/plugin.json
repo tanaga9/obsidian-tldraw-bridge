@@ -2,5 +2,12 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "obsidian-tldraw-bridge",
   "version": "0.1.0",
-  "description": "Read and edit local Obsidian tldraw diagrams through a CLI and Skill."
+  "description": "Read and edit local Obsidian tldraw diagrams through a CLI and Skill.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Obsidian Tldraw Bridge"
+      }
+    }
+  }
 }

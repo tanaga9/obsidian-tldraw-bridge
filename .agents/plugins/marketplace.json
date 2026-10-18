@@ -1,7 +1,7 @@
 {
   "name": "obsidian-tldraw-bridge-local",
   "interface": {
-    "displayName": "Obsidian tldraw Bridge"
+    "displayName": "Obsidian Tldraw Bridge"
   },
   "plugins": [
     {
