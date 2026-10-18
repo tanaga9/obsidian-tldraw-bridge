@@ -139,6 +139,47 @@ application; synchronous failures restore Store records. Ordinary batches share
 one history boundary. Use stable IDs for subsequent updates and preserve
 unrelated content. No automatic conflict resolution is performed.
 
+## Image insertion
+
+`insert-image <path> --revision <revision> --file <local-image>` accepts PNG, WebP
+and JPEG bytes, including `.jpg` and `.jpeg`. The shared Python
+API takes `file`; it reads the file before connecting and sends its name and
+data URL to the runtime. No additional imaging library is needed. The runtime
+checks the format and decodes the image before making synchronous Store edits.
+
+`image-info --file <local-image>` uses the same decoder and optional processing,
+without a diagram path, revision, or Store mutation. Both commands accept
+`--max-dimension` (`maxDimension`, positive integer), `--format` (`format`,
+`original` or `webp`), `--quality` (`quality`, 0–1, requires `format=webp`),
+and `--max-bytes` (`maxBytes`, positive integer). Processing is opt-in; originals
+are preserved by default. Pixel resizing never upscales and retains the format
+unless WebP conversion is requested. WebP encoding defaults to quality 0.85.
+Animated images cannot be resized/converted; insert them unchanged instead.
+Browser re-encoding may discard metadata. The source file is never modified.
+
+The report has `source` and `output` objects with `mimeType`, pixel `width` and
+`height`, and `bytes`, plus `transformed`. `output.dataUrlBytes` is the exact
+embedded data URL size, excluding Markdown/JSON overhead. `maxBytes` limits
+processed image bytes before Base64, with `IMAGE_TOO_LARGE` and the size report
+in error details when exceeded; there is no default limit. Display sizes do
+not reduce stored image bytes. Inspect reports to assess a conversion's benefit.
+
+Optional arguments are `--x`, `--y`, `--width`, `--height`, `--parent-id`,
+`--page-id`, `--shape-id`, and `--full` (`x`, `y`, `width`, `height`, `parentId`,
+`pageId`, `shapeId`, `full` in Python). Coordinates default to `(0, 0)` on the
+current page, or are local to the supplied current-page parent shape. With one
+dimension, aspect ratio is preserved; with neither, decoded natural dimensions
+are used; with both, the exact display size is used. Sizes must be positive and finite.
+
+The command creates an image asset and shape in one rollback boundary, embeds
+the original or explicitly processed bytes in the Markdown, and checks persistence. It creates no
+attachment file and does not modify the input image. Existing shape IDs are
+rejected. Results add `shapeId`, `assetId`, display `width`/`height`, `mimeType`, and the `image` report
+to the normal edit summary. Input data and insertion IDs are covered by the
+request receipt; replay unchanged bytes and arguments under the same request ID.
+Revision and current page are checked again after asynchronous decoding, so
+GUI edits or a page switch cannot redirect a pending insertion.
+
 ## Advanced SDK access
 
 `batch` exposes these SDK Editor methods with positional `args`: createShapes,
@@ -168,7 +209,7 @@ restore filesystem or application side effects.
 
 ## Results and failure recovery
 
-`apply`, `batch`, `script`, and `freehand` return compact summaries: `path`,
+`apply`, `batch`, `script`, `freehand`, and `insert-image` return compact summaries: `path`,
 `revision`, `currentPageId`, net document-record `changes`, and `persistence`.
 Use `--full` for full records and diagnostics; keep it unchanged on replay.
 Observation, state reads, and revision checks first drain pending changes from

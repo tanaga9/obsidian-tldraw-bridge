@@ -29,6 +29,7 @@ These checks do not require a running Obsidian instance. They cover:
 | --- | --- |
 | Agent operation API | Shared validation before connecting; named edit schemas; scoped, bounded observations and revision-pinned pagination; structured failures and non-executing receipt queries. |
 | Freehand drawing | Authored curves preserve geometry and pressure through point encoding; closed strokes accept fill and opacity in the same edit. Redraws reset omitted styles and preserve unrelated shapes. Invalid styles, open fills, and targets fail before edits. |
+| Image insertion | PNG/WebP/JPEG bytes are preserved by default. Read-only size reports, opt-in pixel resizing/WebP conversion, optional byte limits and animation protection are checked. Invalid data, ID collisions, and stale revisions/pages do not add records. Asset/shape creation shares a rollback boundary; request replay does not duplicate an insertion. |
 | CLI transport | CLI output is captured in temporary regular files with independent reader/writer positions; concurrent inherited writes preserve the response; completion and timeout do not wait for inherited descendant output handles. A short, shell-free argv bootstrap reads a closed UTF-8 evaluation file; code size and content do not expand argv. Receiver cleanup failure does not block evaluation; pre-launch failures discard unsent files and final timeout diagnostics list all tracked remaining files. Acknowledged returns also trigger sender cleanup, while uncertain delivery retains unread files. Missing initial output can be recovered by polling. UTF-8 process responses, input files/stdin (with or without a UTF-8 BOM), and JSON stdout/stderr preserve Unicode independently of the locale. Invalid response encoding retains unknown outcome and request identity. |
 | Connection setup | Mocked macOS/Windows discovery without symlink privileges, explicit override precedence, Windows console selection, name/ID validation, wrong-vault rejection before runtime evaluation, staged doctor errors, disabled CLI detection, and a remaining-budget deadline shared by dispatch, polls and cleanup. Untested plugin versions are allowed; missing plugin, Editor, and operation APIs are reported by name, with edits rejected before execution where possible. |
 | Result handling | Edits default to compact net change counts over document records; full output is available explicitly, and state remains inspectable. Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
@@ -118,6 +119,20 @@ python3 tests/live_freehand.py --vault Documents --path 'Bridge test diagram.md'
 ```
 
 Uses an existing dedicated test note. Creates a uniquely named frame and two strokes (including a translucent filled region), verifies redraw isolation, persistence, replay, stale revisions, invalid targets, a detail PNG, and a context crop with exact dimensions and unchanged document revision, then removes its frame and strokes and closes its session. Inspect the images separately for visual quality.
+
+## Image insertion integration check
+
+```sh
+python3 tests/live_images.py --vault Documents
+```
+
+Creates real PNG/WebP/JPEG fixtures with the installed browser's canvas encoders,
+then inserts them through the CLI and shared Python API. Verifies persistence,
+cross-adapter request replay, read-only inspection, opt-in resizing/conversion,
+source preservation, byte-limit/corrupt-input rejection, reopening, and a PNG
+preview. The generated fixture note and session are removed. The preview remains
+in the OS temporary directory (or the supplied `--output` path) for visual QA.
+No third-party Python imaging library is needed.
 
 ## Note creation integration check
 

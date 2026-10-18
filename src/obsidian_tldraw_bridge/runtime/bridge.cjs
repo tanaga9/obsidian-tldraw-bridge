@@ -133,7 +133,9 @@ function requireEditing(editor) {
 function capabilities(app) {
   const plugin = app.plugins.getPlugin('tldraw')
   return { apiVersion: 1, ...pluginSupport(plugin),
-    actions: ['doctor','capabilities','create','open','observe','state','apply','batch','script','saved','preview','close'],
+    actions: ['doctor','capabilities','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','close'],
+    imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
+      optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
     operations: operationFields, coordinates: { observeBounds: 'page', shapePosition: 'parent-local' }, observation: 'dedicated-editor-current-page',
     limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4 },
     guarantees: { revisionRequiredForEdits: true, persistenceChecked: true, synchronousStoreRollback: true,
@@ -447,6 +449,96 @@ function parseMarkdown(text) {
   return data
 }
 
+async function prepareImage(document, args) {
+  if (typeof args.name !== 'string' || !args.name || typeof args.src !== 'string') throw fault('INVALID_INPUT', 'Image name and data URL are required')
+  for (const key of ['maxDimension', 'maxBytes']) {
+    if (args[key] !== undefined && (!Number.isSafeInteger(args[key]) || args[key] <= 0)) throw fault('INVALID_INPUT', `Invalid image ${key}`)
+  }
+  if (!['original', 'webp'].includes(args.format ?? 'original')) throw fault('INVALID_INPUT', 'Image format must be original or webp')
+  if (args.quality !== undefined && (typeof args.quality !== 'number' || !Number.isFinite(args.quality)
+    || args.quality < 0 || args.quality > 1 || args.format !== 'webp')) throw fault('INVALID_INPUT', 'Quality requires format=webp and a value from 0 to 1')
+  const match = /^data:(image\/(?:png|webp|jpeg));base64,([A-Za-z0-9+/]+={0,2})$/.exec(args.src)
+  if (!match) throw fault('INVALID_INPUT', 'Supported image formats are PNG, WebP and JPEG')
+  const bytes = Buffer.from(match[2], 'base64')
+  let mime = bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255 ? 'image/jpeg'
+    : bytes.subarray(0, 4).toString() === 'RIFF' && bytes.subarray(8, 12).toString() === 'WEBP' ? 'image/webp'
+    : bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) ? 'image/png' : null
+  if (mime !== match[1]) throw fault('INVALID_INPUT', 'Image bytes do not match the declared PNG, WebP or JPEG format')
+  let isAnimated = mime === 'image/webp' && bytes.subarray(12, 16).toString() === 'VP8X' && !!(bytes[20] & 2)
+  if (mime === 'image/png') {
+    for (let offset = 8; offset + 12 <= bytes.length;) {
+      if (bytes.subarray(offset + 4, offset + 8).toString() === 'acTL') { isAnimated = true; break }
+      offset += 12 + bytes.readUInt32BE(offset)
+    }
+  }
+  const image = document.createElement('img')
+  image.src = args.src
+  try { await image.decode() }
+  catch (_) { throw fault('INVALID_INPUT', 'The PNG, WebP or JPEG image could not be decoded') }
+  let width = image.naturalWidth, height = image.naturalHeight, src = args.src
+  if (!(width > 0 && height > 0)) throw fault('INVALID_INPUT', 'Image dimensions are invalid')
+  const source = { mimeType: mime, width, height, bytes: bytes.length }
+  const scale = Math.min(1, (args.maxDimension ?? Math.max(width, height)) / Math.max(width, height))
+  const transformed = scale < 1 || args.format === 'webp'
+  if (transformed) {
+    if (isAnimated) throw fault('INVALID_INPUT', 'Animated images cannot be resized or converted; insert the original instead')
+    const canvas = document.createElement('canvas')
+    canvas.width = width = Math.max(1, Math.round(width * scale))
+    canvas.height = height = Math.max(1, Math.round(height * scale))
+    const context = canvas.getContext('2d')
+    if (!context) throw fault('IMAGE_PROCESSING_FAILED', 'Canvas image processing is unavailable')
+    context.drawImage(image, 0, 0, width, height)
+    const outputMime = args.format === 'webp' ? 'image/webp' : mime
+    src = canvas.toDataURL(outputMime, args.format === 'webp' || outputMime === 'image/webp' ? args.quality ?? 0.85 : undefined)
+    if (!src.startsWith(`data:${outputMime};base64,`)) throw fault('IMAGE_PROCESSING_FAILED', `The browser cannot encode ${outputMime}`)
+    mime = outputMime
+    isAnimated = false
+  }
+  const outputBytes = transformed ? Buffer.from(src.split(',')[1], 'base64').length : bytes.length
+  const report = { source, output: { mimeType: mime, width, height, bytes: outputBytes, dataUrlBytes: Buffer.byteLength(src) }, transformed }
+  if (args.maxBytes !== undefined && outputBytes > args.maxBytes) {
+    throw fault('IMAGE_TOO_LARGE', `Image exceeds maxBytes (${outputBytes} > ${args.maxBytes})`, 'not_applied', report)
+  }
+  return { src, mime, width, height, isAnimated, report }
+}
+
+async function insertImage(app, args) {
+  const session = sessionFor(app, args.path), editor = session.editor
+  assertRevision(app, session, args.revision)
+  requireEditing(editor)
+  requireFunctions(editor, ['createAssets', 'createShapes', 'getContainer', 'getShape', 'getCurrentPageShapeIds'], 'editor')
+  const pageId = editor.getCurrentPageId()
+  if (args.pageId !== undefined && args.pageId !== pageId) throw fault('PAGE_CONFLICT', 'Current page changed; observe again')
+  for (const key of ['x', 'y', 'width', 'height']) {
+    if (args[key] !== undefined && (!Number.isFinite(args[key]) || (['width', 'height'].includes(key) && args[key] <= 0))) {
+      throw fault('INVALID_INPUT', `Invalid image ${key}`)
+    }
+  }
+  const image = await prepareImage(editor.getContainer().ownerDocument, args)
+  const width = args.width ?? (args.height === undefined ? image.width : args.height * image.width / image.height)
+  const height = args.height ?? (args.width === undefined ? image.height : args.width * image.height / image.width)
+  if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) throw fault('INVALID_INPUT', 'Image display dimensions are invalid')
+  // Decoding yields to GUI edits and page switches. Check again before writing.
+  assertRevision(app, session, args.revision)
+  if (editor.getCurrentPageId() !== pageId) throw fault('PAGE_CONFLICT', 'Current page changed while decoding the image; observe again')
+  if (args.parentId !== undefined && ![...editor.getCurrentPageShapeIds()].includes(args.parentId)) {
+    throw fault('INVALID_INPUT', 'Image parent must exist on the current page')
+  }
+  const shapeId = args.shapeId ?? `shape:${crypto.randomUUID()}`
+  if (typeof shapeId !== 'string' || !shapeId.startsWith('shape:')) throw fault('INVALID_INPUT', 'Expected a shape: ID')
+  if (editor.getShape(shapeId)) throw fault('INVALID_INPUT', 'Image shape ID already exists')
+  const assetId = `asset:${crypto.randomUUID()}`
+  const assetName = args.format === 'webp' ? args.name.replace(/\.(?:png|jpe?g|webp)$/i, '') + '.webp' : args.name
+  const before = JSON.parse(JSON.stringify(records(editor)))
+  runWithRollback(editor, 'Insert image', () => {
+    editor.createAssets([{ id: assetId, type: 'image', typeName: 'asset', meta: {},
+      props: { name: assetName, src: image.src, w: image.width, h: image.height, mimeType: image.mime, isAnimated: image.isAnimated } }])
+    editor.createShapes([{ id: shapeId, type: 'image', x: args.x ?? 0, y: args.y ?? 0, parentId: args.parentId ?? pageId,
+      props: { assetId, w: width, h: height } }])
+  })
+  return { ...editResult(app, args.path, before, args.full), shapeId, assetId, width, height, mimeType: image.mime, image: image.report }
+}
+
 function flushPendingChanges(app, session) {
   // Store.listen flushes pending notifications before attaching the listener.
   // Drain both hops without waiting for animation frames in background windows.
@@ -499,6 +591,7 @@ async function execute(app, action, args) {
       documents: [...sessionsFor(app).keys()]}
   }
   if (action === 'capabilities') return capabilities(app)
+  if (action === 'image-info') return (await prepareImage(app.workspace.containerEl.ownerDocument, args)).report
   if (action === 'observe') return observe(app, args)
   if (action === 'create') return create(app, args.path)
   if (action === 'open') return open(app, args.path, args.currentPageId)
@@ -510,10 +603,11 @@ async function execute(app, action, args) {
     args = { ...args, operations: namedOperations(args.operations) }
     action = 'batch'
   }
-  if (action === 'batch' || action === 'script') {
+  if (action === 'batch' || action === 'script' || action === 'insert-image') {
     let result
     try {
-      result = action === 'batch' ? batch(app,args.path,args.operations,args.revision,args.full) : script(app,args.path,args.code,args.revision,args.full)
+      result = action === 'insert-image' ? await insertImage(app, args)
+        : action === 'batch' ? batch(app,args.path,args.operations,args.revision,args.full) : script(app,args.path,args.code,args.revision,args.full)
     } catch (error) {
       if (error?.code) throw error
       const unchanged = revision(sessionFor(app,args.path).editor) === args.revision

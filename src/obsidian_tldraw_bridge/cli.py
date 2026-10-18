@@ -47,7 +47,22 @@ def parser():
     freehand.add_argument("path")
     freehand.add_argument("--revision", required=True)
     freehand.add_argument("--input", required=True, help="Stroke definitions JSON file, or - for stdin")
-    for edit_parser in (apply, batch, script, freehand):
+    image = sub.add_parser("insert-image", help="Embed a local PNG, WebP or JPEG image")
+    image.add_argument("path", help="Open vault-relative .md path")
+    image.add_argument("--revision", required=True)
+    info = sub.add_parser('image-info', help='Inspect image dimensions and embedded size without editing a diagram')
+    for image_parser in (image, info):
+        image_parser.add_argument('--file', required=True, help='Local PNG, WebP or JPEG file')
+        image_parser.add_argument('--max-dimension', type=int, help='Resize pixels to fit this longest edge; never upscale')
+        image_parser.add_argument('--format', choices=('original', 'webp'), help='Default: original; WebP conversion is opt-in')
+        image_parser.add_argument('--quality', type=float, help='WebP encoding quality 0–1 (default 0.85 when encoding)')
+        image_parser.add_argument('--max-bytes', type=int, help='Optional limit on processed image bytes, before base64 encoding')
+    for dimension in ('x', 'y', 'width', 'height'):
+        image.add_argument('--' + dimension, type=float)
+    image.add_argument('--parent-id', help="Parent shape on the current page; coordinates are parent-local")
+    image.add_argument('--page-id', help="Pin the current page")
+    image.add_argument('--shape-id', help="Optional new shape: ID (existing shapes are never replaced)")
+    for edit_parser in (apply, batch, script, freehand, image):
         edit_parser.add_argument("--full", action="store_true", help="Include full document records and editor diagnostics in the result")
     preview = sub.add_parser("preview")
     preview.add_argument("path")
@@ -95,6 +110,19 @@ def main(argv=None):
             args["path"] = options.path
         if getattr(options, "revision", None):
             args["revision"] = options.revision
+        if options.command in ('insert-image', 'image-info'):
+            args['file'] = options.file
+            for option, key in (('max_dimension', 'maxDimension'), ('format', 'format'), ('quality', 'quality'), ('max_bytes', 'maxBytes')):
+                value = getattr(options, option)
+                if value is not None:
+                    args[key] = value
+        if options.command == 'insert-image':
+            for key in ('x', 'y', 'width', 'height', 'parent_id', 'page_id', 'shape_id'):
+                value = getattr(options, key)
+                if value is not None:
+                    args[{'parent_id': 'parentId', 'page_id': 'pageId', 'shape_id': 'shapeId'}.get(key, key)] = value
+            if options.full:
+                args['full'] = True
         if options.command in ("apply", "batch", "script", "freehand"):
             if options.full:
                 args["full"] = True

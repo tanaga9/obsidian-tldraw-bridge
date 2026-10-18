@@ -3,6 +3,7 @@ import math
 from pathlib import Path
 from .obsidian import BridgeError, Client, validate_connection
 from .freehand import compile_script
+from .images import load_image
 
 
 class Bridge:
@@ -39,6 +40,9 @@ class Bridge:
             "observe": {"path", "revision", "pageId", "limit", "offset", "ids", "bounds"},
             "apply": {"path", "revision", "pageId", "operations", "full"}, "batch": {"path", "revision", "operations", "full"},
             "script": {"path", "revision", "code", "full"}, "freehand": {"path", "revision", "drawing", "full"},
+            "image-info": {"file", "maxDimension", "format", "quality", "maxBytes"},
+            "insert-image": {"path", "revision", "file", "x", "y", "width", "height", "parentId", "pageId", "shapeId", "full",
+                             "maxDimension", "format", "quality", "maxBytes"},
             "preview": {"path", "revision", "output", "ids", "bounds", "part", "scale"},
         }
         if not isinstance(action, str) or action not in fields:
@@ -46,14 +50,39 @@ class Bridge:
         if not isinstance(arguments, dict) or set(arguments) - fields[action]:
             invalid("Arguments must be an object with known fields")
         args = dict(arguments)
-        if action not in {"doctor", "capabilities"}:
+        if action not in {"doctor", "capabilities", "image-info"}:
             path = args.get("path")
             if (not isinstance(path, str) or not path or path.startswith("/") or
                     ".." in path.split("/") or "\\" in path or not path.endswith(".md")):
                 invalid("Use a vault-relative Markdown path without traversal")
-        if action in {"apply", "batch", "script", "freehand"}:
+        if action in {"apply", "batch", "script", "freehand", "insert-image"}:
             if not isinstance(args.get("revision"), str) or not args["revision"]:
                 invalid("A revision is required for edits")
+        if action in {"insert-image", "image-info"}:
+            for key in ('maxDimension', 'maxBytes'):
+                if key in args and (type(args[key]) is not int or args[key] <= 0):
+                    invalid(key + ' must be a positive integer')
+            if args.get('format', 'original') not in ('original', 'webp'):
+                invalid('format must be original or webp')
+            if 'quality' in args and (isinstance(args['quality'], bool) or not isinstance(args['quality'], (int, float))
+                                     or not 0 <= args['quality'] <= 1 or args.get('format') != 'webp'):
+                invalid('quality must be between 0 and 1 and requires format=webp')
+            for key in ('x', 'y', 'width', 'height'):
+                if key in args and (isinstance(args[key], bool) or not isinstance(args[key], (int, float))
+                                    or not math.isfinite(args[key]) or (key in ('width', 'height') and args[key] <= 0)):
+                    invalid(key + ' must be finite' + (' and positive' if key in ('width', 'height') else ''))
+            for key, prefix in (('parentId', 'shape:'), ('shapeId', 'shape:'), ('pageId', 'page:')):
+                if key in args and (not isinstance(args[key], str) or not args[key].startswith(prefix)):
+                    invalid(key + ' must be a ' + prefix + ' ID')
+            if not isinstance(args.get('file'), str) or not args['file']:
+                invalid('Specify an image file')
+            try:
+                args.update(load_image(args.pop('file')))
+            except (OSError, ValueError) as exc:
+                invalid(str(exc))
+            # The retained request compares serialized arguments. Keep CLI and
+            # Python image calls identical even when callers order keys differently.
+            args = dict(sorted(args.items()))
         if action == "freehand":
             try:
                 args["code"] = compile_script(args.pop("drawing"))

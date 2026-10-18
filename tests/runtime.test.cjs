@@ -557,6 +557,145 @@ test('preview reports a missing export API without changing records',async()=>{
   assert.equal(h.access.revision(h.editor),before)
 })
 
+function imageFixture() {
+  const h=setup()
+  const document={createElement:type=>type==='img'?{
+    naturalWidth:800,naturalHeight:400,
+    decode:async()=>{if(h.decode) await h.decode()},
+  }:{getContext:()=>({drawImage:()=>{h.drawn=true}}),toDataURL:(mime,quality)=>{
+    h.encoding={mime,quality}
+    return h.encodedSrc??'data:'+mime+';base64,'+Buffer.from('encoded').toString('base64')
+  }}}
+  h.editor.getContainer=()=>({ownerDocument:document})
+  h.app.workspace.containerEl={ownerDocument:document}
+  h.editor.createAssets=assets=>h.values().push(...copy(assets))
+  h.editor.createShapes=shapes=>{
+    h.values().push(...copy(shapes).map(shape=>({...shape,typeName:'shape'})))
+    h.setDisk(h.values())
+  }
+  h.args={path:'a.md',revision:h.access.revision(h.editor),name:'photo.webp',
+    src:'data:image/webp;base64,'+Buffer.from('RIFF\x04\0\0\0WEBP','binary').toString('base64'),
+    shapeId:'shape:photo',x:40,y:60,width:320}
+  return h
+}
+
+test('image insertion saves original PNG/WebP/JPEG bytes and replays without duplicates',async()=>{
+  for(const mime of ['webp','jpeg','png']) {
+    const h=imageFixture()
+    if(mime==='jpeg') h.args.src='data:image/jpeg;base64,'+Buffer.from([255,216,255,224]).toString('base64')
+    if(mime==='png') h.args.src='data:image/png;base64,iVBORw0KGgo='
+    const result=await h.invoke('insert-image',h.args,'photo')
+    assert.equal(result.shapeId,'shape:photo')
+    assert.equal(result.width,320)
+    assert.equal(result.height,160)
+    assert.equal(result.mimeType,'image/'+mime)
+    assert.equal(result.persistence.saved,true)
+    assert.deepEqual(result.changes,{added:2,updated:0,removed:0})
+    assert.equal(result.records,undefined)
+    const shape=h.editor.getShape(result.shapeId)
+    assert.equal(shape.parentId,'page:a')
+    assert.equal(shape.x,40)
+    assert.equal(shape.y,60)
+    assert.equal(h.values().find(r=>r.id===result.assetId).props.src,h.args.src)
+    assert.deepEqual(await h.invoke('insert-image',h.args,'photo'),result)
+    assert.equal(h.values().filter(r=>r.typeName==='asset').length,1)
+    assert.equal(h.drawn,undefined)
+  }
+})
+
+test('image insertion supports natural dimensions, height-only scaling and an explicit parent',async()=>{
+  for(const dimensions of [{}, {height:100}, {width:120,height:90}]) {
+    const h=imageFixture()
+    delete h.args.width
+    const result=await h.invoke('insert-image',{...h.args,...dimensions,parentId:'shape:a',pageId:'page:a'})
+    assert.equal(result.width,dimensions.width??(dimensions.height?dimensions.height*2:800))
+    assert.equal(result.height,dimensions.height??400)
+    assert.equal(h.editor.getShape(result.shapeId).parentId,'shape:a')
+  }
+})
+
+test('unsupported/spoofed image types, decode errors and ID collisions leave the document unchanged',async()=>{
+  for(const change of [
+    {src:'data:image/gif;base64,R0lGODlh'},
+    {src:'data:image/webp;base64,iVBORw0KGgo='},
+    {width:0}, {x:true}, {shapeId:'shape:a'}, {parentId:'shape:missing'},
+    {pageId:'page:other'}, {decode:async()=>{throw new Error('corrupt image')}},
+  ]) {
+    const h=imageFixture(), before=h.access.revision(h.editor)
+    if(change.decode) h.decode=change.decode
+    const {decode,...args}=change
+    await assert.rejects(h.invoke('insert-image',{...h.args,...args}))
+    assert.equal(h.access.revision(h.editor),before)
+    assert.equal(h.values().some(r=>r.typeName==='asset'),false)
+    assert.equal(JSON.parse(h.api.poll(h.app,'job')).failure.outcome,'not_applied')
+  }
+})
+
+test('image-info reports source and embedded sizes without editing or requiring a session',async()=>{
+  const h=imageFixture(), before=h.access.revision(h.editor)
+  h.access.sessionsFor(h.app).clear()
+  const report=await h.invoke('image-info',{name:h.args.name,src:h.args.src})
+  assert.deepEqual(report.source,{mimeType:'image/webp',width:800,height:400,bytes:12})
+  assert.deepEqual(report.output,{mimeType:'image/webp',width:800,height:400,bytes:12,dataUrlBytes:Buffer.byteLength(h.args.src)})
+  assert.equal(report.transformed,false)
+  assert.equal(h.access.revision(h.editor),before)
+})
+
+test('pixel resizing and WebP encoding require explicit options and report processed dimensions',async()=>{
+  const h=imageFixture()
+  const result=await h.invoke('insert-image',{...h.args,maxDimension:200,format:'webp',quality:.7})
+  const asset=h.values().find(r=>r.id===result.assetId)
+  assert.equal(asset.props.w,200)
+  assert.equal(asset.props.h,100)
+  assert.equal(result.image.source.width,800)
+  assert.equal(result.image.output.width,200)
+  assert.equal(result.image.transformed,true)
+  assert.deepEqual(h.encoding,{mime:'image/webp',quality:.7})
+  assert.equal(result.width,320) // Display dimensions do not control encoded pixels.
+  const noUpscale=imageFixture()
+  const info=await noUpscale.invoke('image-info',{name:noUpscale.args.name,src:noUpscale.args.src,maxDimension:1600})
+  assert.equal(info.transformed,false)
+  assert.equal(noUpscale.drawn,undefined)
+})
+
+test('size limits, unavailable encoders and animated transformations stop before insertion',async()=>{
+  for(const kind of ['size','encoder','animation']) {
+    const h=imageFixture(), before=h.access.revision(h.editor)
+    let args={...h.args}
+    if(kind==='size') args.maxBytes=1
+    if(kind==='encoder') {args.format='webp';h.encodedSrc='data:image/png;base64,iVBORw0KGgo='}
+    if(kind==='animation') {
+      const bytes=Buffer.alloc(21)
+      bytes.write('RIFF',0);bytes.write('WEBP',8);bytes.write('VP8X',12);bytes[20]=2
+      args.src='data:image/webp;base64,'+bytes.toString('base64');args.maxDimension=200
+    }
+    await assert.rejects(h.invoke('insert-image',args),/exceeds maxBytes|cannot encode|Animated images/)
+    assert.equal(h.access.revision(h.editor),before)
+    assert.equal(h.values().some(r=>r.typeName==='asset'),false)
+  }
+})
+
+test('image decoding cannot apply an insertion after a GUI edit or page switch',async()=>{
+  for(const kind of ['revision','page']) {
+    const h=imageFixture()
+    h.decode=async()=>{
+      if(kind==='revision') h.editor.updateDocumentSettings({name:'GUI edit'})
+      else h.editor.getCurrentPageId=()=> 'page:other'
+    }
+    await assert.rejects(h.invoke('insert-image',h.args),/changed|Revision conflict/)
+    assert.equal(h.values().some(r=>r.typeName==='asset'),false)
+    assert.equal(h.editor.getShape('shape:photo'),undefined)
+  }
+})
+
+test('failed image shape creation rolls back the newly created asset',async()=>{
+  const h=imageFixture(), before=h.access.revision(h.editor)
+  h.editor.createShapes=()=>{throw new Error('Invalid image shape')}
+  await assert.rejects(h.invoke('insert-image',h.args),/Invalid image shape/)
+  assert.equal(h.access.revision(h.editor),before)
+  assert.equal(h.values().some(r=>r.typeName==='asset'),false)
+})
+
 test('create reports actual plugin-assigned path if a competing creation takes the requested name',async()=>{
   const h=createFixture()
   h.actualPath='plan 1.md'

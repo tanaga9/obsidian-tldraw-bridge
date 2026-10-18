@@ -79,6 +79,8 @@ SDK access, result fields, errors, persistence, and request-ID recovery.
 | Compact observation | `observe <path> [--ids <id> ... \| --bounds X Y W H] [--limit N]`; continue with `--offset N --revision <revision> --page-id <currentPageId>` |
 | Full records | `state <path>`; add `--full` to `apply`, `batch`, `script`, or `freehand` for full edit results |
 | Freehand drawing | `freehand <path> --revision <revision> --input <file>`; see [drawing input](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) |
+| Inspect an image | `image-info --file <image> [--max-dimension N --format webp --quality Q]` |
+| Insert PNG/WebP/JPEG | `insert-image <path> --revision <revision> --file <image> [--x X --y Y --width W --height H]` |
 | PNG preview | `preview <path> --output <png> [--part <part> \| --ids <id> ...] [--scale <number>]`; scale defaults to 1, maximum 4 |
 | Check persistence | `saved <path>` |
 | Inspect/release a receipt | `status <request-id>` / `forget <request-id>` |
@@ -101,6 +103,58 @@ Existing files or folders are rejected. A concurrent name collision may make the
 plugin choose a unique filename. Use `open <path>` for existing notes. If creation
 succeeds but opening or persistence verification fails, the error identifies the
 retained note: recover with `open` and `saved`. The bridge does not delete it.
+
+## Image insertion
+
+Inspect an image's size before inserting it (Obsidian must be running; no
+diagram session or revision is needed):
+
+```sh
+python3 bridge.py --vault Documents image-info --file '/path/to/photo.png'
+python3 bridge.py --vault Documents image-info --file '/path/to/photo.png' --max-dimension 1600 --format webp --quality 0.85
+```
+
+The report contains `source` and `output` MIME types, pixel dimensions and byte
+counts, plus `output.dataUrlBytes`: the embedded data URL's exact byte count,
+excluding surrounding Markdown/JSON. Processing is performed in memory without
+editing a note or writing a converted file. Then open the diagram and insert
+with its observed revision and the same processing options if desired:
+
+```sh
+python3 bridge.py --vault Documents --request-id insert-photo insert-image 'Drawings/example.md' --revision '<revision-from-observe>' --file '/path/to/photo.webp' --x 80 --y 120 --width 480
+```
+
+`--file` accepts local PNG, WebP and JPEG (`.jpg` / `.jpeg`); actual bytes determine
+the format. Original bytes are preserved by default. These options are explicit:
+
+- `--max-dimension N` shrinks pixels to fit within an N-pixel longest edge, without upscaling.
+- `--format webp` re-encodes as WebP; `--quality Q` sets quality from 0 to 1 (default 0.85 when encoding WebP).
+- `--max-bytes N` rejects output exceeding N image bytes **before** Base64 encoding. There is no default limit.
+
+These options work with both commands. Reducing display `--width` or `--height`
+alone does not reduce encoded pixels or file size. Resize without conversion
+keeps the image format; re-encoding may discard image metadata. Animated images
+can be embedded unchanged but cannot be resized or converted by this command.
+Conversion does not guarantee smaller output; inspect the byte counts first.
+
+The inserted data URL is stored in the note, so the original file can be moved
+afterward. No attachment file is created and the source file is never modified.
+
+Coordinates default to `(0, 0)` on the current page. `--parent-id <shape-id>`
+places the image under a current-page shape (normally a frame); coordinates
+then use that parent's local space. `--page-id` pins the current page.
+Omitting both dimensions uses the decoded image's natural size; supplying one
+preserves its aspect ratio. Supplying both sets the exact display dimensions.
+
+The result includes `shapeId`, `assetId`, display `width`/`height`, `mimeType`, an
+`image` report in the same format as `image-info`, and the
+usual revision, change counts, and persistence result. `--shape-id` can assign
+a new stable ID; an existing ID is rejected without replacing its shape.
+`--full` includes document records. Use the same request ID and unchanged file
+contents to recover an uncertain insertion without creating a duplicate.
+
+The browser decodes the image before editing. Invalid images leave the document
+unchanged, and revisions and page selection are checked again after decoding.
 
 ## Connection and sessions
 

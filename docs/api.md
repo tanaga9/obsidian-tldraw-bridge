@@ -33,12 +33,20 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
 - `Bridge(vault)` selects the vault; transport initialization is lazy.
 - `call(action, args, request_id=None)` returns a JSON-compatible result. Actions
   include `capabilities`, `doctor`, `create`, `open`, `observe`, `state`, `apply`,
-  `batch`, `script`, `freehand`, `saved`, `preview`, and `close`.
+  `batch`, `script`, `freehand`, `image-info`, `insert-image`, `saved`, `preview`, and `close`.
 - `freehand` takes a `drawing` object, compiled to a synchronous SDK script.
+- `insert-image` takes `path`, `revision`, and a local image `file`, plus optional
+  `x`, `y`, `width`, `height`, `parentId`, `pageId`, `shapeId`, and `full`.
+  PNG, WebP and JPEG bytes are preserved by default. Optional `maxDimension`,
+  `format` (`original`/`webp`), `quality`, and `maxBytes` control processing.
+- `image-info` takes `file` and the same processing options, without a diagram
+  path or revision. It reports source/output dimensions and byte counts without
+  editing documents. Insertion adds this report as `image` in its result. See
+  [image insertion](cli.md#image-insertion) for sizing, storage, and result fields.
 - `status(id)` reads a retained receipt; `forget(id)` releases it and its deduplication protection.
 - Failures raise `BridgeError`; `as_dict()` exposes the same fields as CLI `error` objects.
 
-Paths, revisions, observation/preview options, and freehand input are validated
+Paths, revisions, image file types/layout, observation/preview options, and freehand input are validated
 before connecting. Runtime operation and SDK validation apply to every caller.
 
 The canonical [operations reference](../integrations/codex/skills/obsidian-tldraw/references/operations.md)
