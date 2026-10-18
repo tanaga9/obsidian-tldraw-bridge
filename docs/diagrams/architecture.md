@@ -49,19 +49,19 @@ tags:
 		},
 		"records": [
 			{
-				"x": 60,
-				"y": 488,
+				"x": 436,
+				"y": 145,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-gui-title",
 				"type": "text",
-				"parentId": "shape:readme-architecture",
+				"parentId": "shape:readme-process",
 				"props": {
 					"color": "green",
 					"size": "m",
-					"w": 260,
+					"w": 288,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -81,7 +81,43 @@ tags:
 						]
 					}
 				},
-				"index": "aDgjM",
+				"index": "a4pvz",
+				"typeName": "shape"
+			},
+			{
+				"x": 304,
+				"y": 372,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-launch-label",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "grey",
+					"size": "s",
+					"w": 76,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.8,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "launch"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a8tDI",
 				"typeName": "shape"
 			},
 			{
@@ -93,19 +129,38 @@ tags:
 				"typeName": "pointer"
 			},
 			{
-				"x": 950,
-				"y": 488,
+				"x": 360,
+				"y": 160,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-installation",
+				"type": "frame",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 1048,
+					"h": 590,
+					"name": "Obsidian app + CLI",
+					"color": "grey"
+				},
+				"index": "a4fWb",
+				"typeName": "shape"
+			},
+			{
+				"x": 25,
+				"y": 32,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-markdown-title",
 				"type": "text",
-				"parentId": "shape:readme-architecture",
+				"parentId": "shape:readme-vault",
 				"props": {
 					"color": "green",
 					"size": "m",
-					"w": 270,
+					"w": 660,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -118,14 +173,14 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Markdown document"
+										"text": "Markdown diagram (.md)"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "aJ6Eb",
+				"index": "a1Cjb",
 				"typeName": "shape"
 			},
 			{
@@ -137,58 +192,13 @@ tags:
 				"typeName": "user"
 			},
 			{
-				"x": 728,
-				"y": 205,
+				"x": 292,
+				"y": 405,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-cli-label",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "grey",
-					"size": "s",
-					"w": 180,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.9,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Official"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Obsidian CLI"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aLf7E",
-				"typeName": "shape"
-			},
-			{
-				"x": 290,
-				"y": 252.5,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-link-request",
+				"id": "shape:readme-link-launch",
 				"type": "arrow",
 				"parentId": "shape:readme-architecture",
 				"props": {
@@ -205,7 +215,7 @@ tags:
 						"y": 0
 					},
 					"end": {
-						"x": 110,
+						"x": 93,
 						"y": 0
 					},
 					"arrowheadStart": "none",
@@ -222,404 +232,17 @@ tags:
 					"font": "draw",
 					"scale": 1
 				},
-				"index": "a6zmrf",
+				"index": "a4xUQd",
 				"typeName": "shape"
 			},
 			{
-				"x": 400,
-				"y": 180,
+				"x": 172,
+				"y": 460,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-python",
-				"type": "geo",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"w": 300,
-					"h": 145,
-					"geo": "rectangle",
-					"dash": "solid",
-					"growY": 0,
-					"url": "",
-					"scale": 1,
-					"flipX": false,
-					"flipY": false,
-					"color": "blue",
-					"labelColor": "black",
-					"fill": "semi",
-					"size": "s",
-					"font": "draw",
-					"align": "middle",
-					"verticalAlign": "middle",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph"
-							}
-						]
-					}
-				},
-				"index": "a6xsX",
-				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-persistence-end",
-				"type": "arrow",
-				"fromId": "shape:readme-link-persistence",
-				"toId": "shape:readme-markdown",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-cli-end",
-				"type": "arrow",
-				"fromId": "shape:readme-link-cli",
-				"toId": "shape:readme-runtime",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 470,
-				"y": 488,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-plugin-title",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "green",
-					"size": "m",
-					"w": 300,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.95,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Existing tldraw plugin"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aGrqf",
-				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-sdk-start",
-				"type": "arrow",
-				"fromId": "shape:readme-link-sdk",
-				"toId": "shape:readme-runtime",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 1
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-gui-sync-end",
-				"type": "arrow",
-				"fromId": "shape:readme-link-gui-sync",
-				"toId": "shape:readme-plugin",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 0,
-				"y": 0,
-				"z": 1,
-				"meta": {},
-				"id": "camera:page:page",
-				"typeName": "camera"
-			},
-			{
-				"x": 40,
-				"y": 180,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-codex",
-				"type": "geo",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"w": 250,
-					"h": 145,
-					"geo": "rectangle",
-					"dash": "solid",
-					"growY": 0,
-					"url": "",
-					"scale": 1,
-					"flipX": false,
-					"flipY": false,
-					"color": "violet",
-					"labelColor": "black",
-					"fill": "semi",
-					"size": "s",
-					"font": "draw",
-					"align": "middle",
-					"verticalAlign": "middle",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph"
-							}
-						]
-					}
-				},
-				"index": "a3MSz",
-				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-persistence-start",
-				"type": "arrow",
-				"fromId": "shape:readme-link-persistence",
-				"toId": "shape:readme-plugin",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 60,
-				"y": 250,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-codex-body",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "black",
-					"size": "s",
-					"w": 210,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 1,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Plans the edit"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Runs the bridge"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "a5LXf",
-				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-cli-start",
-				"type": "arrow",
-				"fromId": "shape:readme-link-cli",
-				"toId": "shape:readme-python",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
-				"editingShapeId": null,
-				"croppingShapeId": null,
-				"selectedShapeIds": [],
-				"hoveredShapeId": null,
-				"erasingShapeIds": [],
-				"hintingShapeIds": [],
-				"focusedGroupId": null,
-				"meta": {},
-				"id": "instance_page_state:page:page",
-				"pageId": "page:page",
-				"typeName": "instance_page_state"
-			},
-			{
-				"meta": {},
-				"id": "binding:readme-gui-sync-start",
-				"type": "arrow",
-				"fromId": "shape:readme-link-gui-sync",
-				"toId": "shape:readme-gui",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 420,
-				"y": 198,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-python-title",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "blue",
-					"size": "m",
-					"w": 260,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.95,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Python bridge"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "a7kpX",
-				"typeName": "shape"
-			},
-			{
-				"x": 420,
-				"y": 250,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-python-body",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "black",
-					"size": "s",
-					"w": 260,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 1,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "CLI + shared Python API"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Validates requests"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "a8kvE",
-				"typeName": "shape"
-			},
-			{
-				"x": 1085,
-				"y": 325,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-link-sdk",
+				"id": "shape:readme-link-payload",
 				"type": "arrow",
 				"parentId": "shape:readme-architecture",
 				"props": {
@@ -636,10 +259,10 @@ tags:
 						"y": 0
 					},
 					"end": {
-						"x": -465,
-						"y": 145
+						"x": 98,
+						"y": 150
 					},
-					"arrowheadStart": "arrow",
+					"arrowheadStart": "none",
 					"arrowheadEnd": "arrow",
 					"richText": {
 						"type": "doc",
@@ -653,23 +276,124 @@ tags:
 					"font": "draw",
 					"scale": 1
 				},
-				"index": "aFoxqV",
+				"index": "a5zOMv",
 				"typeName": "shape"
 			},
 			{
-				"x": 60,
-				"y": 198,
+				"x": 140,
+				"y": 170,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-codex-title",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
+				"id": "shape:readme-link-request",
+				"type": "arrow",
+				"parentId": "shape:readme-agent",
 				"props": {
-					"color": "violet",
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 0,
+						"y": 0
+					},
+					"end": {
+						"x": 0,
+						"y": 20
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "a4tPkV",
+				"typeName": "shape"
+			},
+			{
+				"x": 20,
+				"y": 190,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-python",
+				"type": "geo",
+				"parentId": "shape:readme-agent",
+				"props": {
+					"w": 240,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "solid",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "blue",
+					"labelColor": "black",
+					"fill": "semi",
+					"size": "s",
+					"font": "draw",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
+				},
+				"index": "a4Rhz",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-gui-sync-end",
+				"type": "arrow",
+				"fromId": "shape:readme-link-gui-sync",
+				"toId": "shape:readme-plugin",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.7746478873239436,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 41,
+				"y": 205,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-cli-title",
+				"type": "text",
+				"parentId": "shape:readme-installation",
+				"props": {
+					"color": "blue",
 					"size": "m",
-					"w": 210,
+					"w": 168,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -682,145 +406,37 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Codex + Skill"
+										"text": "Official CLI"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "a4UgT",
+				"index": "a3Ee6",
 				"typeName": "shape"
 			},
 			{
-				"x": 40,
-				"y": 670,
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"meta": {},
+				"id": "camera:page:page",
+				"typeName": "camera"
+			},
+			{
+				"x": 20,
+				"y": 60,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-guarantees",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "grey",
-					"size": "s",
-					"w": 1200,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 1,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Revision checks  ·  Request receipts  ·  Synchronous rollback  ·  Save verification"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aPPFI",
-				"typeName": "shape"
-			},
-			{
-				"x": 40,
-				"y": 35,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-title",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "black",
-					"size": "xl",
-					"w": 1200,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.85,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "AI and human editing, synchronized locally"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "a1Ycf",
-				"typeName": "shape"
-			},
-			{
-				"x": 790,
-				"y": 542.5,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-link-persistence",
-				"type": "arrow",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"kind": "arc",
-					"elbowMidPoint": 0.5,
-					"dash": "solid",
-					"size": "s",
-					"fill": "none",
-					"color": "grey",
-					"labelColor": "black",
-					"bend": 0,
-					"start": {
-						"x": 0,
-						"y": 0
-					},
-					"end": {
-						"x": 140,
-						"y": 0
-					},
-					"arrowheadStart": "none",
-					"arrowheadEnd": "arrow",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph"
-							}
-						]
-					},
-					"labelPosition": 0.5,
-					"font": "draw",
-					"scale": 1
-				},
-				"index": "aImZVV",
-				"typeName": "shape"
-			},
-			{
-				"x": 930,
-				"y": 180,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-runtime",
+				"id": "shape:readme-codex",
 				"type": "geo",
-				"parentId": "shape:readme-architecture",
+				"parentId": "shape:readme-agent",
 				"props": {
-					"w": 310,
-					"h": 145,
+					"w": 240,
+					"h": 110,
 					"geo": "rectangle",
 					"dash": "solid",
 					"growY": 0,
@@ -844,19 +460,200 @@ tags:
 						]
 					}
 				},
-				"index": "a9iZr",
+				"index": "a1m7v",
 				"typeName": "shape"
 			},
 			{
-				"x": 700,
-				"y": 252.5,
+				"x": 20,
+				"y": 94,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-link-cli",
+				"id": "shape:readme-temp-note",
+				"type": "text",
+				"parentId": "shape:readme-temp",
+				"props": {
+					"color": "grey",
+					"size": "s",
+					"w": 240,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.75,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "May remain after uncertain delivery"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a2OOf",
+				"typeName": "shape"
+			},
+			{
+				"x": 25,
+				"y": 30,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-store-title",
+				"type": "text",
+				"parentId": "shape:readme-plugin",
+				"props": {
+					"color": "green",
+					"size": "m",
+					"w": 660,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.95,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Shared document Store"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a1RIv",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-runtime-sync-end",
 				"type": "arrow",
-				"parentId": "shape:readme-architecture",
+				"fromId": "shape:readme-link-runtime-sync",
+				"toId": "shape:readme-plugin",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.2323943661971831,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 25,
+				"y": 30,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-runtime-code",
+				"type": "text",
+				"parentId": "shape:readme-runtime",
+				"props": {
+					"color": "grey",
+					"size": "s",
+					"w": 280,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.9,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "loader.cjs + bridge.cjs"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a1cZr",
+				"typeName": "shape"
+			},
+			{
+				"x": 234,
+				"y": 212,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-eval-label",
+				"type": "text",
+				"parentId": "shape:readme-installation",
+				"props": {
+					"color": "grey",
+					"size": "s",
+					"w": 60,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.8,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "eval"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a5ZzF",
+				"typeName": "shape"
+			},
+			{
+				"x": 250,
+				"y": 60,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-process",
+				"type": "frame",
+				"parentId": "shape:readme-installation",
+				"props": {
+					"w": 770,
+					"h": 490,
+					"name": "Running Obsidian Desktop",
+					"color": "blue"
+				},
+				"index": "a1IiU",
+				"typeName": "shape"
+			},
+			{
+				"x": 225,
+				"y": 245,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-link-eval",
+				"type": "arrow",
+				"parentId": "shape:readme-installation",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
@@ -871,7 +668,7 @@ tags:
 						"y": 0
 					},
 					"end": {
-						"x": 230,
+						"x": 80,
 						"y": 0
 					},
 					"arrowheadStart": "none",
@@ -888,119 +685,23 @@ tags:
 					"font": "draw",
 					"scale": 1
 				},
-				"index": "a9xpcl",
+				"index": "a2wzUt",
 				"typeName": "shape"
 			},
 			{
-				"meta": {},
-				"id": "binding:readme-request-end",
-				"type": "arrow",
-				"fromId": "shape:readme-link-request",
-				"toId": "shape:readme-python",
-				"props": {
-					"isPrecise": true,
-					"isExact": true,
-					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 930,
-				"y": 470,
+				"x": 1010,
+				"y": 772,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-markdown",
-				"type": "geo",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"w": 310,
-					"h": 145,
-					"geo": "rectangle",
-					"dash": "solid",
-					"growY": 0,
-					"url": "",
-					"scale": 1,
-					"flipX": false,
-					"flipY": false,
-					"color": "green",
-					"labelColor": "black",
-					"fill": "semi",
-					"size": "s",
-					"font": "draw",
-					"align": "middle",
-					"verticalAlign": "middle",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph"
-							}
-						]
-					}
-				},
-				"index": "aIVhM",
-				"typeName": "shape"
-			},
-			{
-				"x": 40,
-				"y": 470,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-gui",
-				"type": "geo",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"w": 300,
-					"h": 145,
-					"geo": "rectangle",
-					"dash": "solid",
-					"growY": 0,
-					"url": "",
-					"scale": 1,
-					"flipX": false,
-					"flipY": false,
-					"color": "green",
-					"labelColor": "black",
-					"fill": "semi",
-					"size": "s",
-					"font": "draw",
-					"align": "middle",
-					"verticalAlign": "middle",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph"
-							}
-						]
-					}
-				},
-				"index": "aCklf",
-				"typeName": "shape"
-			},
-			{
-				"x": 810,
-				"y": 497,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-persist-label",
+				"id": "shape:readme-save-label",
 				"type": "text",
 				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "grey",
 					"size": "s",
-					"w": 110,
+					"w": 100,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1020,23 +721,67 @@ tags:
 						]
 					}
 				},
-				"index": "aOvAI",
+				"index": "a9XM6",
 				"typeName": "shape"
 			},
 			{
-				"x": 470,
-				"y": 540,
+				"x": 995,
+				"y": 680,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-plugin-body",
-				"type": "text",
+				"id": "shape:readme-link-save",
+				"type": "arrow",
 				"parentId": "shape:readme-architecture",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 0,
+						"y": 0
+					},
+					"end": {
+						"x": 0,
+						"y": 120
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "a6gpoV",
+				"typeName": "shape"
+			},
+			{
+				"x": 36,
+				"y": 120,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-codex-body",
+				"type": "text",
+				"parentId": "shape:readme-agent",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 300,
+					"w": 208,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1049,7 +794,111 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Shared document Store"
+										"text": "Plans + runs edits"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a3MRA",
+				"typeName": "shape"
+			},
+			{
+				"editingShapeId": null,
+				"croppingShapeId": null,
+				"selectedShapeIds": [],
+				"hoveredShapeId": null,
+				"erasingShapeIds": [],
+				"hintingShapeIds": [],
+				"focusedGroupId": null,
+				"meta": {},
+				"id": "instance_page_state:page:page",
+				"pageId": "page:page",
+				"typeName": "instance_page_state"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-launch-end",
+				"type": "arrow",
+				"fromId": "shape:readme-link-launch",
+				"toId": "shape:readme-cli",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 640,
+				"y": 800,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-vault",
+				"type": "frame",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 710,
+					"h": 130,
+					"name": "Vault on disk",
+					"color": "green"
+				},
+				"index": "a6Hwj",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-gui-sync-start",
+				"type": "arrow",
+				"fromId": "shape:readme-link-gui-sync",
+				"toId": "shape:readme-gui",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 32,
+				"y": 820,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-runtime-note",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "grey",
+					"size": "s",
+					"w": 550,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Runtime JavaScript is loaded into Obsidian."
 									}
 								]
 							},
@@ -1058,29 +907,474 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Synchronizes Editors"
+										"text": "Existing tldraw plugin files are unchanged."
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "aHKUJ",
+				"index": "a7h36",
 				"typeName": "shape"
 			},
 			{
-				"x": 450,
-				"y": 470,
+				"x": 36,
+				"y": 205,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-plugin",
-				"type": "geo",
+				"id": "shape:readme-python-title",
+				"type": "text",
+				"parentId": "shape:readme-agent",
+				"props": {
+					"color": "blue",
+					"size": "m",
+					"w": 208,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.95,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Python bridge"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a5cJA",
+				"typeName": "shape"
+			},
+			{
+				"x": 36,
+				"y": 250,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-python-body",
+				"type": "text",
+				"parentId": "shape:readme-agent",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 208,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "CLI + shared API"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a6bAn",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-runtime-sync-start",
+				"type": "arrow",
+				"fromId": "shape:readme-link-runtime-sync",
+				"toId": "shape:readme-editor",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 50,
+				"y": 545,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-payload-label",
+				"type": "text",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 340,
-					"h": 145,
+					"color": "grey",
+					"size": "s",
+					"w": 145,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.8,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "writes payload"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aAVyM",
+				"typeName": "shape"
+			},
+			{
+				"x": 36,
+				"y": 75,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-codex-title",
+				"type": "text",
+				"parentId": "shape:readme-agent",
+				"props": {
+					"color": "violet",
+					"size": "m",
+					"w": 208,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.95,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Codex + Skill"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a2byX",
+				"typeName": "shape"
+			},
+			{
+				"x": 32,
+				"y": 30,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-title",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "black",
+					"size": "xl",
+					"w": 1376,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.9,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Where the bridge runs"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a1M2b",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-payload-end",
+				"type": "arrow",
+				"fromId": "shape:readme-link-payload",
+				"toId": "shape:readme-temp",
+				"props": {
+					"isPrecise": true,
+					"isExact": false,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "edge-point",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-launch-start",
+				"type": "arrow",
+				"fromId": "shape:readme-link-launch",
+				"toId": "shape:readme-python",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 30,
+				"y": 60,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-runtime",
+				"type": "frame",
+				"parentId": "shape:readme-process",
+				"props": {
+					"w": 330,
+					"h": 210,
+					"name": "Bridge runtime (JavaScript)",
+					"color": "violet"
+				},
+				"index": "a1TUo",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-request-end",
+				"type": "arrow",
+				"fromId": "shape:readme-link-request",
+				"toId": "shape:readme-python",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 25,
+				"y": 70,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-editor",
+				"type": "geo",
+				"parentId": "shape:readme-runtime",
+				"props": {
+					"w": 280,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "solid",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "semi",
+					"size": "s",
+					"font": "draw",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
+				},
+				"index": "a2w1z",
+				"typeName": "shape"
+			},
+			{
+				"x": 25,
+				"y": 65,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-store-body",
+				"type": "text",
+				"parentId": "shape:readme-plugin",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 660,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Synchronizes GUI and dedicated Editors"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a2uPb",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-eval-end",
+				"type": "arrow",
+				"fromId": "shape:readme-link-eval",
+				"toId": "shape:readme-runtime",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0,
+						"y": 0.5952380952380952
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 20,
+				"y": 30,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-temp-body",
+				"type": "text",
+				"parentId": "shape:readme-temp",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 240,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Evaluation payload (.js)"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Obsidian reads + deletes"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a1ZIn",
+				"typeName": "shape"
+			},
+			{
+				"x": 41,
+				"y": 250,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-cli-body",
+				"type": "text",
+				"parentId": "shape:readme-installation",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 168,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Separate process"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a4rTv",
+				"typeName": "shape"
+			},
+			{
+				"x": 420,
+				"y": 130,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-gui",
+				"type": "geo",
+				"parentId": "shape:readme-process",
+				"props": {
+					"w": 320,
+					"h": 110,
 					"geo": "rectangle",
 					"dash": "solid",
 					"growY": 0,
@@ -1104,7 +1398,44 @@ tags:
 						]
 					}
 				},
-				"index": "aFVOM",
+				"index": "a315f",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-save-end",
+				"type": "arrow",
+				"fromId": "shape:readme-link-save",
+				"toId": "shape:readme-vault",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 30,
+				"y": 360,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-plugin",
+				"type": "frame",
+				"parentId": "shape:readme-process",
+				"props": {
+					"w": 710,
+					"h": 100,
+					"name": "Existing tldraw plugin",
+					"color": "green"
+				},
+				"index": "a2Yur",
 				"typeName": "shape"
 			},
 			{
@@ -1116,30 +1447,48 @@ tags:
 				"meta": {},
 				"id": "shape:readme-architecture",
 				"type": "frame",
+				"parentId": "page:page",
 				"props": {
-					"w": 1280,
-					"h": 740,
+					"w": 1440,
+					"h": 980,
 					"name": "README architecture",
 					"color": "grey"
 				},
-				"parentId": "page:page",
-				"index": "a1Uye",
+				"index": "a171I",
 				"typeName": "shape"
 			},
 			{
-				"x": 950,
-				"y": 540,
+				"meta": {},
+				"id": "binding:readme-payload-start",
+				"type": "arrow",
+				"fromId": "shape:readme-link-payload",
+				"toId": "shape:readme-python",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 25,
+				"y": 75,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-markdown-body",
 				"type": "text",
-				"parentId": "shape:readme-architecture",
+				"parentId": "shape:readme-vault",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 270,
+					"w": 660,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1152,23 +1501,14 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Editable .md in your vault"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Canonical saved records"
+										"text": "Canonical saved document records"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "aKNNU",
+				"index": "a214f",
 				"typeName": "shape"
 			},
 			{
@@ -1186,15 +1526,15 @@ tags:
 				"typeName": "document"
 			},
 			{
-				"x": 340,
-				"y": 542.5,
+				"x": 580,
+				"y": 240,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-link-gui-sync",
 				"type": "arrow",
-				"parentId": "shape:readme-architecture",
+				"parentId": "shape:readme-process",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
@@ -1209,8 +1549,8 @@ tags:
 						"y": 0
 					},
 					"end": {
-						"x": 110,
-						"y": 0
+						"x": 0,
+						"y": 120
 					},
 					"arrowheadStart": "arrow",
 					"arrowheadEnd": "arrow",
@@ -1226,7 +1566,7 @@ tags:
 					"font": "draw",
 					"scale": 1
 				},
-				"index": "aFcv1t",
+				"index": "a3xqR",
 				"typeName": "shape"
 			},
 			{
@@ -1276,19 +1616,77 @@ tags:
 				"typeName": "instance"
 			},
 			{
-				"x": 60,
-				"y": 540,
+				"x": 25,
+				"y": 190,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-cli",
+				"type": "geo",
+				"parentId": "shape:readme-installation",
+				"props": {
+					"w": 200,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "solid",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "blue",
+					"labelColor": "black",
+					"fill": "semi",
+					"size": "s",
+					"font": "draw",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
+				},
+				"index": "a2dtA",
+				"typeName": "shape"
+			},
+			{
+				"x": 32,
+				"y": 610,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-temp",
+				"type": "frame",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 280,
+					"h": 140,
+					"name": "OS temporary files",
+					"color": "grey"
+				},
+				"index": "a5xwA",
+				"typeName": "shape"
+			},
+			{
+				"x": 436,
+				"y": 190,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-gui-body",
 				"type": "text",
-				"parentId": "shape:readme-architecture",
+				"parentId": "shape:readme-process",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 260,
+					"w": 288,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1304,20 +1702,11 @@ tags:
 										"text": "Human editing"
 									}
 								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Separate undo history"
-									}
-								]
 							}
 						]
 					}
 				},
-				"index": "aEPRE",
+				"index": "a5e8v",
 				"typeName": "shape"
 			},
 			{
@@ -1326,6 +1715,60 @@ tags:
 				"type": "arrow",
 				"fromId": "shape:readme-link-request",
 				"toId": "shape:readme-codex",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 595,
+				"y": 298,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-gui-sync-label",
+				"type": "text",
+				"parentId": "shape:readme-process",
+				"props": {
+					"color": "grey",
+					"size": "s",
+					"w": 120,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.9,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "sync"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a7HWI",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:readme-eval-start",
+				"type": "arrow",
+				"fromId": "shape:readme-link-eval",
+				"toId": "shape:readme-cli",
 				"props": {
 					"isPrecise": true,
 					"isExact": true,
@@ -1339,127 +1782,19 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 365,
-				"y": 500,
+				"x": 41,
+				"y": 130,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-gui-sync-label",
+				"id": "shape:readme-editor-body",
 				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "grey",
-					"size": "s",
-					"w": 90,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.9,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "sync"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aNoa6",
-				"typeName": "shape"
-			},
-			{
-				"x": 950,
-				"y": 198,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-runtime-title",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "violet",
-					"size": "m",
-					"w": 270,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.95,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Bridge runtime"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aAYPn",
-				"typeName": "shape"
-			},
-			{
-				"x": 740,
-				"y": 365,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-runtime-sync-label",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"color": "grey",
-					"size": "s",
-					"w": 200,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 0.9,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "sync"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aMLMA",
-				"typeName": "shape"
-			},
-			{
-				"x": 950,
-				"y": 250,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-runtime-body",
-				"type": "text",
-				"parentId": "shape:readme-architecture",
+				"parentId": "shape:readme-runtime",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 270,
+					"w": 248,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1472,46 +1807,153 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Dedicated tldraw Editor"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Runs inside Obsidian"
+										"text": "Uses tldraw SDK"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "aBaAz",
+				"index": "a4VXM",
 				"typeName": "shape"
 			},
 			{
 				"meta": {},
-				"id": "binding:readme-sdk-end",
+				"id": "binding:readme-save-start",
 				"type": "arrow",
-				"fromId": "shape:readme-link-sdk",
+				"fromId": "shape:readme-link-save",
 				"toId": "shape:readme-plugin",
 				"props": {
 					"isPrecise": true,
 					"isExact": true,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 1
 					},
 					"snap": "none",
-					"terminal": "end"
+					"terminal": "start"
 				},
 				"typeName": "binding"
 			},
 			{
-				"x": 40,
-				"y": 100,
+				"x": 195,
+				"y": 240,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-link-runtime-sync",
+				"type": "arrow",
+				"parentId": "shape:readme-process",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 0,
+						"y": 0
+					},
+					"end": {
+						"x": 0,
+						"y": 120
+					},
+					"arrowheadStart": "arrow",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "a2pWPV",
+				"typeName": "shape"
+			},
+			{
+				"x": 210,
+				"y": 298,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-runtime-sync-label",
+				"type": "text",
+				"parentId": "shape:readme-process",
+				"props": {
+					"color": "grey",
+					"size": "s",
+					"w": 120,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.9,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "sync"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a6Iz1",
+				"typeName": "shape"
+			},
+			{
+				"x": 41,
+				"y": 85,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-editor-title",
+				"type": "text",
+				"parentId": "shape:readme-runtime",
+				"props": {
+					"color": "violet",
+					"size": "m",
+					"w": 248,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.95,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Dedicated Editor"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a3R1n",
+				"typeName": "shape"
+			},
+			{
+				"x": 32,
+				"y": 96,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1522,11 +1964,11 @@ tags:
 				"props": {
 					"color": "grey",
 					"size": "m",
-					"w": 1200,
+					"w": 1376,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.85,
+					"scale": 0.9,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1535,14 +1977,33 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "An agent bridge to the existing Obsidian tldraw plugin"
+										"text": "Local processes, loaded runtime, and the saved document"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "a2aVb",
+				"index": "a2RbQ",
+				"typeName": "shape"
+			},
+			{
+				"x": 32,
+				"y": 160,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-agent",
+				"type": "frame",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 280,
+					"h": 360,
+					"name": "Agent environment",
+					"color": "blue"
+				},
+				"index": "a3grM",
 				"typeName": "shape"
 			}
 		]

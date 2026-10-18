@@ -2,7 +2,7 @@
 
 Edit local Obsidian tldraw diagrams with an AI agent while continuing to edit them in Obsidian. The bridge provides a CLI and a Codex plugin with a bundled Skill, without modifying the existing Obsidian tldraw plugin.
 
-![Architecture: Codex and the Python bridge edit a dedicated tldraw Editor through the official Obsidian CLI; the existing plugin synchronizes GUI edits and saves the Markdown document.](docs/diagrams/architecture.svg)
+![Architecture: The agent launches the official Obsidian CLI, which loads the bridge runtime inside running Obsidian Desktop. Its dedicated Editor and the GUI synchronize through the existing tldraw plugin; Markdown is saved in the vault and evaluation files use the OS temporary directory.](docs/diagrams/architecture.svg)
 
 ## Setup and usage
 
