@@ -4,6 +4,40 @@ Use `capabilities` to discover the runtime's API version, named operations and l
 Registered shape types are reported after opening a document. Props still follow
 the installed SDK; use `state` for exact records when compact observation is insufficient.
 
+## Vault enumeration
+
+`vaults` is a global CLI command and does not require `--vault`:
+
+```sh
+python3 "<skill-directory>/scripts/bridge.py" vaults
+```
+
+Python: `from obsidian_tldraw_bridge.api import list_vaults; list_vaults()`.
+It runs official `vaults verbose`, then inspects each registered path without
+opening vaults, loading plugins, or writing files. Each `vaults` array entry has
+`name`, `path`, and `tldraw` with `status`, `version`, `enabled`, `configDir`,
+`source: filesystem`. Preserve distinct paths even when names coincide.
+
+`status` is installed (valid manifest with id tldraw/version and a main.js file),
+not_installed (no tldraw plugin folder), incomplete (invalid/missing installation
+files), or unknown (vault/config/plugin cannot be inspected). Incomplete/unknown
+results include `reason`; they do not prevent other vaults from being listed.
+`enabled` independently describes whether community-plugins.json lists tldraw;
+a missing file means false. A malformed/unreadable file gives null and
+`enabledReason`. An unavailable vault/config gives null with the overall reason.
+Version is null when it cannot be determined.
+
+The inspected folder defaults to `.obsidian`; `--config-dir <folder-name>` or the
+Python `config_dir` argument selects an explicit alternative for every listed
+vault. The active GUI configuration folder is not inferred. Status is scoped to
+the returned configDir. Saved activation is not proof of runtime loading or API
+support: use `doctor` after selecting a vault. Never treat unknown as uninstalled.
+`--obsidian` and `--timeout` apply; `--vault` and `--request-id` are rejected.
+Global enumeration failures return `VAULT_DISCOVERY_FAILED`/`not_applied` instead
+of a misleading empty list. Enumeration uses the existing CLI discovery and
+file-backed output capture. Timeout bounds the CLI subprocess; filesystem checks
+run afterward and depend on local/cloud filesystem responsiveness.
+
 ## CLI discovery and connection diagnostics
 
 Use a vault name or ID for `--vault`. Filesystem paths are rejected before CLI

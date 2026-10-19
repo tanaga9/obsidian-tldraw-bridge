@@ -4,16 +4,18 @@ import json
 import sys
 from pathlib import Path
 from .obsidian import BridgeError, Client
-from .api import Bridge
+from .api import Bridge, list_vaults
 
 
 def parser():
     p = argparse.ArgumentParser(description="Operate local Obsidian tldraw Markdown diagrams.")
-    p.add_argument("--vault", required=True, help="Obsidian vault name or id (not a filesystem path)")
+    p.add_argument("--vault", help="Obsidian vault name or id (required except for vaults)")
     p.add_argument("--obsidian", help="Obsidian CLI executable")
     p.add_argument("--timeout", type=float, default=30, help="Total dispatch/poll timeout in seconds (default: 30)")
     p.add_argument("--request-id", help="Idempotent request id; reuse only with identical arguments")
     sub = p.add_subparsers(dest="command", required=True)
+    vaults = sub.add_parser("vaults", help="List registered vaults and on-disk tldraw installation status")
+    vaults.add_argument("--config-dir", default=".obsidian", help="Configuration folder name to inspect in each vault (default: .obsidian)")
     sub.add_parser("doctor")
     sub.add_parser("capabilities", help="Discover runtime operations and limits")
     style_spec = sub.add_parser("style-spec", help="Read installed style values and defaults from an open document")
@@ -109,69 +111,83 @@ def _print_json(value, stream, *, ensure_ascii=False):
 def main(argv=None):
     options = parser().parse_args(argv)
     try:
-        bridge = Bridge(options.vault, options.obsidian, options.timeout, client_factory=Client)
-        args = {}
-        if hasattr(options, "path"):
-            args["path"] = options.path
-        if getattr(options, "revision", None):
-            args["revision"] = options.revision
-        if options.command == "style-spec":
-            args["shapeType"] = options.shape_type
-        if options.command in ('insert-image', 'image-info'):
-            args['file'] = options.file
-            for option, key in (('max_dimension', 'maxDimension'), ('format', 'format'), ('quality', 'quality'), ('max_bytes', 'maxBytes')):
-                value = getattr(options, option)
-                if value is not None:
-                    args[key] = value
-        if options.command == 'insert-image':
-            for key in ('x', 'y', 'width', 'height', 'parent_id', 'page_id', 'shape_id'):
-                value = getattr(options, key)
-                if value is not None:
-                    args[{'parent_id': 'parentId', 'page_id': 'pageId', 'shape_id': 'shapeId'}.get(key, key)] = value
-            if options.full:
-                args['full'] = True
-        if options.command in ("apply", "batch", "script", "freehand"):
-            if options.full:
-                args["full"] = True
-            source = _read_input(options.input)
-            if options.command in ("apply", "batch"):
-                data = json.loads(source)
-                args["operations"] = data["operations"] if isinstance(data, dict) else data
-            elif options.command == "freehand":
-                args["drawing"] = json.loads(source)
-            else:
-                args["code"] = source
-        if options.command in ("observe", "preview"):
-            if options.ids is not None:
-                args["ids"] = options.ids
-            if options.bounds is not None:
-                args["bounds"] = dict(zip(("x", "y", "w", "h"), options.bounds))
-        if options.command == "apply" and options.page_id is not None:
-            args["pageId"] = options.page_id
-        if options.command == "observe":
-            args.update(limit=options.limit, offset=options.offset)
-            if options.page_id is not None:
-                args["pageId"] = options.page_id
-        if options.command == "preview":
-            args["output"] = options.output
-            if options.format is not None:
-                args['format'] = options.format
-            if options.quality is not None:
-                args['quality'] = options.quality
-            if options.scale != 1:
-                args["scale"] = options.scale
-            if options.part is not None:
-                args["part"] = options.part
-        if options.command == "forget":
-            result = bridge.forget(options.id)
-        elif options.command == "status":
-            result = bridge.status(options.id)
+        if options.command == 'vaults':
+            if options.vault is not None or options.request_id is not None:
+                raise BridgeError('vaults does not accept --vault or --request-id', code='INVALID_INPUT', outcome='not_applied')
+            result = list_vaults(options.obsidian, options.timeout, options.config_dir)
         else:
-            result = bridge.call(options.command, args, options.request_id)
+            result = _execute(options)
     except (BridgeError, OSError, ValueError, KeyError) as exc:
         error = exc if isinstance(exc, BridgeError) else BridgeError(str(exc), code="INVALID_INPUT", outcome="not_applied")
         _print_json({"error": error.as_dict()}, sys.stderr)
         return 1
+    return _output(options, result)
+
+
+def _execute(options):
+    bridge = Bridge(options.vault, options.obsidian, options.timeout, client_factory=Client)
+    args = {}
+    if hasattr(options, "path"):
+        args["path"] = options.path
+    if getattr(options, "revision", None):
+        args["revision"] = options.revision
+    if options.command == "style-spec":
+        args["shapeType"] = options.shape_type
+    if options.command in ('insert-image', 'image-info'):
+        args['file'] = options.file
+        for option, key in (('max_dimension', 'maxDimension'), ('format', 'format'), ('quality', 'quality'), ('max_bytes', 'maxBytes')):
+            value = getattr(options, option)
+            if value is not None:
+                args[key] = value
+    if options.command == 'insert-image':
+        for key in ('x', 'y', 'width', 'height', 'parent_id', 'page_id', 'shape_id'):
+            value = getattr(options, key)
+            if value is not None:
+                args[{'parent_id': 'parentId', 'page_id': 'pageId', 'shape_id': 'shapeId'}.get(key, key)] = value
+        if options.full:
+            args['full'] = True
+    if options.command in ("apply", "batch", "script", "freehand"):
+        if options.full:
+            args["full"] = True
+        source = _read_input(options.input)
+        if options.command in ("apply", "batch"):
+            data = json.loads(source)
+            args["operations"] = data["operations"] if isinstance(data, dict) else data
+        elif options.command == "freehand":
+            args["drawing"] = json.loads(source)
+        else:
+            args["code"] = source
+    if options.command in ("observe", "preview"):
+        if options.ids is not None:
+            args["ids"] = options.ids
+        if options.bounds is not None:
+            args["bounds"] = dict(zip(("x", "y", "w", "h"), options.bounds))
+    if options.command == "apply" and options.page_id is not None:
+        args["pageId"] = options.page_id
+    if options.command == "observe":
+        args.update(limit=options.limit, offset=options.offset)
+        if options.page_id is not None:
+            args["pageId"] = options.page_id
+    if options.command == "preview":
+        args["output"] = options.output
+        if options.format is not None:
+            args['format'] = options.format
+        if options.quality is not None:
+            args['quality'] = options.quality
+        if options.scale != 1:
+            args["scale"] = options.scale
+        if options.part is not None:
+            args["part"] = options.part
+    if options.command == "forget":
+        result = bridge.forget(options.id)
+    elif options.command == "status":
+        result = bridge.status(options.id)
+    else:
+        result = bridge.call(options.command, args, options.request_id)
+    return result
+
+
+def _output(options, result):
     # Output errors happen after execution and cannot make a completed edit
     # unapplied. Keep the successful result, including when no receipt was retained.
     try:

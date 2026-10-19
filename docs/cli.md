@@ -43,25 +43,55 @@ Preview output paths are local filesystem paths, resolved against the process's
 working directory; their parent directory must exist. They are separate from
 vault-relative diagram paths.
 
-Always specify the vault; diagram paths are vault-relative `.md` paths. `apply`,
+Specify the vault for every command except `vaults`; diagram paths are vault-relative `.md` paths. `apply`,
 `batch`, `freehand`, and `script` accept `--input -` for standard input. Results
 are JSON; handled errors are JSON on standard error with exit code 1.
 
 ## Choosing a vault
 
-The [official Obsidian CLI](https://obsidian.md/help/cli#vaults) lists known vaults
-without selecting a target:
+List registered vaults and their on-disk tldraw installation status without
+selecting or opening any vault:
+
+```sh
+python3 bridge.py vaults
+```
+
+The JSON `vaults` array preserves each registration's `name` and absolute `path`,
+including duplicate names. Each entry adds a `tldraw` object:
+
+```json
+{"status":"installed","version":"1.32.0","enabled":true,"configDir":"/path/to/vault/.obsidian","source":"filesystem"}
+```
+
+`status` is `installed` (valid tldraw manifest and main.js present),
+`not_installed` (no plugin folder in the inspected configuration), `incomplete`
+(missing/invalid installation files), or `unknown` (unavailable paths/permissions).
+`reason` explains incomplete/unknown results. `enabled` separately reads
+`community-plugins.json`: true/false means listed/not listed; null plus
+`enabledReason` means it could not be read or parsed. A missing activation file
+means false. If the vault/config folder itself cannot be inspected, enabled is
+null and `reason` explains why. This reports saved configuration, not whether a
+plugin is loaded, trusted, or compatible; use `doctor` on a selected vault for that.
+
+The default inspected configuration folder is `.obsidian`. Alternate configuration
+folders are explicit: `python3 bridge.py vaults --config-dir .custom` inspects that
+folder in each listed vault. The command does not discover which configuration
+folder a running Obsidian window uses. It never loads plugin code or writes files.
+`--obsidian`/`OBSIDIAN_CLI` and `--timeout` also work; `--vault` and `--request-id`
+are rejected for this read-only global command. A failed official CLI enumeration
+returns `VAULT_DISCOVERY_FAILED`, not an empty successful list. Individual vault
+inspection failures remain in the list without hiding other vaults.
+
+Enumeration uses the [official Obsidian CLI](https://obsidian.md/help/cli#vaults)
+`vaults verbose` command. Use it directly for connection diagnostics if needed:
 
 ```sh
 obsidian vaults verbose
 ```
 
-`vaults` lists names; `verbose` includes paths. Pass a registered name or ID to
-`--vault`; filesystem paths are rejected. If the user identifies a vault by path,
-match it to the registered entry before calling the bridge. Use the executable resolved by
-[connection discovery](#connection-and-sessions) if `obsidian` is not registered
-on PATH. This is an official CLI command, not a bridge subcommand; it lists known
-vaults rather than searching the filesystem for every vault.
+Pass a registered name or ID to `--vault` for subsequent operations; filesystem
+paths are rejected. Match a supplied path to its registered entry. This command
+lists registered vaults rather than searching the filesystem for every vault.
 
 When multiple vaults exist and the target is at all uncertain, agents must ask
 before running vault-scoped commands. Offer candidates ordered by estimated
@@ -77,6 +107,7 @@ SDK access, result fields, errors, persistence, and request-ID recovery.
 
 | Purpose | CLI usage |
 | --- | --- |
+| Vaults and tldraw status | `vaults [--config-dir <folder-name>]`; no `--vault` |
 | Installed style specification | `style-spec <path> --shape-type <type>`; the document must already be open |
 | Compact observation | `observe <path> [--ids <id> ... \| --bounds X Y W H] [--limit N]`; continue with `--offset N --revision <revision> --page-id <currentPageId>` |
 | Full records | `state <path>`; add `--full` to `apply`, `batch`, `script`, or `freehand` for full edit results |

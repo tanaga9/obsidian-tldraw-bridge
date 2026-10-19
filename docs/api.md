@@ -7,9 +7,10 @@ follow the same contract. No MCP server or HTTP listener is provided.
 ## Python usage
 
 ```python
-from obsidian_tldraw_bridge.api import Bridge
+from obsidian_tldraw_bridge.api import Bridge, list_vaults
 from obsidian_tldraw_bridge.obsidian import BridgeError
 
+vaults = list_vaults()  # No vault selection, Editor, or plugin execution.
 bridge = Bridge("Documents")
 bridge.call("open", {"path": "Drawings/example.md"})
 view = bridge.call("observe", {"path": "Drawings/example.md", "limit": 100})
@@ -30,6 +31,13 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
 
 ## Interface
 
+- `list_vaults(executable=None, timeout=30, config_dir=".obsidian")` lists registered
+  vault names/paths and filesystem tldraw status without selecting a vault.
+  `tldraw.status` distinguishes installed, not_installed, incomplete and unknown;
+  `version`, `enabled`, `configDir` and diagnostic reasons describe the inspected
+  configuration. `enabled` describes saved activation settings, not runtime load.
+  Alternative config folder names are explicit. See [vault discovery](cli.md#choosing-a-vault).
+  This is a module function, separate from vault-scoped `Bridge.call` actions.
 - `Bridge(vault)` selects the vault; transport initialization is lazy.
 - `call(action, args, request_id=None)` returns a JSON-compatible result. Actions
   include `capabilities`, `style-spec`, `doctor`, `create`, `open`, `observe`, `state`, `apply`,

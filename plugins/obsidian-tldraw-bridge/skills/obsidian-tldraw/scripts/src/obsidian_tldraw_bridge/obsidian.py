@@ -51,6 +51,10 @@ def validate_connection(vault, timeout):
             (len(vault) >= 2 and vault[0].isalpha() and vault[1] == ':') or vault in ('.', '..')):
         raise BridgeError("Use an Obsidian vault name or id, not a filesystem path",
                           code="INVALID_INPUT", outcome="not_applied", details={"stage": "vault"})
+    validate_timeout(timeout)
+
+
+def validate_timeout(timeout):
     if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or not math.isfinite(timeout) or timeout <= 0:
         raise BridgeError("Timeout must be positive and finite", code="INVALID_INPUT", outcome="not_applied")
 
@@ -123,7 +127,8 @@ class Client:
         except OSError:
             pass  # Cleanup must not hide an evaluation result or its original error.
 
-    def _run_cli(self, argv, timeout):
+    @staticmethod
+    def _run_cli(argv, timeout):
         process = None
         try:
             # Regular files avoid pipe EOF waits; independent readers never move

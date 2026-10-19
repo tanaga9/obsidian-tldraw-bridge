@@ -4,6 +4,7 @@ from pathlib import Path
 from .obsidian import BridgeError, Client, validate_connection
 from .freehand import compile_script
 from .images import load_image
+from .vaults import list_vaults
 
 
 class Bridge:
