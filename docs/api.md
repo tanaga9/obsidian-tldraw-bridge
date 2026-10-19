@@ -32,8 +32,17 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
 
 - `Bridge(vault)` selects the vault; transport initialization is lazy.
 - `call(action, args, request_id=None)` returns a JSON-compatible result. Actions
-  include `capabilities`, `doctor`, `create`, `open`, `observe`, `state`, `apply`,
+  include `capabilities`, `style-spec`, `doctor`, `create`, `open`, `observe`, `state`, `apply`,
   `batch`, `script`, `freehand`, `image-info`, `insert-image`, `saved`, `preview`, and `close`.
+- `style-spec` takes `path` and `shapeType` for an already-open document. It
+  reports installed style enums, separate SDK/shape defaults and current creation
+  styles with per-field availability/source; it does not edit or save the note.
+- `script` returns `scriptResult` beside changes and persistence in compact/full
+  output. JSON results are detached and validated inside the rollback transaction
+  (64 KiB UTF-8, container depth 32). No return is `{"hasValue":false}`; null is
+  `{"hasValue":true,"value":null}`. Invalid results restore Store changes.
+  See [script results](../integrations/codex/skills/obsidian-tldraw/references/operations.md#script-results)
+  for allowed types, errors, and persistence-failure recovery.
 - `freehand` takes a `drawing` object, compiled to a synchronous SDK script.
 - `insert-image` takes `path`, `revision`, and a local image `file`, plus optional
   `x`, `y`, `width`, `height`, `parentId`, `pageId`, `shapeId`, and `full`.

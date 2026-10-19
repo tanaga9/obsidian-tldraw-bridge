@@ -26,6 +26,71 @@ function records(editor) {
 // Bound retained receipts without silently expiring an idempotency key.
 const MAX_JOBS = 128
 const INITIALIZATION_TIMEOUT_MS = 8000
+const SCRIPT_RESULT_BYTES = 64 * 1024
+const SCRIPT_RESULT_DEPTH = 32
+
+// Encode only JSON data, without executing accessors/toJSON or silently losing
+// unsupported values. Bound each token before retaining it, then detach the value
+// from the script's mutable objects before leaving the rollback transaction.
+function scriptResult(value) {
+  if (value === undefined) return { hasValue: false }
+  const chunks = [], ancestors = new Set()
+  let bytes = 0
+  const invalid = message => { throw fault('SCRIPT_RESULT_INVALID', message) }
+  const tooLarge = () => { throw fault('SCRIPT_RESULT_TOO_LARGE', `Script result exceeds ${SCRIPT_RESULT_BYTES} UTF-8 bytes or depth ${SCRIPT_RESULT_DEPTH}`) }
+  const append = token => {
+    bytes += Buffer.byteLength(token, 'utf8')
+    if (bytes > SCRIPT_RESULT_BYTES) tooLarge()
+    chunks.push(token)
+  }
+  const string = text => {
+    // JSON length is at least the UTF-16 length; bound stringify's allocation.
+    if (text.length > SCRIPT_RESULT_BYTES - bytes) tooLarge()
+    append(JSON.stringify(text))
+  }
+  const visit = (item, depth) => {
+    if (item === null) return append('null')
+    if (typeof item === 'string') return string(item)
+    if (typeof item === 'boolean') return append(String(item))
+    if (typeof item === 'number' && Number.isFinite(item)) return append(JSON.stringify(item))
+    if (typeof item !== 'object') invalid('Script result must contain only JSON data and finite numbers')
+    if (depth > SCRIPT_RESULT_DEPTH) tooLarge()
+    if (require('node:util').types.isProxy(item)) invalid('Proxy script results are unsupported')
+    if (ancestors.has(item)) invalid('Circular script result')
+    const array = Array.isArray(item), proto = Object.getPrototypeOf(item)
+    if (array && proto === null) invalid('Script results require ordinary arrays')
+    if (array || proto !== null) {
+      const constructor = Object.getOwnPropertyDescriptor(proto, 'constructor')?.value
+      if ((!array && Object.getPrototypeOf(proto) !== null) || typeof constructor !== 'function'
+        || Function.prototype.toString.call(constructor) !== Function.prototype.toString.call(array ? Array : Object)) {
+        invalid('Script results require plain objects and ordinary arrays')
+      }
+    }
+    ancestors.add(item)
+    if (array && item.length > SCRIPT_RESULT_BYTES - bytes) tooLarge()
+    const keys = Reflect.ownKeys(item)
+    for (const key of keys) {
+      const descriptor = Object.getOwnPropertyDescriptor(item, key)
+      if (typeof key !== 'string' || !Object.hasOwn(descriptor, 'value')) invalid('Symbol keys and accessors are unsupported in script results')
+      if (array ? key !== 'length' && (!/^(0|[1-9][0-9]*)$/.test(key) || Number(key) >= item.length)
+        : !descriptor.enumerable) invalid('Script result contains non-JSON properties')
+    }
+    append(array ? '[' : '{')
+    const count = array ? item.length : keys.length
+    for (let index = 0; index < count; index++) {
+      if (index) append(',')
+      const key = array ? String(index) : keys[index]
+      const descriptor = Object.getOwnPropertyDescriptor(item, key)
+      if (!descriptor) invalid('Sparse arrays are unsupported in script results')
+      if (!array) { string(key); append(':') }
+      visit(descriptor.value, depth + 1)
+    }
+    append(array ? ']' : '}')
+    ancestors.delete(item)
+  }
+  visit(value, 1)
+  return { hasValue: true, value: JSON.parse(chunks.join('')) }
+}
 
 function errorMessage(error) {
   // JavaScript can throw any value, including objects with throwing getters.
@@ -133,18 +198,71 @@ function requireEditing(editor) {
 function capabilities(app) {
   const plugin = app.plugins.getPlugin('tldraw')
   return { apiVersion: 1, ...pluginSupport(plugin),
-    actions: ['doctor','capabilities','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','close'],
+    actions: ['doctor','capabilities','style-spec','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','close'],
     imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
       optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
     preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9 },
     operations: operationFields, coordinates: { observeBounds: 'page', shapePosition: 'parent-local' }, observation: 'dedicated-editor-current-page',
-    limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4 },
+    limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4,
+      scriptResultBytes: SCRIPT_RESULT_BYTES, scriptResultDepth: SCRIPT_RESULT_DEPTH },
     guarantees: { revisionRequiredForEdits: true, persistenceChecked: true, synchronousStoreRollback: true,
       humanEditLock: false, arbitraryScriptCancellation: false, receiptsSurviveRestart: false },
     shapeTypes: [...sessionsFor(app).values()][0]?.editor.shapeUtils
       ? Object.keys([...sessionsFor(app).values()][0].editor.shapeUtils).sort() : null,
     shapeTypesNote: 'Open a document to discover registered types; shape props follow its installed SDK.',
   }
+}
+function styleSpec(app, args) {
+  if (typeof args.path !== 'string' || !args.path || typeof args.shapeType !== 'string' || !args.shapeType.trim()) {
+    throw fault('INVALID_INPUT', 'Style specification requires path and shapeType')
+  }
+  const session = sessionsFor(app).get(args.path)
+  if (!session?.editor) throw fault('EDITOR_UNAVAILABLE', 'Open the document before requesting style-spec')
+  const editor = session.editor
+  if (!editor.shapeUtils) throw fault('TLDRAW_UNSUPPORTED', 'Required editor.shapeUtils is unavailable')
+  if (!Object.hasOwn(editor.shapeUtils, args.shapeType)) {
+    throw fault('INVALID_INPUT', `Unknown shape type: ${args.shapeType}`)
+  }
+  const available = (source, value) => ({ status: 'available', source, value })
+  const unavailable = (source, reason, status = 'unavailable') => ({ status, source, reason })
+  const read = (source, callback, missingStatus = 'unavailable') => {
+    try {
+      const value = callback()
+      if (value === undefined) return unavailable(source,
+        missingStatus === 'unsupported' ? 'Style is not enumerable' : 'No value returned', missingStatus)
+      return available(source, scriptResult(value).value)
+    } catch (error) { return unavailable(source, errorMessage(error)) }
+  }
+  const source = 'editor.styleProps[shapeType]'
+  const result = { path: args.path, shapeType: args.shapeType,
+    pluginVersion: app.plugins.getPlugin('tldraw')?.manifest?.version ?? null }
+  try {
+    const styles = editor.styleProps?.[args.shapeType]
+    if (!styles || typeof styles.entries !== 'function') {
+      return { ...result, properties: unavailable(source, 'Style property mapping is unavailable') }
+    }
+    const util = editor.shapeUtils[args.shapeType]
+    let defaults, defaultsError
+    try { defaults = util.getDefaultProps() }
+    catch (error) { defaultsError = errorMessage(error) }
+    const properties = Object.create(null)
+    for (const [style, key] of styles.entries()) {
+      if (typeof key !== 'string' || !style) throw new Error('Unsupported style property mapping')
+      properties[key] = {
+        styleId: read('StyleProp.id', () => style.id),
+        values: read('StyleProp.values', () => {
+          const values = style.values
+          if (values !== undefined && !Array.isArray(values)) throw new Error('Enum values must be an array')
+          return values
+        }, 'unsupported'),
+        styleDefault: read('StyleProp.defaultValue', () => style.defaultValue),
+        shapeDefault: defaultsError ? unavailable('ShapeUtil.getDefaultProps()', defaultsError)
+          : read('ShapeUtil.getDefaultProps()[property]', () => defaults && Object.hasOwn(defaults, key) ? defaults[key] : undefined),
+        nextShapeStyle: read('editor.getStyleForNextShape(style)', () => editor.getStyleForNextShape(style)),
+      }
+    }
+    return { ...result, properties: available(source, properties) }
+  } catch (error) { return { ...result, properties: unavailable(source, errorMessage(error)) } }
 }
 function namedOperations(operations) {
   if (!Array.isArray(operations) || !operations.length || operations.length > 1000) {
@@ -425,18 +543,27 @@ function script(app, path, code, expected, full = false) {
   // after execution: this check cannot cancel already scheduled work.
   const before = JSON.parse(JSON.stringify(records(editor)))
   const fn = new Function('editor', 'app', 'plugin', 'require', code)
+  let returned
   try { runWithRollback(editor, 'Obsidian tldraw bridge script', () => {
     const result = fn(editor, app, app.plugins.getPlugin('tldraw'), require)
-    if (result && typeof result.then === 'function') {
-      Promise.resolve(result).catch(() => {})
+    if (require('node:util').types.isPromise(result)) {
+      Promise.prototype.then.call(result, undefined, () => {})
       throw new Error('Scripts must be synchronous; scheduled work cannot be cancelled')
     }
+    returned = scriptResult(result)
   })
   } catch (error) {
-    throw fault('SCRIPT_FAILED', errorMessage(error), 'unknown', { storeRevision: revision(editor),
+    let code = 'SCRIPT_FAILED'
+    // Scripts may throw any value. Read metadata once, and do not let a
+    // throwing getter/Proxy hide the original failure or its unknown outcome.
+    try {
+      const reportedCode = error?.code
+      if (['SCRIPT_RESULT_INVALID', 'SCRIPT_RESULT_TOO_LARGE', 'ROLLBACK_FAILED'].includes(reportedCode)) code = reportedCode
+    } catch (_) {}
+    throw fault(code, errorMessage(error), 'unknown', { storeRevision: revision(editor),
       recovery: 'Inspect state; script side effects outside the Store cannot be restored.' })
   }
-  return editResult(app, path, before, full)
+  return { ...editResult(app, path, before, full), scriptResult: returned }
 }
 
 function parseMarkdown(text) {
@@ -592,6 +719,7 @@ async function execute(app, action, args) {
       documents: [...sessionsFor(app).keys()]}
   }
   if (action === 'capabilities') return capabilities(app)
+  if (action === 'style-spec') return styleSpec(app, args)
   if (action === 'image-info') return (await prepareImage(app.workspace.containerEl.ownerDocument, args)).report
   if (action === 'observe') return observe(app, args)
   if (action === 'create') return create(app, args.path)
@@ -617,9 +745,14 @@ async function execute(app, action, args) {
     try {
       return {...result, persistence: await saved(app,args.path,result.revision)}
     } catch (error) {
-      if (error?.code === 'SAVE_CONFLICT') throw error
+      const scriptDetails = result.scriptResult === undefined ? {} : { scriptResult: result.scriptResult }
+      if (error?.code === 'SAVE_CONFLICT') {
+        error.details = { ...error.details, changes: result.changes, ...scriptDetails }
+        throw error
+      }
       throw fault('SAVE_UNCONFIRMED', errorMessage(error), 'applied', { path: args.path, revision: result.revision,
-        currentPageId: result.currentPageId, changes: result.changes, recovery: 'Inspect state and saved; do not reapply the edit.' })
+        currentPageId: result.currentPageId, changes: result.changes, ...scriptDetails,
+        recovery: 'Inspect state and saved; do not reapply the edit.' })
     }
   }
   if (action === 'saved') return saved(app, args.path)

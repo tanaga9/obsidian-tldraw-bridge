@@ -36,6 +36,7 @@ class Bridge:
             raise BridgeError(message, code="INVALID_INPUT", outcome="not_applied")
         fields = {
             "doctor": set(), "capabilities": set(), "create": {"path"},
+            "style-spec": {"path", "shapeType"},
             "open": {"path", "currentPageId"}, "state": {"path"}, "saved": {"path"}, "close": {"path"},
             "observe": {"path", "revision", "pageId", "limit", "offset", "ids", "bounds"},
             "apply": {"path", "revision", "pageId", "operations", "full"}, "batch": {"path", "revision", "operations", "full"},
@@ -50,6 +51,9 @@ class Bridge:
         if not isinstance(arguments, dict) or set(arguments) - fields[action]:
             invalid("Arguments must be an object with known fields")
         args = dict(arguments)
+        if action == "style-spec":
+            if not isinstance(args.get("shapeType"), str) or not args["shapeType"].strip():
+                invalid("Specify a nonempty shapeType")
         if action not in {"doctor", "capabilities", "image-info"}:
             path = args.get("path")
             if (not isinstance(path, str) or not path or path.startswith("/") or

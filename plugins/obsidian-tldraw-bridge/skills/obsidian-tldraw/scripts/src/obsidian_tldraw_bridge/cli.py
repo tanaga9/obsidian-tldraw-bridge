@@ -16,6 +16,9 @@ def parser():
     sub = p.add_subparsers(dest="command", required=True)
     sub.add_parser("doctor")
     sub.add_parser("capabilities", help="Discover runtime operations and limits")
+    style_spec = sub.add_parser("style-spec", help="Read installed style values and defaults from an open document")
+    style_spec.add_argument("path", help="Open vault-relative .md path")
+    style_spec.add_argument("--shape-type", required=True, help="Registered shape type, e.g. geo")
     sub.add_parser("status", help="Inspect a retained request without re-executing it").add_argument("id")
     observe = sub.add_parser("observe", help="Read compact current-page shapes, text, bounds, and connections")
     observe.add_argument("path")
@@ -112,6 +115,8 @@ def main(argv=None):
             args["path"] = options.path
         if getattr(options, "revision", None):
             args["revision"] = options.revision
+        if options.command == "style-spec":
+            args["shapeType"] = options.shape_type
         if options.command in ('insert-image', 'image-info'):
             args['file'] = options.file
             for option, key in (('max_dimension', 'maxDimension'), ('format', 'format'), ('quality', 'quality'), ('max_bytes', 'maxBytes')):

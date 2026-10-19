@@ -17,6 +17,7 @@ python3 bridge.py --vault Documents doctor
 python3 bridge.py --vault Documents capabilities
 python3 bridge.py --vault Documents --request-id create-example create 'Drawings/example.md'
 python3 bridge.py --vault Documents observe 'Drawings/example.md'
+python3 bridge.py --vault Documents style-spec 'Drawings/example.md' --shape-type geo
 ```
 
 Substitute the observed revision and `currentPageId` below. Use the returned path
@@ -76,6 +77,7 @@ SDK access, result fields, errors, persistence, and request-ID recovery.
 
 | Purpose | CLI usage |
 | --- | --- |
+| Installed style specification | `style-spec <path> --shape-type <type>`; the document must already be open |
 | Compact observation | `observe <path> [--ids <id> ... \| --bounds X Y W H] [--limit N]`; continue with `--offset N --revision <revision> --page-id <currentPageId>` |
 | Full records | `state <path>`; add `--full` to `apply`, `batch`, `script`, or `freehand` for full edit results |
 | Freehand drawing | `freehand <path> --revision <revision> --input <file>`; see [drawing input](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) |
@@ -89,6 +91,14 @@ Use a fresh global `--request-id` for each consequential edit. After a timeout,
 inspect its status or repeat the identical request with the same ID. Release
 completed receipts with `forget`; explicit IDs occupy the 128-receipt capacity
 until forgotten or Obsidian restarts.
+
+`script` returns `scriptResult` in both normal and `--full` output, beside the
+change summary and persistence result. `return {value:42}` yields
+`{"hasValue":true,"value":{"value":42}}`. JSON data is validated and detached
+inside the Store rollback transaction, with limits of 64 KiB UTF-8 and 32 nested
+containers. Invalid/oversized results fail with Store restoration. See
+[script results](../integrations/codex/skills/obsidian-tldraw/references/operations.md#script-results)
+for type restrictions, retained results, and failure recovery.
 
 ## Note creation
 

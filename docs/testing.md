@@ -32,6 +32,8 @@ These checks do not require a running Obsidian instance. They cover:
 | Image insertion | PNG/WebP/JPEG bytes are preserved by default. Read-only size reports, opt-in pixel resizing/WebP conversion, optional byte limits and animation protection are checked. Invalid data, ID collisions, and stale revisions/pages do not add records. Asset/shape creation shares a rollback boundary; request replay does not duplicate an insertion. |
 | CLI transport | CLI output is captured in temporary regular files with independent reader/writer positions; concurrent inherited writes preserve the response; completion and timeout do not wait for inherited descendant output handles. A short, shell-free argv bootstrap reads a closed UTF-8 evaluation file; code size and content do not expand argv. Receiver cleanup failure does not block evaluation; pre-launch failures discard unsent files and final timeout diagnostics list all tracked remaining files. Acknowledged returns also trigger sender cleanup, while uncertain delivery retains unread files. Missing initial output can be recovered by polling. UTF-8 process responses, input files/stdin (with or without a UTF-8 BOM), and JSON stdout/stderr preserve Unicode independently of the locale. Invalid response encoding retains unknown outcome and request identity. |
 | Connection setup | Mocked macOS/Windows discovery without symlink privileges, explicit override precedence, Windows console selection, name/ID validation, wrong-vault rejection before runtime evaluation, staged doctor errors, disabled CLI detection, and a remaining-budget deadline shared by dispatch, polls and cleanup. Untested plugin versions are allowed; missing plugin, Editor, and operation APIs are reported by name, with edits rejected before execution where possible. |
+| Style discovery | Document-specific installed StyleProps, enum extensions, separate defaults and next-shape styles; unavailable/unsupported/empty distinctions; no edits, history marks or file writes. |
+| Script results | Detached JSON data in compact/full results; UTF-8 byte/depth limits; invalid-result rollback without getter/toJSON execution; persistence failure details, explicit-ID replay and CLI output recovery. |
 | Result handling | Edits default to compact net change counts over document records; full output is available explicitly, and state remains inspectable. Automatic receipts are released; explicit request IDs retain their results. Cleanup failures do not hide successful operations. |
 | Note creation | Plugin-generated Markdown, existing-path and traversal rejection, saved editable session, retained creation after initialization failure, and request replay without duplicate creation. A live Editor avoids opening GUI tabs. Initialization does not override a user tab switch or reopen a closed tab; captured SDK construction data remains usable after the seed tab closes. |
 | Revisions and persistence | All SDK document-scope records participate in revision and persistence checks. Session records do not affect the revision. Pending GUI/source/shared notifications are reconciled before reads and revision checks without waiting for animation frames. Edits superseded during persistence return SAVE_CONFLICT; previews reject queued GUI changes during export. |
@@ -120,6 +122,20 @@ lost dispatch output, retained-ID replay, changed-request rejection, and short C
 bootstrap arguments. Removes its temporary note, session and consumed evaluation
 files. This opt-in check requires a running Obsidian instance and supported tldraw;
 it is separate from the automated Node-based transport checks.
+
+## Style discovery and script result integration check
+
+```sh
+python3 tests/live_styles.py --vault obsidian-tldraw-bridge
+```
+
+Choose the intended registered vault explicitly. Creates its own unique temporary
+note in `workspace/drawings/` and uses isolated runtime/loader copies. Checks real
+SDK fill/dash enums, default versus next-shape style, unchanged records/revision
+and Markdown during discovery, compact/full script results, retained replay/status,
+invalid-result rollback in shared records and persistence, and saved edits with
+results. It removes its note and closes its session. No production diagram is
+edited. The CLI/API adapter contract is also covered by the automated tests.
 
 ## Freehand integration check
 

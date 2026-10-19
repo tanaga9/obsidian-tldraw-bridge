@@ -74,3 +74,55 @@ class InputContractTest(unittest.TestCase):
             with self.subTest(args=args), self.assertRaises(BridgeError):
                 bridge.call('observe', args)
         factory.assert_not_called()
+
+class StyleSpecAndScriptResultTest(unittest.TestCase):
+    def test_style_spec_validates_before_connecting(self):
+        factory = Mock()
+        bridge = Bridge('V', client_factory=factory)
+        for args in ({'path': 'a.md'}, {'path': 'a.md', 'shapeType': ''},
+                     {'path': 'a.md', 'shapeType': None}, {'path': 'a.md', 'shapeType': '  '},
+                     {'path': '../a.md', 'shapeType': 'geo'},
+                     {'path': 'a.md', 'shapeType': 'geo', 'revision': 'r'}):
+            with self.subTest(args=args), self.assertRaises(BridgeError):
+                bridge.call('style-spec', args)
+        factory.assert_not_called()
+
+    def test_style_spec_cli_and_api_use_the_same_contract(self):
+        args = {'path': 'a.md', 'shapeType': 'geo'}
+        result = {'path': 'a.md', 'shapeType': 'geo', 'properties': {'status': 'available', 'value': {}}}
+        factory = Mock()
+        factory.return_value.call.return_value = result
+        self.assertEqual(Bridge('V', client_factory=factory).call('style-spec', args), result)
+        factory.return_value.call.assert_called_once_with('style-spec', args, None)
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, contextlib.redirect_stdout(io.StringIO()) as output:
+            client.return_value.call.return_value = result
+            self.assertEqual(main(['--vault', 'V', 'style-spec', 'a.md', '--shape-type', 'geo']), 0)
+            client.return_value.call.assert_called_once_with('style-spec', args, None)
+            self.assertEqual(json.loads(output.getvalue()), result)
+
+    def test_script_result_passes_through_cli_api_and_output_failure(self):
+        for full in (False, True):
+            result = {'path': 'a.md', 'scriptResult': {'hasValue': True, 'value': {'value': 42, 'text': '青😀'}},
+                      'persistence': {'saved': True}}
+            args = {'path': 'a.md', 'revision': 'r', 'code': 'return {value:42,text:"青😀"}'}
+            if full:
+                args['full'] = True
+                result['records'] = []
+            factory = Mock()
+            factory.return_value.call.return_value = result
+            self.assertEqual(Bridge('V', client_factory=factory).call('script', args, 'result-id'), result)
+            argv = ['--vault', 'V', '--request-id', 'result-id', 'script', 'a.md', '--revision', 'r', '--input', '-']
+            if full:
+                argv.append('--full')
+            for broken in (False, True):
+                output = Mock() if broken else io.StringIO()
+                if broken:
+                    output.buffer = None
+                    output.write.side_effect = BrokenPipeError('closed')
+                with patch('obsidian_tldraw_bridge.cli.Client') as client, patch('sys.stdin', io.StringIO(args['code'])), \
+                        contextlib.redirect_stdout(output), contextlib.redirect_stderr(io.StringIO()) as errors:
+                    client.return_value.call.return_value = result
+                    self.assertEqual(main(argv), 1 if broken else 0)
+                    client.return_value.call.assert_called_once_with('script', args, 'result-id')
+                    actual = json.loads(errors.getvalue())['error']['details']['result'] if broken else json.loads(output.getvalue())
+                    self.assertEqual(actual, result)

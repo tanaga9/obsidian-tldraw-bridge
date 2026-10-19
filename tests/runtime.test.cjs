@@ -245,6 +245,34 @@ for (const [name,code,message] of [
   })
 }
 
+for (const [name, thrown, expectedCode] of [
+  ['throwing code getter', '{message:"original failure",get code(){throw new Error("code getter failed")}}', 'SCRIPT_FAILED'],
+  ['throwing Proxy metadata', 'new Proxy({message:"original failure"},{get(target,key){if(key==="code")throw new Error("code trap failed");return Reflect.get(target,key)}})', 'SCRIPT_FAILED'],
+  ['code read once', '{message:"original failure",get code(){if(++app.codeReads>1)throw new Error("code read twice");return "SCRIPT_RESULT_INVALID"}}', 'SCRIPT_RESULT_INVALID'],
+]) {
+  test(`${name} preserves script failure, rollback and retained replay`,async()=>{
+    const h=setup(), before=copy(h.values()), revision=h.access.revision(h.editor)
+    h.app.externalSideEffects=0
+    h.app.codeReads=0
+    const args={path:'a.md',revision,code:
+      `app.externalSideEffects++;editor.updateDocumentSettings({gridSize:999});throw ${thrown}`}
+    await assert.rejects(h.invoke('script',args,'metadata-failure'),/original failure/)
+    const receipt=JSON.parse(h.api.poll(h.app,'metadata-failure'))
+    assert.equal(receipt.failure.code,expectedCode)
+    assert.equal(receipt.failure.message,'original failure')
+    assert.equal(receipt.failure.outcome,'unknown')
+    assert.equal(receipt.failure.details.storeRevision,revision)
+    assert.match(receipt.failure.details.recovery,/outside the Store/)
+    assert.deepEqual(copy(h.values()),before)
+    assert.equal(h.app.externalSideEffects,1)
+    if (name==='code read once') assert.equal(h.app.codeReads,1)
+    await assert.rejects(h.invoke('script',args,'metadata-failure'),/original failure/)
+    assert.deepEqual(JSON.parse(h.api.poll(h.app,'metadata-failure')),receipt)
+    assert.equal(h.app.externalSideEffects,1)
+    assert.equal((await h.invoke('doctor',{},'after-metadata-failure')).vault,'test')
+  })
+}
+
 test('a non-Error rollback failure preserves both error messages and releases the job',async()=>{
   const h=setup()
   h.editor.bailToMark=()=>{throw null}
@@ -954,4 +982,177 @@ test('preview detects GUI notifications queued during asynchronous export',async
     await assert.rejects(h.invoke('preview',{path:'a.md',format:'png',output},'pending-preview'),/Revision conflict/)
     assert.equal(fs.readFileSync(output,'utf8'),'original')
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+function installStyles(h, editor = h.editor, next = 'solid') {
+  const fill = { id: 'tldraw:fill', values: ['none','semi','solid','pattern','fill','lined-fill'], defaultValue: 'none' }
+  const dash = { id: 'tldraw:dash', values: ['draw','solid'], defaultValue: 'draw' }
+  editor.shapeUtils = {geo:{getDefaultProps:()=>({fill:'none',dash:'draw'})}}
+  editor.styleProps = {geo:new Map([[fill,'fill'],[dash,'dash']])}
+  editor.getStyleForNextShape = style => style === fill ? next : 'draw'
+  return {fill,dash}
+}
+
+test('style-spec reads the specified session without edits, history marks or file reads',async()=>{
+  const h=setup(), before=copy(h.values()), rev=h.access.revision(h.editor)
+  const {fill}=installStyles(h)
+  fill.values.push('custom')
+  const other={...h.editor}
+  installStyles(h,other,'pattern')
+  h.access.sessionsFor(h.app).set('b.md',{path:'b.md',editor:other})
+  h.app.vault.read=()=>{throw new Error('unexpected file read')}
+  h.editor.markHistoryStoppingPoint=()=>{throw new Error('unexpected history change')}
+  const a=await h.invoke('style-spec',{path:'a.md',shapeType:'geo'},'styles-a')
+  const b=await h.invoke('style-spec',{path:'b.md',shapeType:'geo'},'styles-b')
+  assert.equal(a.pluginVersion,'1.32.0')
+  assert.equal(a.properties.status,'available')
+  const props=a.properties.value
+  assert.deepEqual(props.fill.values.value,['none','semi','solid','pattern','fill','lined-fill','custom'])
+  assert.equal(props.fill.styleId.value,'tldraw:fill')
+  assert.equal(props.fill.styleDefault.value,'none')
+  assert.equal(props.fill.shapeDefault.value,'none')
+  assert.equal(props.fill.nextShapeStyle.value,'solid')
+  assert.equal(b.properties.value.fill.nextShapeStyle.value,'pattern')
+  assert.equal(props.dash.values.status,'available')
+  assert.equal(h.access.revision(h.editor),rev)
+  assert.deepEqual(copy(h.values()),before)
+  assert.ok((await h.invoke('capabilities',{},'style-caps')).actions.includes('style-spec'))
+})
+
+test('style-spec distinguishes unsupported, unavailable, empty and null fields',async()=>{
+  const h=setup(), {fill,dash}=installStyles(h)
+  fill.values=[]
+  fill.defaultValue=null
+  delete dash.values
+  delete h.editor.getStyleForNextShape
+  h.editor.shapeUtils.geo.getDefaultProps=()=>{throw new Error('defaults unavailable')}
+  const props=(await h.invoke('style-spec',{path:'a.md',shapeType:'geo'},'fields')).properties.value
+  assert.deepEqual(props.fill.values.value,[])
+  assert.equal(props.fill.styleDefault.value,null)
+  assert.equal(props.fill.styleDefault.status,'available')
+  assert.equal(props.dash.values.status,'unsupported')
+  assert.equal('value' in props.dash.values,false)
+  assert.equal(props.fill.nextShapeStyle.status,'unavailable')
+  assert.equal(props.fill.shapeDefault.status,'unavailable')
+  assert.match(props.fill.shapeDefault.reason,/defaults unavailable/)
+  delete h.editor.styleProps
+  assert.equal((await h.invoke('style-spec',{path:'a.md',shapeType:'geo'},'mapping')).properties.status,'unavailable')
+  for (const args of [{path:'missing.md',shapeType:'geo'}, {path:'a.md',shapeType:'missing'}, {shapeType:'geo'}]) {
+    await assert.rejects(h.invoke('style-spec',args,JSON.stringify(args)))
+  }
+})
+
+test('script results distinguish absence, null and falsy values in compact and full responses',async()=>{
+  const h=setup(), revision=h.access.revision(h.editor)
+  for (const full of [false,true]) {
+    for (const [code,expected] of [[';', {hasValue:false}], ['return undefined',{hasValue:false}],
+      ['return null',{hasValue:true,value:null}], ['return false',{hasValue:true,value:false}],
+      ['return 0',{hasValue:true,value:0}], ['return ""',{hasValue:true,value:''}],
+      ['return {value:42,text:"青😀",list:[true,null]}',{hasValue:true,value:{value:42,text:'青😀',list:[true,null]}}]]) {
+      const args={path:'a.md',revision,code,full}, id=`result-${full}-${code}`
+      const result=await h.invoke('script',args,id)
+      assert.deepEqual(result.scriptResult,expected)
+      assert.equal(result.persistence.saved,true)
+      assert.equal('records' in result,full)
+      assert.deepEqual(await h.invoke('script',args,id),result)
+    }
+  }
+})
+
+for (const code of ['return 1n','return ()=>{}','return Symbol("x")','return NaN','return Infinity',
+  'return {value:undefined}','return [undefined]','return Array(2)','return new Date()',
+  'return new Map()','return new (class extends Array {})()', 'return Object.setPrototypeOf([],null)',
+  'const a={};a.self=a;return a',
+  'return {get value(){app.getterCalled=true;throw new Error("getter ran")}}',
+  'return {get then(){app.getterCalled=true;throw new Error("then getter ran")}}',
+  'return {toJSON(){app.getterCalled=true;return 42}}',
+  'return {[Symbol("key")]:1}', 'return Object.defineProperty({},"hidden",{value:1})',
+  'return new Proxy({}, {ownKeys(){app.getterCalled=true;return []}})']) {
+  test(`invalid script result rolls back and remains pollable: ${code}`,async()=>{
+    const h=setup(), before=copy(h.values()), revision=h.access.revision(h.editor)
+    await assert.rejects(h.invoke('script',{path:'a.md',revision,
+      code:'editor.updateDocumentSettings({gridSize:999});'+code},'bad-result'))
+    const receipt=JSON.parse(h.api.poll(h.app,'bad-result'))
+    assert.equal(receipt.failure.code,'SCRIPT_RESULT_INVALID')
+    assert.equal(receipt.failure.outcome,'unknown')
+    assert.equal(receipt.failure.details.storeRevision,revision)
+    assert.deepEqual(copy(h.values()),before)
+    assert.equal(h.app.getterCalled,undefined)
+    assert.equal((await h.access.saved(h.app,'a.md')).saved,true)
+  })
+}
+
+test('script result limits count JSON UTF-8 bytes and container depth with rollback',async()=>{
+  const h=setup(), revision=h.access.revision(h.editor)
+  for(const expression of ['"a".repeat(65534)', '"青".repeat(21844)+"aa"', '"\\u0000".repeat(10922)+"aa"',
+    'Array.from({length:32}).reduce(a=>[a],null)']) {
+    const result=await h.invoke('script',{path:'a.md',revision,code:`return ${expression}`},expression)
+    assert.equal(result.persistence.saved,true)
+  }
+  for(const expression of ['"a".repeat(65535)', '"青".repeat(21845)', '"\\u0000".repeat(10923)',
+    'Array.from({length:33}).reduce(a=>[a],null)', 'Array(10000000).fill(null)']) {
+    await assert.rejects(h.invoke('script',{path:'a.md',revision,
+      code:`editor.updateDocumentSettings({gridSize:999});return ${expression}`},expression))
+    assert.equal(JSON.parse(h.api.poll(h.app,expression)).failure.code,'SCRIPT_RESULT_TOO_LARGE')
+    assert.equal(h.access.revision(h.editor),revision)
+  }
+})
+
+test('script results detach mutable references before persistence and preserve proto keys',async()=>{
+  const h=setup(), revision=h.access.revision(h.editor)
+  h.app.value={n:1}
+  h.app.vault.read=async()=>{h.app.value.n=2;return h.markdown(h.values())}
+  const args={path:'a.md',revision,code:'editor.updateDocumentSettings({gridSize:20}); return {ref:app.value,["__proto__"]:{safe:true}}'}
+  const result=await h.invoke('script',args,'detached')
+  assert.equal(result.changes.updated,1)
+  assert.equal(result.scriptResult.value.ref.n,1)
+  assert.deepEqual(result.scriptResult.value.__proto__,{safe:true})
+  assert.equal(h.app.value.n,2)
+  assert.deepEqual(await h.invoke('script',args,'detached'),result)
+})
+
+for (const conflict of [false,true]) {
+  test(`save failure preserves script results and retained replay (conflict=${conflict})`,async()=>{
+    const h=setup(), revision=h.access.revision(h.editor)
+    h.app.vault.read=async()=>{
+      if (!conflict) throw new Error('disk unavailable')
+      h.editor.updateDocumentSettings({gridSize:30})
+      return h.markdown(h.values())
+    }
+    const args={path:'a.md',revision,code:'editor.updateDocumentSettings({gridSize:20});return {value:42}'}
+    await assert.rejects(h.invoke('script',args,'save-result'))
+    const receipt=JSON.parse(h.api.poll(h.app,'save-result'))
+    assert.equal(receipt.failure.code,conflict?'SAVE_CONFLICT':'SAVE_UNCONFIRMED')
+    assert.equal(receipt.failure.outcome,'applied')
+    assert.deepEqual(receipt.failure.details.scriptResult,{hasValue:true,value:{value:42}})
+    assert.equal(receipt.failure.details.changes.updated,1)
+    assert.notEqual(receipt.failure.details.revision,revision)
+    await assert.rejects(h.invoke('script',args,'save-result'))
+    assert.deepEqual(JSON.parse(h.api.poll(h.app,'save-result')),receipt)
+  })
+}
+
+test('returned rejected Promises roll back without an unhandled rejection',async()=>{
+  const h=setup(), revision=h.access.revision(h.editor)
+  await assert.rejects(h.invoke('script',{path:'a.md',revision,
+    code:'editor.updateDocumentSettings({gridSize:999});return Promise.reject(new Error("async failure"))'},'promise'),/must be synchronous/)
+  assert.equal(h.access.revision(h.editor),revision)
+})
+
+
+test('style-spec isolates broken SDK fields from otherwise available values',async()=>{
+  const h=setup(), {fill}=installStyles(h)
+  Object.defineProperty(fill,'values',{get(){throw new Error('values unavailable')}})
+  h.editor.shapeUtils.geo.getDefaultProps=()=>({fill:'none',other:undefined})
+  const props=(await h.invoke('style-spec',{path:'a.md',shapeType:'geo'},'partial-sdk')).properties.value
+  assert.equal(props.fill.values.status,'unavailable')
+  assert.match(props.fill.values.reason,/values unavailable/)
+  assert.equal(props.fill.shapeDefault.value,'none')
+  assert.equal(props.fill.nextShapeStyle.value,'solid')
+  assert.equal(props.dash.values.status,'available')
+  h.editor.styleProps.geo=new Map()
+  assert.deepEqual((await h.invoke('style-spec',{path:'a.md',shapeType:'geo'},'no-styles')).properties.value,{})
+  delete h.editor.shapeUtils
+  await assert.rejects(h.invoke('style-spec',{path:'a.md',shapeType:'geo'},'no-utils'),/editor.shapeUtils/)
+  assert.equal(JSON.parse(h.api.poll(h.app,'no-utils')).failure.code,'TLDRAW_UNSUPPORTED')
 })

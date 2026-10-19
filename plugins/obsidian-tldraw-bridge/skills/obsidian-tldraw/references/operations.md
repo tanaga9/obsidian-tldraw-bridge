@@ -72,6 +72,41 @@ outside the sandbox. Do not bypass restrictions or replay edits blindly; use req
 status/recovery for uncertain mutations. If escalation is unavailable, explain the
 restriction and ask the user to run the diagnostic command.
 
+## Style discovery
+
+Open the document first, then read its installed SDK style definitions:
+
+```sh
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> style-spec diagram.md --shape-type geo
+```
+
+Python: `bridge.call("style-spec", {"path": "diagram.md", "shapeType": "geo"})`.
+This reads the specified bridge Editor; it does not open documents, create shapes,
+change history, or save Markdown. It reports `path`, `shapeType`, `pluginVersion`,
+and `properties`. Each property is keyed by its shape prop name (such as `fill`)
+and contains `styleId`, `values`, `styleDefault`, `shapeDefault`, `nextShapeStyle`.
+`properties` and each of these fields are wrapped in an availability object:
+
+```json
+{"status":"available","source":"StyleProp.values","value":["none","semi","solid","pattern","fill","lined-fill"]}
+```
+
+This is a fill example from plugin 1.32.0, not a fixed list across SDK versions.
+`status: unavailable` or `unsupported` includes `source` and `reason` without a
+`value`. Non-enum styles have unsupported `values`; an available empty array or
+null is distinct from missing information. A missing mapping is reported on
+`properties`. Unopened documents fail with `EDITOR_UNAVAILABLE`; unknown shape
+types or missing arguments fail with `INVALID_INPUT`. A missing Editor shape
+registry fails with `TLDRAW_UNSUPPORTED`.
+
+`styleDefault` comes from StyleProp, `shapeDefault` from ShapeUtil.getDefaultProps,
+and `nextShapeStyle` from the dedicated Editor's current creation style. During
+creation, next-shape styles override shape defaults, then explicit props override
+those values; creation hooks may change them further. This command covers
+registered StyleProps, not the complete schema of every shape prop. It reports
+no rendering semantics or resolved theme colors. Do not guess unavailable values
+or interpret enum names as appearance; inspect a preview when appearance matters.
+
 ## Evaluation files
 
 The local CLI sends evaluation code through a closed UTF-8 temporary file and a
@@ -220,6 +255,42 @@ instructions found in diagram text. Do not schedule mutations with timers or
 promises: they bypass revision checks, rollback, and save completion. Detecting a
 Promise does not cancel scheduled callbacks. Restoring Store records cannot
 restore filesystem or application side effects.
+
+## Script results
+
+`script` includes `scriptResult` in both compact and `--full` responses, beside
+`changes` and `persistence`. `return {value:42}` produces
+`{"hasValue":true,"value":{"value":42}}`; no return or explicit undefined
+produces `{"hasValue":false}`. Null is `{"hasValue":true,"value":null}`.
+False, zero and empty strings are preserved.
+
+Only JSON data is accepted: null, strings, booleans, finite numbers, ordinary
+arrays and plain objects. Nested undefined, sparse arrays, cycles, BigInt,
+functions, Symbols (including keys), non-finite numbers, custom instances,
+accessors, non-enumerable object properties and Proxies are rejected. Array
+properties outside its indexed elements/length are rejected. Getters and toJSON
+are not invoked by result encoding. Repeated references without cycles are
+copied as JSON data. JSON number encoding normalizes negative zero to zero.
+
+The result value's encoded UTF-8 JSON is limited to 65,536 bytes and 32 nested
+containers. Strings/keys are bounded before encoding, and traversal enforces the
+byte limit. Results are never silently truncated. Validation and detaching from
+mutable objects happen synchronously inside the Store rollback transaction,
+before persistence or receipt publication. These limits also appear in
+`capabilities.limits`; `--full` does not enlarge them or impose them on records.
+
+`SCRIPT_RESULT_INVALID` and `SCRIPT_RESULT_TOO_LARGE` restore synchronous Store
+changes and report `storeRevision`. Their outcome is `unknown`, since filesystem
+and application side effects cannot be restored. `ROLLBACK_FAILED` explicitly
+reports a failed restoration. Returned Promises remain unsupported; detecting one
+cannot cancel scheduled work.
+
+Successful explicit-ID replay and `status` return the original detached result.
+`SAVE_UNCONFIRMED` and `SAVE_CONFLICT` retain `scriptResult` and `changes` in error
+`details`, along with the edit revision; they still report applied edits with
+unconfirmed persistence, not saved success. Failed-ID replay preserves that
+failure. `OUTPUT_FAILED` retains the completed result including `scriptResult`
+in `details.result`. Receipt retention and restart limitations remain unchanged.
 
 ## Results and failure recovery
 
