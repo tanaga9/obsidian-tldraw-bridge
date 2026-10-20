@@ -49,23 +49,23 @@ tags:
 		},
 		"records": [
 			{
-				"x": 480,
-				"y": 145,
+				"x": 1192,
+				"y": 361,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-gui-title",
 				"type": "text",
-				"parentId": "shape:readme-process",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "green",
 					"size": "m",
-					"w": 287.05882352941177,
+					"w": 190,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.85,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -81,12 +81,12 @@ tags:
 						]
 					}
 				},
-				"index": "a4pvz",
+				"index": "b0pIhz",
 				"typeName": "shape"
 			},
 			{
-				"x": 304,
-				"y": 372,
+				"x": 346,
+				"y": 383,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -95,11 +95,11 @@ tags:
 				"type": "text",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
-					"w": 76,
+					"w": 80,
 					"font": "sans",
-					"textAlign": "start",
+					"textAlign": "middle",
 					"autoSize": false,
 					"scale": 0.8,
 					"richText": {
@@ -117,7 +117,43 @@ tags:
 						]
 					}
 				},
-				"index": "a8tDI",
+				"index": "b11BSf",
+				"typeName": "shape"
+			},
+			{
+				"x": 792,
+				"y": 408,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-editor-sdk",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 263.5294117647059,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.85,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "tldraw SDK"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "b0lLbb",
 				"typeName": "shape"
 			},
 			{
@@ -143,42 +179,23 @@ tags:
 				}
 			},
 			{
-				"x": 360,
-				"y": 160,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-installation",
-				"type": "frame",
-				"parentId": "shape:readme-architecture",
-				"props": {
-					"w": 1048,
-					"h": 590,
-					"name": "Obsidian app + CLI",
-					"color": "grey"
-				},
-				"index": "a4fWb",
-				"typeName": "shape"
-			},
-			{
-				"x": 90,
-				"y": 32,
+				"x": 816,
+				"y": 737,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-markdown-title",
 				"type": "text",
-				"parentId": "shape:readme-vault",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "green",
 					"size": "m",
-					"w": 595,
+					"w": 586.6666666666666,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.95,
+					"scale": 0.9,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -194,7 +211,7 @@ tags:
 						]
 					}
 				},
-				"index": "a1Cjb",
+				"index": "b0yRJX",
 				"typeName": "shape"
 			},
 			{
@@ -206,11 +223,11 @@ tags:
 				"typeName": "user"
 			},
 			{
-				"x": 292,
-				"y": 405,
+				"x": 300,
+				"y": 394,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.45,
 				"meta": {},
 				"id": "shape:readme-link-launch",
 				"type": "arrow",
@@ -218,10 +235,10 @@ tags:
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "solid",
-					"size": "s",
+					"dash": "draw",
+					"size": "m",
 					"fill": "none",
-					"color": "grey",
+					"color": "black",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
@@ -229,7 +246,7 @@ tags:
 						"y": 0
 					},
 					"end": {
-						"x": 93,
+						"x": 144,
 						"y": 0
 					},
 					"arrowheadStart": "none",
@@ -243,29 +260,65 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "draw",
+					"font": "sans",
 					"scale": 1
 				},
-				"index": "a4xUQd",
+				"index": "b0fzAtV",
 				"typeName": "shape"
 			},
 			{
-				"x": 140,
-				"y": 170,
+				"x": 752,
+				"y": 688,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
+				"id": "shape:readme-vault-heading",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 760,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.8,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Vault on disk"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "b0wyJM",
+				"typeName": "shape"
+			},
+			{
+				"x": 190,
+				"y": 312,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 0.45,
+				"meta": {},
 				"id": "shape:readme-link-request",
 				"type": "arrow",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "solid",
-					"size": "s",
+					"dash": "draw",
+					"size": "m",
 					"fill": "none",
-					"color": "grey",
+					"color": "black",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
@@ -274,7 +327,7 @@ tags:
 					},
 					"end": {
 						"x": 0,
-						"y": 20
+						"y": 32
 					},
 					"arrowheadStart": "none",
 					"arrowheadEnd": "arrow",
@@ -287,27 +340,27 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "draw",
+					"font": "sans",
 					"scale": 1
 				},
-				"index": "a4tPkV",
+				"index": "b0btbTV",
 				"typeName": "shape"
 			},
 			{
-				"x": 20,
-				"y": 190,
+				"x": 80,
+				"y": 344,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-python",
 				"type": "geo",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 240,
-					"h": 110,
+					"w": 220,
+					"h": 100,
 					"geo": "rectangle",
-					"dash": "solid",
+					"dash": "draw",
 					"growY": 0,
 					"url": "",
 					"scale": 1,
@@ -315,7 +368,46 @@ tags:
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "semi",
+					"fill": "none",
+					"size": "s",
+					"font": "sans",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
+				},
+				"index": "b0b8pQ",
+				"typeName": "shape"
+			},
+			{
+				"x": 346,
+				"y": 382,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 0.88,
+				"meta": {},
+				"id": "shape:readme-launch-label-backplate",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 64,
+					"h": 24,
+					"geo": "rectangle",
+					"dash": "none",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "white",
+					"labelColor": "black",
+					"fill": "fill",
 					"size": "s",
 					"font": "draw",
 					"align": "middle",
@@ -329,7 +421,7 @@ tags:
 						]
 					}
 				},
-				"index": "a4Rhz",
+				"index": "b10JcE",
 				"typeName": "shape"
 			},
 			{
@@ -342,7 +434,7 @@ tags:
 					"isPrecise": true,
 					"isExact": true,
 					"normalizedAnchor": {
-						"x": 0.7746478873239436,
+						"x": 0.8092105263157895,
 						"y": 0
 					},
 					"snap": "none",
@@ -351,23 +443,23 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 85,
-				"y": 205,
+				"x": 508,
+				"y": 361,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-cli-title",
 				"type": "text",
-				"parentId": "shape:readme-installation",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "blue",
 					"size": "m",
-					"w": 145.88235294117646,
+					"w": 150,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.85,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -376,14 +468,14 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Official CLI"
+										"text": "Obsidian CLI"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "a3Ee6",
+				"index": "b0hXOb",
 				"typeName": "shape"
 			},
 			{
@@ -395,20 +487,20 @@ tags:
 				"typeName": "camera"
 			},
 			{
-				"x": 20,
-				"y": 60,
+				"x": 80,
+				"y": 212,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-codex",
 				"type": "geo",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 240,
-					"h": 110,
+					"w": 220,
+					"h": 100,
 					"geo": "rectangle",
-					"dash": "solid",
+					"dash": "draw",
 					"growY": 0,
 					"url": "",
 					"scale": 1,
@@ -416,9 +508,9 @@ tags:
 					"flipY": false,
 					"color": "violet",
 					"labelColor": "black",
-					"fill": "semi",
+					"fill": "none",
 					"size": "s",
-					"font": "draw",
+					"font": "sans",
 					"align": "middle",
 					"verticalAlign": "middle",
 					"richText": {
@@ -430,27 +522,27 @@ tags:
 						]
 					}
 				},
-				"index": "a1m7v",
+				"index": "b0YXnX",
 				"typeName": "shape"
 			},
 			{
-				"x": 90,
-				"y": 30,
+				"x": 816,
+				"y": 541,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-store-title",
 				"type": "text",
-				"parentId": "shape:readme-plugin",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "green",
 					"size": "m",
-					"w": 595,
+					"w": 586.6666666666666,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.95,
+					"scale": 0.9,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -466,7 +558,43 @@ tags:
 						]
 					}
 				},
-				"index": "a1RIv",
+				"index": "b0tyrM",
+				"typeName": "shape"
+			},
+			{
+				"x": 752,
+				"y": 252,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-runtime-heading",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 380,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.8,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Bridge runtime · JavaScript"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "b0XEwA",
 				"typeName": "shape"
 			},
 			{
@@ -479,7 +607,7 @@ tags:
 					"isPrecise": true,
 					"isExact": true,
 					"normalizedAnchor": {
-						"x": 0.2323943661971831,
+						"x": 0.25,
 						"y": 0
 					},
 					"snap": "none",
@@ -488,23 +616,23 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 25,
-				"y": 30,
+				"x": 776,
+				"y": 306,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-runtime-code",
 				"type": "text",
-				"parentId": "shape:readme-runtime",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
-					"w": 280,
+					"w": 301.1764705882353,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.9,
+					"scale": 0.85,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -520,25 +648,25 @@ tags:
 						]
 					}
 				},
-				"index": "a1cZr",
+				"index": "b0kMuU",
 				"typeName": "shape"
 			},
 			{
-				"x": 234,
-				"y": 212,
+				"x": 657,
+				"y": 383,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-eval-label",
 				"type": "text",
-				"parentId": "shape:readme-installation",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
-					"w": 60,
+					"w": 62.5,
 					"font": "sans",
-					"textAlign": "start",
+					"textAlign": "middle",
 					"autoSize": false,
 					"scale": 0.8,
 					"richText": {
@@ -556,45 +684,65 @@ tags:
 						]
 					}
 				},
-				"index": "a5ZzF",
+				"index": "b13fqr",
 				"typeName": "shape"
 			},
 			{
-				"x": 250,
-				"y": 60,
+				"x": 720,
+				"y": 220,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.12,
 				"meta": {},
 				"id": "shape:readme-process",
-				"type": "frame",
-				"parentId": "shape:readme-installation",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 770,
-					"h": 490,
-					"name": "Running Obsidian Desktop",
-					"color": "blue"
+					"w": 672,
+					"h": 436,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "black",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "l",
+					"font": "sans",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
 				},
-				"index": "a1IiU",
+				"index": "b0U4KA",
 				"typeName": "shape"
 			},
 			{
-				"x": 225,
-				"y": 245,
+				"x": 644,
+				"y": 394,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.45,
 				"meta": {},
 				"id": "shape:readme-link-eval",
 				"type": "arrow",
-				"parentId": "shape:readme-installation",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "solid",
-					"size": "s",
+					"dash": "draw",
+					"size": "m",
 					"fill": "none",
-					"color": "grey",
+					"color": "black",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
@@ -602,7 +750,7 @@ tags:
 						"y": 0
 					},
 					"end": {
-						"x": 80,
+						"x": 108,
 						"y": 0
 					},
 					"arrowheadStart": "none",
@@ -616,15 +764,15 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "draw",
+					"font": "sans",
 					"scale": 1
 				},
-				"index": "a2wzUt",
+				"index": "b0fekAl",
 				"typeName": "shape"
 			},
 			{
-				"x": 1010,
-				"y": 772,
+				"x": 1027,
+				"y": 629,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -633,13 +781,13 @@ tags:
 				"type": "text",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
-					"w": 100,
+					"w": 72.5,
 					"font": "sans",
-					"textAlign": "start",
+					"textAlign": "middle",
 					"autoSize": false,
-					"scale": 0.9,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -655,15 +803,15 @@ tags:
 						]
 					}
 				},
-				"index": "a9XM6",
+				"index": "b19KP2",
 				"typeName": "shape"
 			},
 			{
-				"x": 995,
-				"y": 680,
+				"x": 1056,
+				"y": 624,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.45,
 				"meta": {},
 				"id": "shape:readme-link-save",
 				"type": "arrow",
@@ -671,10 +819,10 @@ tags:
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "solid",
-					"size": "s",
+					"dash": "draw",
+					"size": "m",
 					"fill": "none",
-					"color": "grey",
+					"color": "black",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
@@ -683,7 +831,7 @@ tags:
 					},
 					"end": {
 						"x": 0,
-						"y": 120
+						"y": 96
 					},
 					"arrowheadStart": "none",
 					"arrowheadEnd": "arrow",
@@ -696,22 +844,22 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "draw",
+					"font": "sans",
 					"scale": 1
 				},
-				"index": "a6gpoV",
+				"index": "b0vuBk",
 				"typeName": "shape"
 			},
 			{
-				"x": 32,
-				"y": 201,
+				"x": 96,
+				"y": 360,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-icon-python",
 				"type": "image",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"w": 36,
 					"h": 36,
@@ -723,27 +871,27 @@ tags:
 					"flipY": false,
 					"altText": "Python-inspired generated diagram icon"
 				},
-				"index": "a8Q1I",
+				"index": "b0c9YI",
 				"typeName": "shape"
 			},
 			{
-				"x": 36,
-				"y": 120,
+				"x": 96,
+				"y": 276,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-codex-body",
 				"type": "text",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 208,
+					"w": 221.1764705882353,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 1,
+					"scale": 0.85,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -759,7 +907,7 @@ tags:
 						]
 					}
 				},
-				"index": "a3MRA",
+				"index": "b1A2wv",
 				"typeName": "shape"
 			},
 			{
@@ -790,6 +938,45 @@ tags:
 				}
 			},
 			{
+				"x": 657,
+				"y": 382,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 0.88,
+				"meta": {},
+				"id": "shape:readme-eval-label-backplate",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 50,
+					"h": 24,
+					"geo": "rectangle",
+					"dash": "none",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "white",
+					"labelColor": "black",
+					"fill": "fill",
+					"size": "s",
+					"font": "draw",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
+				},
+				"index": "b12Qtn",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:readme-launch-end",
 				"type": "arrow",
@@ -808,22 +995,81 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 640,
-				"y": 800,
+				"x": 752,
+				"y": 720,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-vault",
-				"type": "frame",
+				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 710,
-					"h": 130,
-					"name": "Vault on disk",
-					"color": "green"
+					"w": 608,
+					"h": 100,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "s",
+					"font": "sans",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
 				},
-				"index": "a6Hwj",
+				"index": "b0vDvU",
+				"typeName": "shape"
+			},
+			{
+				"x": 1027,
+				"y": 628,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 0.88,
+				"meta": {},
+				"id": "shape:readme-save-label-backplate",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 58,
+					"h": 24,
+					"geo": "rectangle",
+					"dash": "none",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "white",
+					"labelColor": "black",
+					"fill": "fill",
+					"size": "s",
+					"font": "draw",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
+				},
+				"index": "b18n8v",
 				"typeName": "shape"
 			},
 			{
@@ -845,18 +1091,18 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 432,
-				"y": 141,
+				"x": 1144,
+				"y": 360,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-icon-gui",
 				"type": "image",
-				"parentId": "shape:readme-process",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 40,
-					"h": 40,
+					"w": 36,
+					"h": 36,
 					"assetId": "asset:f272a5dc-39e1-453c-9627-97b03c679c2b",
 					"playing": true,
 					"url": "",
@@ -865,38 +1111,32 @@ tags:
 					"flipY": false,
 					"altText": "Purple Obsidian-inspired stone on a transparent background"
 				},
-				"index": "a86TI",
+				"index": "b0oP0Q",
 				"typeName": "shape"
 			},
 			{
-				"x": 80,
-				"y": 205,
+				"x": 144,
+				"y": 361,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-python-title",
 				"type": "text",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "blue",
 					"size": "m",
-					"w": 205,
+					"w": 175,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
 					"scale": 0.8,
 					"richText": {
 						"type": "doc",
-						"attrs": {
-							"dir": "auto"
-						},
 						"content": [
 							{
 								"type": "paragraph",
-								"attrs": {
-									"dir": "auto"
-								},
 								"content": [
 									{
 										"type": "text",
@@ -907,27 +1147,27 @@ tags:
 						]
 					}
 				},
-				"index": "a5cJA",
+				"index": "b0dLmj",
 				"typeName": "shape"
 			},
 			{
-				"x": 36,
-				"y": 250,
+				"x": 96,
+				"y": 408,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-python-body",
 				"type": "text",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 208,
+					"w": 221.1764705882353,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 1,
+					"scale": 0.85,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -943,7 +1183,43 @@ tags:
 						]
 					}
 				},
-				"index": "a6bAn",
+				"index": "b0e4kX",
+				"typeName": "shape"
+			},
+			{
+				"x": 816,
+				"y": 588,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-store-source",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 621.1764705882354,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.85,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Existing tldraw plugin"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "b0uPzc",
 				"typeName": "shape"
 			},
 			{
@@ -979,23 +1255,23 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 80,
-				"y": 75,
+				"x": 144,
+				"y": 229,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-codex-title",
 				"type": "text",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "violet",
 					"size": "m",
-					"w": 192.94117647058823,
+					"w": 175,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.85,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1011,11 +1287,11 @@ tags:
 						]
 					}
 				},
-				"index": "a2byX",
+				"index": "b0anp6",
 				"typeName": "shape"
 			},
 			{
-				"x": 32,
+				"x": 48,
 				"y": 30,
 				"rotation": 0,
 				"isLocked": false,
@@ -1027,7 +1303,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "xl",
-					"w": 1376,
+					"w": 1344,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1047,22 +1323,22 @@ tags:
 						]
 					}
 				},
-				"index": "a1M2b",
+				"index": "b0Q0zJ",
 				"typeName": "shape"
 			},
 			{
-				"x": 37,
-				"y": 201,
+				"x": 460,
+				"y": 360,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-icon-cli",
 				"type": "image",
-				"parentId": "shape:readme-installation",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 40,
-					"h": 40,
+					"w": 36,
+					"h": 36,
 					"assetId": "asset:0d647650-86a5-403a-a622-ef3a3f796d58",
 					"playing": true,
 					"url": "",
@@ -1071,7 +1347,7 @@ tags:
 					"flipY": false,
 					"altText": ""
 				},
-				"index": "a6FzW",
+				"index": "b0gnsz",
 				"typeName": "shape"
 			},
 			{
@@ -1093,37 +1369,57 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 30,
-				"y": 60,
+				"x": 752,
+				"y": 282,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.16,
 				"meta": {},
 				"id": "shape:readme-runtime",
-				"type": "frame",
-				"parentId": "shape:readme-process",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 330,
-					"h": 210,
-					"name": "Bridge runtime (JavaScript)",
-					"color": "violet"
+					"w": 304,
+					"h": 186,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "black",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "l",
+					"font": "sans",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
 				},
-				"index": "a1TUo",
+				"index": "b0WQCn",
 				"typeName": "shape"
 			},
 			{
-				"x": 25,
-				"y": 24,
+				"x": 768,
+				"y": 540,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-icon-store",
 				"type": "image",
-				"parentId": "shape:readme-plugin",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 48,
-					"h": 48,
+					"w": 36,
+					"h": 36,
 					"assetId": "asset:ec7b9846-5a33-4b65-9486-7a293771802f",
 					"playing": true,
 					"url": "",
@@ -1132,7 +1428,7 @@ tags:
 					"flipY": false,
 					"altText": ""
 				},
-				"index": "a3g06",
+				"index": "b0sTUm",
 				"typeName": "shape"
 			},
 			{
@@ -1154,20 +1450,20 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 25,
-				"y": 70,
+				"x": 776,
+				"y": 344,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-editor",
 				"type": "geo",
-				"parentId": "shape:readme-runtime",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 280,
-					"h": 110,
+					"w": 256,
+					"h": 100,
 					"geo": "rectangle",
-					"dash": "solid",
+					"dash": "draw",
 					"growY": 0,
 					"url": "",
 					"scale": 1,
@@ -1175,9 +1471,9 @@ tags:
 					"flipY": false,
 					"color": "violet",
 					"labelColor": "black",
-					"fill": "semi",
+					"fill": "none",
 					"size": "s",
-					"font": "draw",
+					"font": "sans",
 					"align": "middle",
 					"verticalAlign": "middle",
 					"richText": {
@@ -1189,43 +1485,7 @@ tags:
 						]
 					}
 				},
-				"index": "a2w1z",
-				"typeName": "shape"
-			},
-			{
-				"x": 90,
-				"y": 65,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:readme-store-body",
-				"type": "text",
-				"parentId": "shape:readme-plugin",
-				"props": {
-					"color": "black",
-					"size": "s",
-					"w": 595,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 1,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Synchronizes GUI and dedicated Editors"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "a2uPb",
+				"index": "b0mlEb",
 				"typeName": "shape"
 			},
 			{
@@ -1239,7 +1499,7 @@ tags:
 					"isExact": true,
 					"normalizedAnchor": {
 						"x": 0,
-						"y": 0.5952380952380952
+						"y": 0.6021505376344086
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1247,23 +1507,23 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 41,
-				"y": 250,
+				"x": 48,
+				"y": 150,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-cli-body",
+				"id": "shape:readme-agent-heading",
 				"type": "text",
-				"parentId": "shape:readme-installation",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 168,
+					"w": 355,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 1,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1272,31 +1532,67 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Separate process"
+										"text": "Agent environment"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "a4rTv",
+				"index": "b0TXVj",
 				"typeName": "shape"
 			},
 			{
-				"x": 420,
-				"y": 130,
+				"x": 460,
+				"y": 408,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-cli-body",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 197.64705882352942,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.85,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Official · own process"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "b0iUhB",
+				"typeName": "shape"
+			},
+			{
+				"x": 1128,
+				"y": 344,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-gui",
 				"type": "geo",
-				"parentId": "shape:readme-process",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 320,
-					"h": 110,
+					"w": 232,
+					"h": 100,
 					"geo": "rectangle",
-					"dash": "solid",
+					"dash": "draw",
 					"growY": 0,
 					"url": "",
 					"scale": 1,
@@ -1304,9 +1600,9 @@ tags:
 					"flipY": false,
 					"color": "green",
 					"labelColor": "black",
-					"fill": "semi",
+					"fill": "none",
 					"size": "s",
-					"font": "draw",
+					"font": "sans",
 					"align": "middle",
 					"verticalAlign": "middle",
 					"richText": {
@@ -1318,7 +1614,7 @@ tags:
 						]
 					}
 				},
-				"index": "a315f",
+				"index": "b0nOkQ",
 				"typeName": "shape"
 			},
 			{
@@ -1368,22 +1664,42 @@ tags:
 				}
 			},
 			{
-				"x": 30,
-				"y": 360,
+				"x": 752,
+				"y": 524,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-plugin",
-				"type": "frame",
-				"parentId": "shape:readme-process",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 710,
+					"w": 608,
 					"h": 100,
-					"name": "Existing tldraw plugin",
-					"color": "green"
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "s",
+					"font": "sans",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
 				},
-				"index": "a2Yur",
+				"index": "b0r8uE",
 				"typeName": "shape"
 			},
 			{
@@ -1398,7 +1714,7 @@ tags:
 				"parentId": "page:page",
 				"props": {
 					"w": 1440,
-					"h": 980,
+					"h": 868,
 					"name": "README architecture",
 					"color": "grey"
 				},
@@ -1406,23 +1722,23 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 90,
-				"y": 75,
+				"x": 816,
+				"y": 784,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-markdown-body",
 				"type": "text",
-				"parentId": "shape:readme-vault",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 595,
+					"w": 621.1764705882354,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 1,
+					"scale": 0.85,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1431,14 +1747,14 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Canonical saved document records"
+										"text": "Canonical saved document"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "a214f",
+				"index": "b0z8Ir",
 				"typeName": "shape"
 			},
 			{
@@ -1456,22 +1772,22 @@ tags:
 				"typeName": "document"
 			},
 			{
-				"x": 580,
-				"y": 240,
+				"x": 1244,
+				"y": 444,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.45,
 				"meta": {},
 				"id": "shape:readme-link-gui-sync",
 				"type": "arrow",
-				"parentId": "shape:readme-process",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "solid",
-					"size": "s",
+					"dash": "draw",
+					"size": "m",
 					"fill": "none",
-					"color": "grey",
+					"color": "black",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
@@ -1480,7 +1796,7 @@ tags:
 					},
 					"end": {
 						"x": 0,
-						"y": 120
+						"y": 80
 					},
 					"arrowheadStart": "arrow",
 					"arrowheadEnd": "arrow",
@@ -1493,10 +1809,10 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "draw",
+					"font": "sans",
 					"scale": 1
 				},
-				"index": "a3xqR",
+				"index": "b0rOqaG",
 				"typeName": "shape"
 			},
 			{
@@ -1546,20 +1862,20 @@ tags:
 				"typeName": "instance"
 			},
 			{
-				"x": 25,
-				"y": 190,
+				"x": 444,
+				"y": 344,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-cli",
 				"type": "geo",
-				"parentId": "shape:readme-installation",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"w": 200,
-					"h": 110,
+					"h": 100,
 					"geo": "rectangle",
-					"dash": "solid",
+					"dash": "draw",
 					"growY": 0,
 					"url": "",
 					"scale": 1,
@@ -1567,9 +1883,9 @@ tags:
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "semi",
+					"fill": "none",
 					"size": "s",
-					"font": "draw",
+					"font": "sans",
 					"align": "middle",
 					"verticalAlign": "middle",
 					"richText": {
@@ -1581,27 +1897,27 @@ tags:
 						]
 					}
 				},
-				"index": "a2dtA",
+				"index": "b0fKBj",
 				"typeName": "shape"
 			},
 			{
-				"x": 436,
-				"y": 190,
+				"x": 1144,
+				"y": 408,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-gui-body",
 				"type": "text",
-				"parentId": "shape:readme-process",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 288,
+					"w": 235.29411764705884,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 1,
+					"scale": 0.85,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1610,14 +1926,14 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Human editing"
+										"text": "Human · tldraw Editor"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "a5e8v",
+				"index": "b0qCYM",
 				"typeName": "shape"
 			},
 			{
@@ -1639,23 +1955,23 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 595,
-				"y": 298,
+				"x": 1215,
+				"y": 473,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-gui-sync-label",
 				"type": "text",
-				"parentId": "shape:readme-process",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
-					"w": 120,
+					"w": 72.5,
 					"font": "sans",
-					"textAlign": "start",
+					"textAlign": "middle",
 					"autoSize": false,
-					"scale": 0.9,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1671,22 +1987,22 @@ tags:
 						]
 					}
 				},
-				"index": "a7HWI",
+				"index": "b17feI",
 				"typeName": "shape"
 			},
 			{
-				"x": 37,
-				"y": 81,
+				"x": 792,
+				"y": 360,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-icon-editor",
 				"type": "image",
-				"parentId": "shape:readme-runtime",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 40,
-					"h": 40,
+					"w": 36,
+					"h": 36,
 					"assetId": "asset:3a2182f5-8907-48db-aada-40a5eca49712",
 					"playing": true,
 					"url": "",
@@ -1695,7 +2011,7 @@ tags:
 					"flipY": false,
 					"altText": "Dedicated editing canvas with a gear"
 				},
-				"index": "a5jSn",
+				"index": "b0j2nI",
 				"typeName": "shape"
 			},
 			{
@@ -1731,39 +2047,42 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 41,
-				"y": 130,
+				"x": 1215,
+				"y": 472,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.88,
 				"meta": {},
-				"id": "shape:readme-editor-body",
-				"type": "text",
-				"parentId": "shape:readme-runtime",
+				"id": "shape:readme-gui-sync-label-backplate",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"color": "black",
-					"size": "s",
-					"w": 248,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
+					"w": 58,
+					"h": 24,
+					"geo": "rectangle",
+					"dash": "none",
+					"growY": 0,
+					"url": "",
 					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "white",
+					"labelColor": "black",
+					"fill": "fill",
+					"size": "s",
+					"font": "draw",
+					"align": "middle",
+					"verticalAlign": "middle",
 					"richText": {
 						"type": "doc",
 						"content": [
 							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Uses tldraw SDK"
-									}
-								]
+								"type": "paragraph"
 							}
 						]
 					}
 				},
-				"index": "a4VXM",
+				"index": "b16Fbr",
 				"typeName": "shape"
 			},
 			{
@@ -1785,18 +2104,18 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 25,
-				"y": 35,
+				"x": 768,
+				"y": 736,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-icon-markdown",
 				"type": "image",
-				"parentId": "shape:readme-vault",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 48,
-					"h": 48,
+					"w": 36,
+					"h": 36,
 					"assetId": "asset:fa874a73-dfb9-4c0f-93cf-a97b5cc24245",
 					"playing": true,
 					"url": "",
@@ -1805,7 +2124,7 @@ tags:
 					"flipY": false,
 					"altText": ""
 				},
-				"index": "a3dUs",
+				"index": "b0xpZb",
 				"typeName": "shape"
 			},
 			{
@@ -1823,22 +2142,22 @@ tags:
 				}
 			},
 			{
-				"x": 195,
-				"y": 240,
+				"x": 904,
+				"y": 444,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.45,
 				"meta": {},
 				"id": "shape:readme-link-runtime-sync",
 				"type": "arrow",
-				"parentId": "shape:readme-process",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "solid",
-					"size": "s",
+					"dash": "draw",
+					"size": "m",
 					"fill": "none",
-					"color": "grey",
+					"color": "black",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
@@ -1847,7 +2166,7 @@ tags:
 					},
 					"end": {
 						"x": 0,
-						"y": 120
+						"y": 80
 					},
 					"arrowheadStart": "arrow",
 					"arrowheadEnd": "arrow",
@@ -1860,30 +2179,30 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "draw",
+					"font": "sans",
 					"scale": 1
 				},
-				"index": "a2pWPV",
+				"index": "b0ri8y",
 				"typeName": "shape"
 			},
 			{
-				"x": 210,
-				"y": 298,
+				"x": 875,
+				"y": 473,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-runtime-sync-label",
 				"type": "text",
-				"parentId": "shape:readme-process",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
-					"w": 120,
+					"w": 72.5,
 					"font": "sans",
-					"textAlign": "start",
+					"textAlign": "middle",
 					"autoSize": false,
-					"scale": 0.9,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1899,22 +2218,22 @@ tags:
 						]
 					}
 				},
-				"index": "a6Iz1",
+				"index": "b15UhN",
 				"typeName": "shape"
 			},
 			{
-				"x": 32,
-				"y": 71,
+				"x": 96,
+				"y": 228,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-icon-codex",
 				"type": "image",
-				"parentId": "shape:readme-agent",
+				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 40,
-					"h": 40,
+					"w": 36,
+					"h": 36,
 					"assetId": "asset:6961d9ee-acf1-46a7-9e61-84fe4690f16a",
 					"playing": true,
 					"url": "",
@@ -1923,27 +2242,27 @@ tags:
 					"flipY": false,
 					"altText": "Blue-violet Codex-inspired cloud and terminal prompt on transparency"
 				},
-				"index": "a7bSE",
+				"index": "b0ZQYj",
 				"typeName": "shape"
 			},
 			{
-				"x": 85,
-				"y": 85,
+				"x": 840,
+				"y": 361,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:readme-editor-title",
 				"type": "text",
-				"parentId": "shape:readme-runtime",
+				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "violet",
 					"size": "m",
-					"w": 240,
+					"w": 220,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.85,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1959,27 +2278,27 @@ tags:
 						]
 					}
 				},
-				"index": "a3R1n",
+				"index": "b1BiMU",
 				"typeName": "shape"
 			},
 			{
-				"x": 32,
-				"y": 96,
+				"x": 720,
+				"y": 190,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:readme-subtitle",
+				"id": "shape:readme-process-heading",
 				"type": "text",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"color": "grey",
-					"size": "m",
-					"w": 1376,
+					"color": "black",
+					"size": "s",
+					"w": 840,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.9,
+					"scale": 0.8,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1988,33 +2307,128 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Local processes, loaded runtime, and the saved document"
+										"text": "Running Obsidian Desktop"
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "a2RbQ",
+				"index": "b0VO22",
 				"typeName": "shape"
 			},
 			{
-				"x": 32,
-				"y": 160,
+				"x": 48,
+				"y": 96,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.65,
 				"meta": {},
-				"id": "shape:readme-agent",
-				"type": "frame",
+				"id": "shape:readme-subtitle",
+				"type": "text",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 280,
-					"h": 360,
-					"name": "Agent environment",
-					"color": "blue"
+					"color": "black",
+					"size": "m",
+					"w": 1344,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.8,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Local processes, shared editing, and the saved document"
+									}
+								]
+							}
+						]
+					}
 				},
-				"index": "a3grM",
+				"index": "b0Rx5M",
+				"typeName": "shape"
+			},
+			{
+				"x": 48,
+				"y": 180,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 0.12,
+				"meta": {},
+				"id": "shape:readme-agent",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 284,
+					"h": 296,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "black",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "l",
+					"font": "sans",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
+				},
+				"index": "b0S5za",
+				"typeName": "shape"
+			},
+			{
+				"x": 875,
+				"y": 472,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 0.88,
+				"meta": {},
+				"id": "shape:readme-runtime-sync-label-backplate",
+				"type": "geo",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"w": 58,
+					"h": 24,
+					"geo": "rectangle",
+					"dash": "none",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "white",
+					"labelColor": "black",
+					"fill": "fill",
+					"size": "s",
+					"font": "draw",
+					"align": "middle",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					}
+				},
+				"index": "b14gdQ",
 				"typeName": "shape"
 			}
 		]

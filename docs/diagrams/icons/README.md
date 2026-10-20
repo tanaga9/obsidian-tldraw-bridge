@@ -24,7 +24,7 @@ text, not to the Python logo.
 
 All seven icons were generated with the built-in image generation tool. For compact
 embedding, they are resized to 128 pixels and encoded as WebP at quality 0.9,
-preserving transparency and their display dimensions (36–48 pixels). Obsidian, Codex and Python illustrations use official icons as visual references,
+preserving transparency. The current diagram displays each icon at 36 pixels. Obsidian, Codex and Python illustrations use official icons as visual references,
 not as distributed diagram assets.
 Generation does not itself grant rights to the referenced trademarks. Reference
 context: [Obsidian icon design](https://obsidian.md/blog/new-obsidian-icon/) and

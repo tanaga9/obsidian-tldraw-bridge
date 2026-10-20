@@ -1,6 +1,6 @@
 # Diagramming guidance
 
-Choose the diagram format that best answers the user's request and the reader's question. First consider established formats, including UML; use one when it fits well. Rely on familiar conventions without loading tutorials.
+For new diagrams or substantial structural revisions, identify the relationships to show—flow, comparison, hierarchy, containment, interaction, causality, or spatial arrangement. Briefly compare suitable representations and choose the one that best answers the user's request and the reader's question; state the reason in one sentence. First consider established formats, including UML, and use one when it fits well. Rely on familiar conventions without loading tutorials.
 
 | Purpose | Starting point |
 | --- | --- |
@@ -19,22 +19,41 @@ Choose the diagram format that best answers the user's request and the reader's 
 | Hierarchy or radial topic organization | Tree diagram, mind map |
 | Schedule, duration, and dependencies | Gantt chart, PERT diagram |
 
-These are candidates, not an exhaustive catalog or mandatory notation. Preserve explicit creative choices and existing conventions. A local correction does not call for a full redesign. Verify the relevant standard when strict conformance is requested.
+These are candidates, not an exhaustive catalog or mandatory notation. Preserve explicit creative choices and existing conventions. Local corrections do not require repeating format selection or redesigning the diagram. Verify the relevant standard when strict conformance is requested.
 
-When none fits the intended meaning well, use an **Informal Diagram / Ad hoc Diagram**: choose or combine boxes and arrows, concept maps, rich pictures, sketchnotes, cluster diagrams, causal loop diagrams, and architecture sketches. Include flowchart or swimlane elements where useful. These building blocks can also be established formats in their own right; the informal composition need not conform to one notation. Make relationship meanings clear with labels or a small legend when needed.
+When none fits the intended meaning well, use a **Freeform Diagram** (also called an Informal Diagram or Ad hoc Diagram): choose or combine boxes and arrows, concept maps, rich pictures, sketchnotes, cluster diagrams, causal loop diagrams, and architecture sketches to express the intended relationships and structure. Include flowchart or swimlane elements where useful. These building blocks can also be established formats in their own right; the composition need not conform to one notation. Make relationship meanings clear with labels or a small legend when needed. The common rules below still apply.
 
 ## Common rules
 
-- **Text serves the diagram:** Use layout, grouping, and connections to convey structure; avoid text-heavy diagrams that merely arrange prose in boxes. Prefer concise labels, but use full sentences without hesitation when they are needed for clarity or accuracy.
-- **Explanations have a place:** Do not cram long passages into boxes. Use nearby annotations for supporting explanations, or propose a companion Markdown document for extended detail. Keep essential labels and qualifications in the diagram so it remains understandable.
+- **Show structure:** Use layout, grouping, and connections rather than turning headings and paragraphs into boxes. Avoid diagrams where most elements are explanatory prose, including short passages or annotations. Prefer concise labels, but use sentences when needed for clarity or accuracy. Put supporting explanation in annotations or propose companion Markdown for extended detail.
+- **Preserve meaning:** Make node identities and connection meanings clear. Enclosures and headings supply context: when their name, scope, or nesting changes, recheck the interpretation of their contents and retain essential context in labels.
+- **Balance the layout:** Keep spacing and alignment coherent across comparable elements, with visual emphasis matching the diagram's purpose.
+- **Refine without losing strengths:** Compare with the prior diagram before finalizing. Preserve useful information and effective visual choices, or convey their meaning another way.
 
 ### Quality check
 
-After visual edits, inspect both the diagram's structure and its rendered appearance on each edited page. Check for unintended dangling or misconnected arrows, text overflow or clipping, lines crossing text, overlapping labels or shapes, and unreadable wrapping or sizing. Distinguish intentional open endpoints or overlaps from mistakes. Fix defects and inspect the updated rendering before completion.
+After visual edits, inspect structure and rendered appearance on each edited page, including at the intended display size:
+
+- **Meaning:** Names, scope, relationship meanings, and arrow directions remain clear after edits, including the interpretation of elements inside changed enclosures. The main relationships should be apparent with concise labels; if the result is a Markdown outline in connected boxes, reconsider the representation and move extended explanation to prose.
+- **Connections:** Check for unintended dangling or misconnected arrows. Distinguish intentional open endpoints and overlaps from mistakes.
+- **Readability and balance:** Check text overflow or clipping, lines obscuring text, overlapping labels or shapes, and unreadable sizing or unnecessary wrapping. Compare padding and gaps across peers. What draws the eye first should match the diagram's purpose; enclosures and fills should not overpower the contents.
+
+Fix defects and inspect the updated rendering before completion.
+
+## Freeform Diagram techniques
+
+- **Node composition:** Prefer wider-than-tall nodes and other text-containing shapes for horizontal writing, avoiding unnecessary wrapping without imposing a fixed aspect ratio. Allow other proportions when notation, content, or layout warrants them. Place names, optional icons, and short role labels consistently across peers; keep each icon with its node and distinguish names from supporting explanations.
+- **Spacing:** Choose a small set of intervals for padding within nodes and enclosures and gaps between peers. Larger gaps may express hierarchy or separation. Balance visible clearances on all sides, including headings, icons, and connectors; make optical adjustments rather than forcing identical distances everywhere.
+- **Enclosures and strokes:** A thicker outline can distinguish a grouping level. Pair thicker outlines, lines, or arrows with lower opacity where useful, keeping enclosures subordinate to their contents, often with a neutral color. Boundaries, paths, arrowheads, and labels must remain discernible.
+- **Lightness and contrast:** Establish legibility and distinguish important boundaries primarily through lightness contrast; hue and saturation differences are supplementary. Use dark text on light backgrounds and light text on dark backgrounds, checking the rendered result including transparency. Preserve sufficient contrast without automatically maximizing it: if pure black against pure white feels harsh, use a softer near-black or off-white while keeping text and boundaries clear.
+- **Labels over lines:** When deliberately placing text over a line or arrow, give the label a slightly translucent background color that contrasts with the text and softens the line beneath it. Keep the text itself opaque and the connection's path and direction clear.
+- **Exceptional emphasis:** Reserve dark fills with light text for elements that are truly the central message of the material, such as an error or failure point in a troubleshooting diagram. Do not use this treatment merely to accent an ordinary component, even if only one node receives it. Use gentler color, outline, or placement differences for routine emphasis. When exceptional emphasis is warranted, prefer bold light text where supported; see the [tldraw text limitation](tldraw.md#styles) for this workflow.
+- **Color as visual support:** Use hue and saturation as secondary cues for accents, gentle fills, and visual grouping, supported by adequate lightness contrast. Colored outlines and matching headings can provide distinction while preserving white space; not every node needs a fill. Keep the palette coherent, use color where helpful, and avoid assigning too many category meanings to it. Viewing conditions and color perception vary, so convey essential meaning through labels, placement, shape, or line style as well.
 
 ## Project conventions
 
-- **Named frames:** Normally put each coherent diagram in one descriptively named frame, including standalone diagrams. This is a user-defined project default. Leave boundaries open for exploration or when framing would obscure the intended relationship.
+- **Node outlines:** The default line style for node outlines is hand-drawn (`draw`).
+- **Named frames:** Use one descriptively named frame per diagram as the project default. Use ordinary enclosure shapes for node groups, subsystem boundaries, and other containment within a diagram. Nested frames are rare: use them only when a diagram itself contains another diagram that warrants its own frame. Leave boundaries open for exploration or when framing would obscure the intended relationship.
 - **Connector alignment:** Connections between aligned peers should be exactly horizontal or vertical. Small accidental slopes distract without conveying meaning. Check actual attachment points after labels wrap or shapes grow. Deliberate diagonals remain appropriate where the layout benefits from them.
 
 For Obsidian tldraw edits, read [implementation guidance](tldraw.md). For editing and persistence contracts, use [operations](../operations.md) and the Skill entrypoint.
