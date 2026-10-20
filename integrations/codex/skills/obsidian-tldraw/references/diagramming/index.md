@@ -4,22 +4,16 @@ For new diagrams or substantial structural revisions, identify the relationships
 
 | Purpose | Starting point |
 | --- | --- |
-| Steps and conditional branches | Flowchart |
-| Workflow, responsibilities, and handoffs | UML activity diagram, swimlane diagram, BPMN |
-| Actors and system goals | UML use case diagram |
-| Types, instances, and relationships | UML class or object diagram |
-| Messages between participants | UML sequence or communication diagram |
-| States, events, and time-dependent behavior | UML state machine or timing diagram |
-| Coordination across interactions | UML interaction overview diagram |
-| Modules, interfaces, and organization | UML component, package, or composite structure diagram |
-| Runtime nodes and deployed artifacts | UML deployment diagram |
-| System context, boundaries, and architecture levels | C4 diagram |
-| Data entities and relationships | Entity–relationship diagram (ERD) |
-| Data movement and transformation | Data flow diagram (DFD) |
-| Hierarchy or radial topic organization | Tree diagram, mind map |
-| Schedule, duration, and dependencies | Gantt chart, PERT diagram |
+| Processes and responsibilities | Flowchart, swimlane, BPMN, UML activity diagram |
+| Goals, interactions, and lifecycles | UML use case, sequence, state diagrams |
+| Software structure and architecture | UML structural diagrams, C4 |
+| Data relationships and movement | ERD, DFD |
+| Hierarchies and topics | Tree diagram, mind map |
+| Schedules and dependencies | Gantt chart, PERT diagram |
 
 These are candidates, not an exhaustive catalog or mandatory notation. Preserve explicit creative choices and existing conventions. Local corrections do not require repeating format selection or redesigning the diagram. Verify the relevant standard when strict conformance is requested.
+
+When an established format such as UML is the best fit, suggest a dedicated tool such as Mermaid or PlantUML, choosing according to the notation needed. If those tools may not adequately express the required relationships, layout, annotations, or combination of forms, continue with the Obsidian tldraw workflow and briefly explain why. Respect explicit user choices of tool or format.
 
 When none fits the intended meaning well, use a **Freeform Diagram** (also called an Informal Diagram or Ad hoc Diagram): choose or combine boxes and arrows, concept maps, rich pictures, sketchnotes, cluster diagrams, causal loop diagrams, and architecture sketches to express the intended relationships and structure. Include flowchart or swimlane elements where useful. These building blocks can also be established formats in their own right; the composition need not conform to one notation. Make relationship meanings clear with labels or a small legend when needed. The common rules below still apply.
 
