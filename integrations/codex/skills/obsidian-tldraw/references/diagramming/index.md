@@ -5,7 +5,7 @@
 For new diagrams or substantial structural revisions:
 
 1. **Clarify the purpose:** State in one sentence what the reader should understand or be able to decide, using the request and existing context. Identify the relationships needed—chronology, causality, or other structure—and choose the [format and layout](#format-selection) accordingly.
-2. **Check a structural draft:** Before adding explanatory prose or visual polish, draw short element names and meaningful connections. Inspect whether layout and connections communicate the main relationships. Rework structure that depends on long explanations; necessary labels and concise qualifications remain appropriate. Distinguish different connection meanings, such as chronology and causality, with labels, line styles, or a small legend when direction alone is ambiguous.
+2. **Check a structural draft:** Before adding explanatory prose or visual polish, draw short element names and meaningful connections. Verify that placement, containment, and connections communicate the main relationships; this is a condition for proceeding to refinement. If they do not, revise the structure and check again. Necessary labels and concise qualifications remain appropriate. Distinguish different connection meanings, such as chronology and causality, with labels, line styles, or a small legend when direction alone is ambiguous.
 3. **Refine and verify:** Add only the explanation and visual detail that serve the purpose. Perform the [quality check](#quality-check), correcting problems and inspecting the revision before considering the diagram complete. Move long explanations that obscure relationships into supporting notes.
 
 Ask only when an unresolved choice would materially change the diagram's purpose or structure; reuse what the conversation already establishes. Prefer one concise question at a time with two or three outcome-oriented choices and room for a free-form answer. Show a structural draft early to refine direction, and ask follow-ups only for important ambiguities it reveals. Handle routine drawing decisions without questioning the user at every step.
@@ -46,7 +46,7 @@ After visual edits, inspect structure and rendered appearance on each edited pag
 - **Connections:** Check for unintended dangling or misconnected arrows. Distinguish intentional open endpoints and overlaps from mistakes.
 - **Readability and balance:** Check text overflow or clipping, lines obscuring text, overlapping labels or shapes, and unreadable sizing or unnecessary wrapping. Compare padding and gaps across peers. What draws the eye first should match the diagram's purpose; enclosures and fills should not overpower the contents.
 
-Fix defects and inspect the updated rendering before completion.
+Fix defects and inspect the updated rendering before completion. If the structure fails the meaning or connection checks, revise the structure and verify it again; changes to prose volume or appearance alone do not establish completion.
 
 ## Freeform Diagram techniques
 
