@@ -46,6 +46,7 @@ Fix defects and inspect the updated rendering before completion.
 
 ## Project conventions
 
+- **Diagram extent:** Start with a landscape layout, roughly width:height = 1:0.75, as a flexible default. Fit the intended viewing width at a readable scale; when more space is needed, prefer growing vertically over horizontal sprawl because vertical scrolling is generally easier on a work PC. Let the relationships and content justify other proportions rather than forcing this ratio or shrinking text to fit. This concerns the whole diagram, while individual nodes may remain wider than tall.
 - **Node outlines:** The default line style for node outlines is hand-drawn (`draw`).
 - **Named frames:** Use one descriptively named frame per diagram as the project default. Use ordinary enclosure shapes for node groups, subsystem boundaries, and other containment within a diagram. Nested frames are rare: use them only when a diagram itself contains another diagram that warrants its own frame. Leave boundaries open for exploration or when framing would obscure the intended relationship.
 - **Connector alignment:** Connections between aligned peers should be exactly horizontal or vertical. Small accidental slopes distract without conveying meaning. Check actual attachment points after labels wrap or shapes grow. Deliberate diagonals remain appropriate where the layout benefits from them.
