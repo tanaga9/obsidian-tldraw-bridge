@@ -1,6 +1,20 @@
 # Diagramming guidance
 
-For new diagrams or substantial structural revisions, identify the relationships to show—flow, comparison, hierarchy, containment, interaction, causality, or spatial arrangement. Briefly compare suitable representations and choose the one that best answers the user's request and the reader's question; state the reason in one sentence. First consider established formats, including UML, and use one when it fits well. Rely on familiar conventions without loading tutorials.
+## Production workflow
+
+For new diagrams or substantial structural revisions:
+
+1. **Clarify the purpose:** State in one sentence what the reader should understand or be able to decide, using the request and existing context. Identify the relationships needed—chronology, causality, or other structure—and choose the [format and layout](#format-selection) accordingly.
+2. **Check a structural draft:** Before adding explanatory prose or visual polish, draw short element names and meaningful connections. Inspect whether layout and connections communicate the main relationships. Rework structure that depends on long explanations; necessary labels and concise qualifications remain appropriate. Distinguish different connection meanings, such as chronology and causality, with labels, line styles, or a small legend when direction alone is ambiguous.
+3. **Refine and verify:** Add only the explanation and visual detail that serve the purpose. Perform the [quality check](#quality-check), correcting problems and inspecting the revision before considering the diagram complete. Move long explanations that obscure relationships into supporting notes.
+
+Ask only when an unresolved choice would materially change the diagram's purpose or structure; reuse what the conversation already establishes. Prefer one concise question at a time with two or three outcome-oriented choices and room for a free-form answer. Show a structural draft early to refine direction, and ask follow-ups only for important ambiguities it reveals. Handle routine drawing decisions without questioning the user at every step.
+
+Local corrections reuse the existing purpose and structure rather than restarting the workflow.
+
+## Format selection
+
+Briefly compare suitable representations and state the selection reason in one sentence. First consider established formats, including UML, and use one when it fits well. Rely on familiar conventions without loading tutorials.
 
 | Purpose | Starting point |
 | --- | --- |
@@ -28,7 +42,7 @@ When none fits the intended meaning well, use a **Freeform Diagram** (also calle
 
 After visual edits, inspect structure and rendered appearance on each edited page, including at the intended display size:
 
-- **Meaning:** Names, scope, relationship meanings, and arrow directions remain clear after edits, including the interpretation of elements inside changed enclosures. The main relationships should be apparent with concise labels; if the result is a Markdown outline in connected boxes, reconsider the representation and move extended explanation to prose.
+- **Meaning:** Independently of visual neatness, verify that the diagram enables the intended understanding or decision. Names, scope, relationship meanings, and arrow directions must remain clear, including inside changed enclosures. If a bullet list would convey almost the same information, reconsider what the layout and connections contribute; move extended explanation to prose.
 - **Connections:** Check for unintended dangling or misconnected arrows. Distinguish intentional open endpoints and overlaps from mistakes.
 - **Readability and balance:** Check text overflow or clipping, lines obscuring text, overlapping labels or shapes, and unreadable sizing or unnecessary wrapping. Compare padding and gaps across peers. What draws the eye first should match the diagram's purpose; enclosures and fills should not overpower the contents.
 
