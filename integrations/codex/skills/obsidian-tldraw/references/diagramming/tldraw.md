@@ -18,4 +18,4 @@ A geo shape's effective height can include `growY` after text wrapping. Equal `p
 
 ## Verification
 
-Use `state` to check frame membership and arrow bindings. Inspect `preview` for clipping, overlaps, label wrapping, and accidental slopes after layout changes. Check each edited page. Structure checks and image inspection complement each other; neither alone establishes both correctness and readability.
+Apply the [common quality check](index.md#quality-check) using `state` for frame membership and arrow bindings and `preview` for rendered appearance, including accidental slopes after layout changes. Structure checks and image inspection complement each other; neither alone establishes both correctness and readability.
