@@ -49,8 +49,8 @@ tags:
 		},
 		"records": [
 			{
-				"x": 1192,
-				"y": 361,
+				"x": 936,
+				"y": 337,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -85,8 +85,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 346,
-				"y": 383,
+				"x": 158,
+				"y": 492,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -121,8 +121,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 792,
-				"y": 408,
+				"x": 504,
+				"y": 384,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -133,7 +133,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 263.5294117647059,
+					"w": 290,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -146,7 +146,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "tldraw SDK"
+										"text": "tldraw SDK · own Store"
 									}
 								]
 							}
@@ -179,7 +179,7 @@ tags:
 				}
 			},
 			{
-				"x": 816,
+				"x": 528,
 				"y": 737,
 				"rotation": 0,
 				"isLocked": false,
@@ -191,7 +191,7 @@ tags:
 				"props": {
 					"color": "green",
 					"size": "m",
-					"w": 586.6666666666666,
+					"w": 640,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -227,7 +227,7 @@ tags:
 				"y": 394,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 0.45,
+				"opacity": 0.65,
 				"meta": {},
 				"id": "shape:readme-link-launch",
 				"type": "arrow",
@@ -267,7 +267,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 752,
+				"x": 464,
 				"y": 688,
 				"rotation": 0,
 				"isLocked": false,
@@ -279,7 +279,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 760,
+					"w": 656,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -307,7 +307,7 @@ tags:
 				"y": 312,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 0.45,
+				"opacity": 0.65,
 				"meta": {},
 				"id": "shape:readme-link-request",
 				"type": "arrow",
@@ -386,8 +386,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 346,
-				"y": 382,
+				"x": 158,
+				"y": 491,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,
@@ -434,7 +434,7 @@ tags:
 					"isPrecise": true,
 					"isExact": true,
 					"normalizedAnchor": {
-						"x": 0.8092105263157895,
+						"x": 0.8109756097560976,
 						"y": 0
 					},
 					"snap": "none",
@@ -443,8 +443,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 508,
-				"y": 361,
+				"x": 144,
+				"y": 565,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -455,7 +455,7 @@ tags:
 				"props": {
 					"color": "blue",
 					"size": "m",
-					"w": 150,
+					"w": 175,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -526,7 +526,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 816,
+				"x": 528,
 				"y": 541,
 				"rotation": 0,
 				"isLocked": false,
@@ -538,7 +538,7 @@ tags:
 				"props": {
 					"color": "green",
 					"size": "m",
-					"w": 586.6666666666666,
+					"w": 640,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -562,8 +562,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 752,
-				"y": 252,
+				"x": 464,
+				"y": 212,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -574,7 +574,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 380,
+					"w": 328,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -616,8 +616,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 776,
-				"y": 306,
+				"x": 488,
+				"y": 270,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -652,8 +652,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 657,
-				"y": 383,
+				"x": 357,
+				"y": 552,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -688,18 +688,18 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 720,
-				"y": 220,
+				"x": 432,
+				"y": 180,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 0.12,
+				"opacity": 0.2,
 				"meta": {},
 				"id": "shape:readme-process",
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 672,
-					"h": 436,
+					"w": 720,
+					"h": 476,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -731,15 +731,15 @@ tags:
 				"y": 394,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 0.45,
+				"opacity": 0.65,
 				"meta": {},
 				"id": "shape:readme-link-eval",
 				"type": "arrow",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"kind": "arc",
+					"kind": "elbow",
 					"elbowMidPoint": 0.5,
-					"dash": "draw",
+					"dash": "solid",
 					"size": "m",
 					"fill": "none",
 					"color": "black",
@@ -771,8 +771,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 1027,
-				"y": 629,
+				"x": 763,
+				"y": 665,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -811,7 +811,7 @@ tags:
 				"y": 624,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 0.45,
+				"opacity": 0.65,
 				"meta": {},
 				"id": "shape:readme-link-save",
 				"type": "arrow",
@@ -938,8 +938,8 @@ tags:
 				}
 			},
 			{
-				"x": 657,
-				"y": 382,
+				"x": 357,
+				"y": 551,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,
@@ -986,8 +986,8 @@ tags:
 					"isPrecise": true,
 					"isExact": true,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.5
+						"x": 0.5,
+						"y": 0
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -995,7 +995,7 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 752,
+				"x": 464,
 				"y": 720,
 				"rotation": 0,
 				"isLocked": false,
@@ -1005,7 +1005,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 608,
+					"w": 656,
 					"h": 100,
 					"geo": "rectangle",
 					"dash": "draw",
@@ -1034,8 +1034,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 1027,
-				"y": 628,
+				"x": 763,
+				"y": 664,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,
@@ -1091,8 +1091,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 1144,
-				"y": 360,
+				"x": 888,
+				"y": 336,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1187,7 +1187,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 816,
+				"x": 528,
 				"y": 588,
 				"rotation": 0,
 				"isLocked": false,
@@ -1199,7 +1199,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 621.1764705882354,
+					"w": 660,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1212,7 +1212,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Existing tldraw plugin"
+										"text": "Existing plugin · shapes, pages, bindings & assets"
 									}
 								]
 							}
@@ -1303,7 +1303,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "xl",
-					"w": 1344,
+					"w": 1180,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1327,8 +1327,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 460,
-				"y": 360,
+				"x": 96,
+				"y": 564,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1360,8 +1360,8 @@ tags:
 					"isPrecise": true,
 					"isExact": true,
 					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.5
+						"x": 0.5,
+						"y": 1
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1369,18 +1369,18 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 752,
-				"y": 282,
+				"x": 464,
+				"y": 242,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 0.16,
+				"opacity": 0.24,
 				"meta": {},
 				"id": "shape:readme-runtime",
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 304,
-					"h": 186,
+					"w": 328,
+					"h": 202,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -1408,7 +1408,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 768,
+				"x": 480,
 				"y": 540,
 				"rotation": 0,
 				"isLocked": false,
@@ -1450,8 +1450,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 776,
-				"y": 344,
+				"x": 488,
+				"y": 320,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1460,7 +1460,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 256,
+					"w": 280,
 					"h": 100,
 					"geo": "rectangle",
 					"dash": "draw",
@@ -1499,7 +1499,7 @@ tags:
 					"isExact": true,
 					"normalizedAnchor": {
 						"x": 0,
-						"y": 0.6021505376344086
+						"y": 0.6336633663366337
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1543,8 +1543,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 460,
-				"y": 408,
+				"x": 96,
+				"y": 612,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1555,11 +1555,11 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 197.64705882352942,
+					"w": 250,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.85,
+					"scale": 0.75,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1568,7 +1568,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Official · own process"
+										"text": "Official · separate process"
 									}
 								]
 							}
@@ -1579,8 +1579,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 1128,
-				"y": 344,
+				"x": 872,
+				"y": 320,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1589,7 +1589,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 232,
+					"w": 248,
 					"h": 100,
 					"geo": "rectangle",
 					"dash": "draw",
@@ -1664,7 +1664,7 @@ tags:
 				}
 			},
 			{
-				"x": 752,
+				"x": 464,
 				"y": 524,
 				"rotation": 0,
 				"isLocked": false,
@@ -1674,7 +1674,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 608,
+					"w": 656,
 					"h": 100,
 					"geo": "rectangle",
 					"dash": "draw",
@@ -1713,7 +1713,7 @@ tags:
 				"type": "frame",
 				"parentId": "page:page",
 				"props": {
-					"w": 1440,
+					"w": 1200,
 					"h": 868,
 					"name": "README architecture",
 					"color": "grey"
@@ -1722,7 +1722,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 816,
+				"x": 528,
 				"y": 784,
 				"rotation": 0,
 				"isLocked": false,
@@ -1734,7 +1734,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 621.1764705882354,
+					"w": 660,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1747,7 +1747,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Canonical saved document"
+										"text": "Canonical document · embedded tldraw JSON"
 									}
 								]
 							}
@@ -1776,7 +1776,7 @@ tags:
 				"y": 444,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 0.45,
+				"opacity": 0.65,
 				"meta": {},
 				"id": "shape:readme-link-gui-sync",
 				"type": "arrow",
@@ -1862,8 +1862,8 @@ tags:
 				"typeName": "instance"
 			},
 			{
-				"x": 444,
-				"y": 344,
+				"x": 80,
+				"y": 548,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1872,7 +1872,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 200,
+					"w": 220,
 					"h": 100,
 					"geo": "rectangle",
 					"dash": "draw",
@@ -1901,8 +1901,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 1144,
-				"y": 408,
+				"x": 888,
+				"y": 384,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1913,7 +1913,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 235.29411764705884,
+					"w": 270,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1926,7 +1926,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Human · tldraw Editor"
+										"text": "Human · own Editor Store"
 									}
 								]
 							}
@@ -1955,8 +1955,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 1215,
-				"y": 473,
+				"x": 967,
+				"y": 463,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1991,8 +1991,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 792,
-				"y": 360,
+				"x": 504,
+				"y": 336,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2047,8 +2047,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 1215,
-				"y": 472,
+				"x": 967,
+				"y": 462,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,
@@ -2104,7 +2104,7 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 768,
+				"x": 480,
 				"y": 736,
 				"rotation": 0,
 				"isLocked": false,
@@ -2146,7 +2146,7 @@ tags:
 				"y": 444,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 0.45,
+				"opacity": 0.65,
 				"meta": {},
 				"id": "shape:readme-link-runtime-sync",
 				"type": "arrow",
@@ -2186,8 +2186,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 875,
-				"y": 473,
+				"x": 599,
+				"y": 463,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2246,8 +2246,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 840,
-				"y": 361,
+				"x": 552,
+				"y": 337,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2258,7 +2258,7 @@ tags:
 				"props": {
 					"color": "violet",
 					"size": "m",
-					"w": 220,
+					"w": 250,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -2282,8 +2282,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 720,
-				"y": 190,
+				"x": 432,
+				"y": 150,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2294,7 +2294,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 840,
+					"w": 720,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -2330,7 +2330,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "m",
-					"w": 1344,
+					"w": 1360,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -2343,7 +2343,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Local processes, shared editing, and the saved document"
+										"text": "Local execution → synchronized document records → Markdown persistence"
 									}
 								]
 							}
@@ -2393,8 +2393,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 875,
-				"y": 472,
+				"x": 599,
+				"y": 462,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,

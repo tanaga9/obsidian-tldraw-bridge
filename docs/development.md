@@ -38,11 +38,11 @@ note in Obsidian with the tldraw plugin, edit the diagram, and render the named
 
 ```sh
 python3 bridge.py --vault obsidian-tldraw-bridge open docs/diagrams/architecture.md
-python3 bridge.py --vault obsidian-tldraw-bridge preview docs/diagrams/architecture.md --ids shape:readme-architecture --format webp --quality 0.9 --scale 0.6666666666666666 --output docs/diagrams/architecture.webp
+python3 bridge.py --vault obsidian-tldraw-bridge preview docs/diagrams/architecture.md --ids shape:readme-architecture --format webp --quality 0.9 --scale 0.8 --output docs/diagrams/architecture.webp
 python3 bridge.py --vault obsidian-tldraw-bridge close docs/diagrams/architecture.md
 ```
 
-The SDK raster pixel ratio is 2. For this 1440-pixel-wide frame, scale 2/3
+The SDK raster pixel ratio is 2. For this 1200-pixel-wide frame, scale 0.8
 produces a 1920-pixel-wide WebP. Substitute the registered vault containing your
 checkout. No intermediate PNG or external image converter is required.
 Commit the note and WebP together.
