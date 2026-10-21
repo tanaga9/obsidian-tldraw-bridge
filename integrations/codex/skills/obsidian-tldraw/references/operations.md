@@ -4,6 +4,32 @@ Use `capabilities` to discover the runtime's API version, named operations and l
 Registered shape types are reported after opening a document. Props still follow
 the installed SDK; use `state` for exact records when compact observation is insufficient.
 
+## Markdown body edits
+
+Use Markdown outside the drawing data block for supporting prose or Agent context
+such as rationale, working notes, and unresolved questions. The drawing view shows
+the diagram; users need the **View as markdown** action to read this prose. Keep
+information users need to see in the diagram or the response as well.
+
+Before editing the prose, check the file's modification time against the current
+time. Proceed when the last modification is at least a few seconds old (use
+3 seconds as a practical default). If it is more recent, wait and check again.
+Read the latest contents, then recheck the modification time immediately before
+writing; if it changed or is too recent, reread after another quiet period.
+Edit only the intended prose, preserving frontmatter, asset references, and the
+complete drawing data block. This heuristic is sufficient for routine edits;
+closing GUI tabs or bridge sessions is not required. If updates keep arriving,
+defer the prose edit rather than repeatedly racing the writer. Read back the
+saved file to confirm the intended prose and preserved drawing data.
+
+This reduces risk but does not lock the file. In tldraw 1.32.0,
+[serialization](https://github.com/tldraw/obsidian-plugin/blob/1.32.0/src/utils/document.ts#L115-L135)
+preserves text outside the data markers, but the
+[save manager](https://github.com/tldraw/obsidian-plugin/blob/1.32.0/src/obsidian/plugin/TLDataDocumentStoreManager.ts)
+writes the whole file from in-memory contents. A concurrent save can overwrite a
+prose edit, or a stale prose write can revert drawing changes. Bridge revisions
+and `saved` verify drawing records, not prose preservation.
+
 ## Vault enumeration
 
 `vaults` is a global CLI command and does not require `--vault`:

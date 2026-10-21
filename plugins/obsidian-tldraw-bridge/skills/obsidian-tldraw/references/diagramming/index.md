@@ -33,7 +33,7 @@ When none fits the intended meaning well, use a **Freeform Diagram** (also calle
 
 ## Common rules
 
-- **Show structure:** Use layout, grouping, and connections rather than turning headings and paragraphs into boxes. Avoid diagrams where most elements are explanatory prose, including short passages or annotations. Prefer concise labels, but use sentences when needed for clarity or accuracy. Put supporting explanation in annotations or propose companion Markdown for extended detail.
+- **Show structure:** Use layout, grouping, and connections rather than turning headings and paragraphs into boxes. Avoid diagrams where most elements are explanatory prose, including short passages or annotations. Prefer concise labels, but use sentences when needed for clarity or accuracy. Put supporting explanation in annotations or supporting Markdown for extended detail. Markdown may live outside the drawing data block in the same note; it is not visible in the drawing view, so keep essential reader-facing information in the diagram or response. Follow [Markdown body edits](../operations.md#markdown-body-edits) when updating it.
 - **Preserve meaning:** Make node identities and connection meanings clear. Enclosures and headings supply context: when their name, scope, or nesting changes, recheck the interpretation of their contents and retain essential context in labels.
 - **Balance the layout:** Keep spacing and alignment coherent across comparable elements, with visual emphasis matching the diagram's purpose.
 - **Refine without losing strengths:** Compare with the prior diagram before finalizing. Preserve useful information and effective visual choices, or convey their meaning another way.
