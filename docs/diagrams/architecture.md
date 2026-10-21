@@ -49,7 +49,7 @@ tags:
 		},
 		"records": [
 			{
-				"x": 936,
+				"x": 880,
 				"y": 337,
 				"rotation": 0,
 				"isLocked": false,
@@ -61,7 +61,7 @@ tags:
 				"props": {
 					"color": "green",
 					"size": "m",
-					"w": 190,
+					"w": 250,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -122,7 +122,7 @@ tags:
 			},
 			{
 				"x": 504,
-				"y": 384,
+				"y": 378,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -180,7 +180,7 @@ tags:
 			},
 			{
 				"x": 528,
-				"y": 737,
+				"y": 713,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -268,7 +268,7 @@ tags:
 			},
 			{
 				"x": 464,
-				"y": 688,
+				"y": 664,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -434,7 +434,7 @@ tags:
 					"isPrecise": true,
 					"isExact": true,
 					"normalizedAnchor": {
-						"x": 0.8109756097560976,
+						"x": 0.75,
 						"y": 0
 					},
 					"snap": "none",
@@ -771,8 +771,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 763,
-				"y": 665,
+				"x": 812,
+				"y": 664,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -783,11 +783,11 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 72.5,
+					"w": 56,
 					"font": "sans",
-					"textAlign": "middle",
+					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.8,
+					"scale": 1,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -996,7 +996,7 @@ tags:
 			},
 			{
 				"x": 464,
-				"y": 720,
+				"y": 696,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1034,8 +1034,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 763,
-				"y": 664,
+				"x": 808,
+				"y": 662,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,
@@ -1044,8 +1044,8 @@ tags:
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 58,
-					"h": 24,
+					"w": 64,
+					"h": 28,
 					"geo": "rectangle",
 					"dash": "none",
 					"growY": 0,
@@ -1091,7 +1091,7 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 888,
+				"x": 832,
 				"y": 336,
 				"rotation": 0,
 				"isLocked": false,
@@ -1212,7 +1212,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Existing plugin · shapes, pages, bindings & assets"
+										"text": "tldraw plugin · shapes, pages, bindings & assets"
 									}
 								]
 							}
@@ -1380,7 +1380,7 @@ tags:
 				"parentId": "shape:readme-architecture",
 				"props": {
 					"w": 328,
-					"h": 202,
+					"h": 226,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -1461,7 +1461,7 @@ tags:
 				"parentId": "shape:readme-architecture",
 				"props": {
 					"w": 280,
-					"h": 100,
+					"h": 124,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -1499,7 +1499,7 @@ tags:
 					"isExact": true,
 					"normalizedAnchor": {
 						"x": 0,
-						"y": 0.6336633663366337
+						"y": 0.5663716814159292
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1579,7 +1579,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 872,
+				"x": 816,
 				"y": 320,
 				"rotation": 0,
 				"isLocked": false,
@@ -1589,8 +1589,8 @@ tags:
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 248,
-					"h": 100,
+					"w": 280,
+					"h": 124,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -1714,7 +1714,7 @@ tags:
 				"parentId": "page:page",
 				"props": {
 					"w": 1200,
-					"h": 868,
+					"h": 840,
 					"name": "README architecture",
 					"color": "grey"
 				},
@@ -1723,7 +1723,7 @@ tags:
 			},
 			{
 				"x": 528,
-				"y": 784,
+				"y": 760,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1901,8 +1901,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 888,
-				"y": 384,
+				"x": 832,
+				"y": 378,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1913,7 +1913,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 270,
+					"w": 290,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1926,7 +1926,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Human · own Editor Store"
+										"text": "Human · tldraw SDK"
 									}
 								]
 							}
@@ -1955,8 +1955,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 967,
-				"y": 463,
+				"x": 927,
+				"y": 473,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2047,8 +2047,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 967,
-				"y": 462,
+				"x": 927,
+				"y": 472,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,
@@ -2086,6 +2086,42 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 504,
+				"y": 408,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-editor-session",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 290,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.85,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Own view + Undo history"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "b1Cndn",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:readme-save-start",
 				"type": "arrow",
@@ -2105,7 +2141,7 @@ tags:
 			},
 			{
 				"x": 480,
-				"y": 736,
+				"y": 712,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2187,7 +2223,7 @@ tags:
 			},
 			{
 				"x": 599,
-				"y": 463,
+				"y": 473,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2318,6 +2354,42 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 832,
+				"y": 408,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:readme-gui-session",
+				"type": "text",
+				"parentId": "shape:readme-architecture",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 290,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 0.85,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Own Store, view + Undo"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "b1DtC6",
+				"typeName": "shape"
+			},
+			{
 				"x": 48,
 				"y": 96,
 				"rotation": 0,
@@ -2343,7 +2415,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Local execution → synchronized document records → Markdown persistence"
+										"text": "Shared document records · independent views and Undo histories"
 									}
 								]
 							}
@@ -2394,7 +2466,7 @@ tags:
 			},
 			{
 				"x": 599,
-				"y": 462,
+				"y": 472,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,
