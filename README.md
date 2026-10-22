@@ -33,6 +33,14 @@ Tell Codex the vault, diagram, and desired change. For example:
 
 The bridge synchronizes edits through the existing plugin and verifies persistence. Revision checks detect conflicts without locking human editing. Bridge and GUI Editors have separate Undo histories.
 
+## Diagramming guide design
+
+The Skill distills design knowledge into practical drawing guidance. Normal use follows a check–revise loop through saved delivery; maintainers improve the guidance through selected cases and evidence.
+
+![Diagramming guide design system: design knowledge informs the distributed Skill, which supports the drawing workflow; separate maintenance feeds lessons back into the guidance.](docs/diagrams/diagramming-guide-design-system.webp)
+
+See the [design explanation](docs/diagramming-guide-design-system.md) and [editable Obsidian tldraw note](docs/diagrams/diagramming-guide-design-system.md).
+
 ## Documentation
 
 - [CLI reference](docs/cli.md): commands, note creation, connection settings, and sessions.
