@@ -30,6 +30,27 @@ writes the whole file from in-memory contents. A concurrent save can overwrite a
 prose edit, or a stale prose write can revert drawing changes. Bridge revisions
 and `saved` verify drawing records, not prose preservation.
 
+## Session lifecycle
+
+The bridge uses a dedicated Editor synchronized with the plugin's human GUI
+Editors. Human edits change the revision; use bridge edits rather than replacing
+embedded drawing JSON on disk.
+
+`create` and `open` reuse a live GUI Editor for SDK initialization. If none is
+available, they open one initialization tab. They do not restore a previous tab
+or reopen a tab the user closes. Once initialized, the bridge session works
+independently of GUI tabs. If initialization stops because its tab or window was
+closed, report the retained note path rather than repeatedly reopening it.
+Showing a diagram in a GUI tab is a separate action, not a prerequisite for edits
+or previews.
+
+`close` verifies persistence and disposes the bridge Editor without closing human
+GUI tabs. Obsidian restarts discard sessions; use `open` again. Runtime replacement
+can also recreate sessions after checking persistence, restoring their selected
+pages but resetting bridge Undo history. Failed reopens appear in
+`doctor.reloadErrors`; retry with `open` or dismiss the recovery entry with
+`close`. Other documents remain usable.
+
 ## Vault enumeration
 
 `vaults` is a global CLI command and does not require `--vault`:
@@ -284,7 +305,9 @@ The Python API accepts the same `format` and `quality` fields.
 
 Existing `ids`, `part`, `bounds`, `scale` and `revision` options apply to both
 formats. Preview includes a light background. The result reports `path`,
-`format`, logical `width`/`height`, and the captured `revision`; the SDK's default
+`format`, logical `width`/`height`, the captured `revision`, and `sha256` of the
+exported image bytes. Use this hash to detect an overwritten image when retaining
+export evidence. The SDK's default
 raster pixel ratio is 2, so actual image pixel dimensions are twice the reported
 logical dimensions. Rendering failures, encoder fallback to a different format, and
 revision conflicts leave existing output files unchanged.
@@ -303,7 +326,8 @@ Arguments follow the installed SDK:
 ]]}]
 ```
 
-For custom logic, synchronous `script` receives `editor`, `app`, `plugin`, `require`:
+For custom logic, use `script <path> --revision <revision> --input <js-file>`.
+Synchronous scripts receive `editor`, `app`, `plugin`, `require`:
 
 ```js
 const ids = [...editor.getCurrentPageShapeIds()];
@@ -361,6 +385,8 @@ Observation, state reads, and revision checks first drain pending changes from
 other synchronizing Editors for that document. Successful edits verify that the
 revision produced by the edit still matches the saved state; a concurrent change
 is reported as `SAVE_CONFLICT`. This does not lock human editing.
+`saved` results and edit `persistence` include the `revision` verified against
+Markdown. Match it to the state or preview revision when associating evidence.
 
 State and revisions cover all SDK document-scope records, including settings,
 pages, shapes, bindings, and assets. Session records are excluded.

@@ -706,7 +706,7 @@ async function saved(app, path, expectedRevision) {
     const document = parseMarkdown(text)
     const actual = JSON.stringify(documentRecords(session.editor, document.raw.records))
     const expected = JSON.stringify(records(session.editor))
-    if (actual === expected) return { saved: true, path: session.path, bytes: Buffer.byteLength(text) }
+    if (actual === expected) return { saved: true, path: session.path, revision: revision(session.editor), bytes: Buffer.byteLength(text) }
     await new Promise(resolve => setTimeout(resolve, 100))
   }
   throw new Error('Timed out waiting for Markdown persistence')
@@ -806,7 +806,7 @@ async function execute(app, action, args) {
     flushPendingChanges(app, session)
     if (revision(editor) !== capturedRevision) throw fault('REVISION_CONFLICT', 'Revision conflict during preview: read state and export again')
     require('node:fs').writeFileSync(args.output, bytes)
-    return { path: args.output, width, height, format, revision: capturedRevision }
+    return { path: args.output, width, height, format, revision: capturedRevision, sha256: crypto.createHash('sha256').update(bytes).digest('hex') }
   }
   throw new Error('Unknown action')
 }

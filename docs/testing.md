@@ -228,3 +228,34 @@ After live tests, confirm that temporary shapes and documents are gone, the orig
 See [Known limitations](known-limitations.md) for implementation boundaries,
 including asynchronous scripts, external side effects, file lifecycle changes,
 and runtime updates.
+
+## Diagramming guidance evaluation
+
+For changes to drawing decisions rather than runtime behavior, use the
+[diagramming evaluation kit](evaluations/diagramming/README.md). It provides
+three fixed prompts, a partial-edit setup fixture, a pinned guide baseline,
+viewing conditions, and a staged comparison rubric. Both arms use the same frozen
+current package and recorder; preflight their evidence captures before timing.
+Package checks establish distribution
+integrity; this separate evaluation is needed to establish drawing-quality gains.
+
+Inspect whether required facts and useful existing content survive the
+check–revise loop, and whether refinement is followed by another inspection and
+confirmed saving. A successful first candidate need not demonstrate a forced
+retry. This is a maintainer comparison procedure, not an extra completion step
+for ordinary drawing requests.
+
+The [maintenance paths](evaluations/diagramming/README.md#choose-the-maintenance-path)
+separate local diagnosis from comparative guide evaluation. The repository-only
+`scripts/diagramming_eval.py` records trial timing and CLI calls and checks exact
+shape/binding preservation against frozen scope. Its automated tests are
+`tests/test_diagramming_eval.py`; they do not establish visual or semantic quality.
+Read those judgments from independent preview review, keeping task, affected
+quality, and preservation verdicts separate.
+
+Recorder regression checks also cover stale/cross-trial review rejection,
+frozen-artifact integrity, export-image SHA-256 matching (including missing hashes
+and image replacement before or during review preparation), matching final/preview/saved revisions (including rejection
+of missing or stale saved revisions in otherwise valid bundles), and required
+property preservation inside otherwise editable records. A valid review bound
+to a changed label or reconnected binding cannot override a property violation.

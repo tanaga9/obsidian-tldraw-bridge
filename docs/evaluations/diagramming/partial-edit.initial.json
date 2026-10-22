@@ -1,0 +1,349 @@
+[
+  {
+    "op": "createShapes",
+    "shapes": [
+      {
+        "id": "shape:eval-frame",
+        "type": "frame",
+        "x": 0,
+        "y": 0,
+        "props": {
+          "name": "Webhook delivery",
+          "w": 1280,
+          "h": 760
+        }
+      },
+      {
+        "id": "shape:eval-client",
+        "type": "geo",
+        "parentId": "shape:eval-frame",
+        "x": 80,
+        "y": 180,
+        "props": {
+          "geo": "rectangle",
+          "w": 240,
+          "h": 100,
+          "color": "black",
+          "fill": "none",
+          "dash": "draw",
+          "font": "sans",
+          "size": "m",
+          "align": "start",
+          "richText": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Client"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "shape:eval-api",
+        "type": "geo",
+        "parentId": "shape:eval-frame",
+        "x": 460,
+        "y": 180,
+        "props": {
+          "geo": "rectangle",
+          "w": 240,
+          "h": 100,
+          "color": "blue",
+          "fill": "none",
+          "dash": "draw",
+          "font": "sans",
+          "size": "m",
+          "align": "start",
+          "richText": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "API"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "shape:eval-worker",
+        "type": "geo",
+        "parentId": "shape:eval-frame",
+        "x": 900,
+        "y": 180,
+        "props": {
+          "geo": "rectangle",
+          "w": 140,
+          "h": 100,
+          "color": "black",
+          "fill": "none",
+          "dash": "draw",
+          "font": "sans",
+          "size": "m",
+          "align": "start",
+          "richText": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Webhook Worker\nTake pending events and deliver them, retrying on failure. Record delivery results in Database."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "shape:eval-database",
+        "type": "geo",
+        "parentId": "shape:eval-frame",
+        "x": 900,
+        "y": 500,
+        "props": {
+          "geo": "rectangle",
+          "w": 240,
+          "h": 100,
+          "color": "black",
+          "fill": "none",
+          "dash": "draw",
+          "font": "sans",
+          "size": "m",
+          "align": "start",
+          "richText": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Database"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "shape:eval-request",
+        "type": "arrow",
+        "parentId": "shape:eval-frame",
+        "x": 320,
+        "y": 230,
+        "props": {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 140,
+            "y": 0
+          },
+          "arrowheadStart": "none",
+          "arrowheadEnd": "arrow",
+          "color": "black",
+          "dash": "solid",
+          "font": "sans",
+          "richText": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Request"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "shape:eval-enqueue",
+        "type": "arrow",
+        "parentId": "shape:eval-frame",
+        "x": 700,
+        "y": 230,
+        "props": {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 200,
+            "y": 0
+          },
+          "arrowheadStart": "none",
+          "arrowheadEnd": "arrow",
+          "color": "black",
+          "dash": "solid",
+          "font": "sans",
+          "richText": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Queue delivery"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "shape:eval-persist",
+        "type": "arrow",
+        "parentId": "shape:eval-frame",
+        "x": 970,
+        "y": 280,
+        "props": {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 50,
+            "y": 220
+          },
+          "arrowheadStart": "none",
+          "arrowheadEnd": "arrow",
+          "color": "black",
+          "dash": "solid",
+          "font": "sans",
+          "richText": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Save result"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "op": "createBindings",
+    "bindings": [
+      {
+        "id": "binding:eval-request-start",
+        "type": "arrow",
+        "fromId": "shape:eval-request",
+        "toId": "shape:eval-client",
+        "props": {
+          "terminal": "start",
+          "normalizedAnchor": {
+            "x": 1,
+            "y": 0.5
+          },
+          "isExact": false,
+          "isPrecise": true
+        }
+      },
+      {
+        "id": "binding:eval-request-end",
+        "type": "arrow",
+        "fromId": "shape:eval-request",
+        "toId": "shape:eval-api",
+        "props": {
+          "terminal": "end",
+          "normalizedAnchor": {
+            "x": 0,
+            "y": 0.5
+          },
+          "isExact": false,
+          "isPrecise": true
+        }
+      },
+      {
+        "id": "binding:eval-enqueue-start",
+        "type": "arrow",
+        "fromId": "shape:eval-enqueue",
+        "toId": "shape:eval-api",
+        "props": {
+          "terminal": "start",
+          "normalizedAnchor": {
+            "x": 1,
+            "y": 0.5
+          },
+          "isExact": false,
+          "isPrecise": true
+        }
+      },
+      {
+        "id": "binding:eval-enqueue-end",
+        "type": "arrow",
+        "fromId": "shape:eval-enqueue",
+        "toId": "shape:eval-worker",
+        "props": {
+          "terminal": "end",
+          "normalizedAnchor": {
+            "x": 0,
+            "y": 0.5
+          },
+          "isExact": false,
+          "isPrecise": true
+        }
+      },
+      {
+        "id": "binding:eval-persist-start",
+        "type": "arrow",
+        "fromId": "shape:eval-persist",
+        "toId": "shape:eval-worker",
+        "props": {
+          "terminal": "start",
+          "normalizedAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "isExact": false,
+          "isPrecise": true
+        }
+      },
+      {
+        "id": "binding:eval-persist-end",
+        "type": "arrow",
+        "fromId": "shape:eval-persist",
+        "toId": "shape:eval-database",
+        "props": {
+          "terminal": "end",
+          "normalizedAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "isExact": false,
+          "isPrecise": true
+        }
+      }
+    ]
+  }
+]

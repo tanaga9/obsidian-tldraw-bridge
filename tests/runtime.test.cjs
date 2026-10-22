@@ -73,12 +73,26 @@ test('document scope drives revisions and includes custom persistent types',()=>
   assert.notEqual(h.access.revision(h.editor),after)
 })
 
+test('saved receipts identify the persisted document revision, including changes during reads',async()=>{
+  const h=setup()
+  const first=await h.access.saved(h.app,'a.md')
+  h.app.vault.read=async()=>{
+    h.editor.updateDocumentSettings({name:'Changed during read'})
+    return h.markdown(copy(h.values()))
+  }
+  const second=await h.access.saved(h.app,'a.md')
+  assert.equal(second.revision,h.access.revision(h.editor))
+  assert.notEqual(second.revision,first.revision)
+})
+
 test('save waits for document settings to reach Markdown',async()=>{
   const h=setup(), old=copy(h.values())
   h.editor.updateDocumentSettings({name:'Unsaved'})
   let reads=0
   h.app.vault.read=async()=>h.markdown(++reads===1?old:copy(h.values()))
-  assert.equal((await h.access.saved(h.app,'a.md')).saved,true)
+  const receipt=await h.access.saved(h.app,'a.md')
+  assert.equal(receipt.saved,true)
+  assert.equal(receipt.revision,h.access.revision(h.editor))
   assert.equal(reads,2)
 })
 
@@ -116,6 +130,7 @@ test('unchanged preview writes bytes tagged with the captured revision',async()=
     const before=h.access.revision(h.editor)
     const result=await h.invoke('preview',{path:'a.md',format:'png',output})
     assert.equal(result.revision,before)
+    assert.equal(result.sha256,require('node:crypto').createHash('sha256').update(fs.readFileSync(output)).digest('hex'))
     assert.equal(result.format,'png')
     assert.equal(fs.readFileSync(output,'utf8'),'image')
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
@@ -136,6 +151,7 @@ test('WebP default and explicit export pass quality and selection to SDK',async(
         return {blob:{type:'image/webp',arrayBuffer:async()=>bytes},width:200,height:100}
       }
       const result=await h.invoke('preview',{path:'a.md',ids:['shape:a'],scale:2,...(format===undefined?{}:{format}),...(quality===undefined?{}:{quality}),output})
+      assert.equal(result.sha256,require('node:crypto').createHash('sha256').update(bytes).digest('hex'))
       assert.equal(result.format,'webp')
       assert.equal(result.revision,before)
       assert.equal(h.access.revision(h.editor),before)

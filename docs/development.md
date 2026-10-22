@@ -56,12 +56,20 @@ when needed for reuse, and update the note and rendered WebP together when repla
 
 ## Maintaining diagramming guidance
 
-Keep diagramming guidance inside the canonical Skill's [references](../integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md) so both builds remain self-contained.
+Keep agent-facing diagramming guidance inside the canonical Skill's [references](../integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md) so both builds remain self-contained. General foundations, design principles, and extended authoring rationale belong primarily in maintainer documentation under `docs/`, outside the distributed Skill. Distill that knowledge into decisions, applicable conditions, exceptions, and actions. Include a short rationale within a rule or workflow step only when it helps the agent choose; do not bundle a separate theory layer for completeness.
+
+The [diagramming guide design system](diagramming-guide-design-system.md)
+illustrates the authoring/runtime boundary, normal drawing loop, and separate maintenance process.
+Its editable tldraw note and WebP preview live in `docs/diagrams/` and are
+repository documentation, outside the distributed Skill.
 
 - Assume the agent knows familiar diagram types; name them and their purpose rather than writing tutorials.
 - Add knowledge that changes decisions: project preferences, unfamiliar notation, or demonstrated implementation pitfalls. State when it applies and any useful exception; include evidence or a compact example when needed.
 - Keep drawing conventions in `diagramming/index.md`, SDK details in `diagramming/tldraw.md`, and operation contracts in `operations.md`. Split a reference only when its size or independent use justifies it.
 - Update existing guidance before adding new rules. Keep history in Git rather than cumulative activity logs.
+- Preserve the normal completion path: task context → structural candidate → check/revise → refinement and verification → saved delivery. Keep completion conditions separate from adjustable defaults, and retain useful existing content when revising a diagram.
+
+Use selected failures or test tasks to investigate guidance changes. Choose the [maintenance path](evaluations/diagramming/README.md#choose-the-maintenance-path) first: diagnose a local failure with a minimal reproduction and targeted checks, or compare guides on fixed inputs with the same workflow. Freeze editable/protected records and initial defects; assess task success, affected quality, and preservation separately. Use the repository-only recorder for consistent timing and CLI counts. Keep, simplify, or revise guidance only within the evidence's scope. Ordinary diagramming ends with delivery and does not require an evaluation report.
 
 After knowledge-only changes, rebuild the plugin, run `python3 scripts/build_plugin.py --check`, and run `python3 -m unittest discover -s tests -p 'test_package.py'`. Package tests check that local Markdown references are self-contained and reachable from `SKILL.md`. These checks do not establish drawing quality; live tests are needed for runtime changes.
 

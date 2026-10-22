@@ -123,6 +123,9 @@ inspect its status or repeat the identical request with the same ID. Release
 completed receipts with `forget`; explicit IDs occupy the 128-receipt capacity
 until forgotten or Obsidian restarts.
 
+`saved` and edit `persistence` return the document `revision` verified against
+Markdown, alongside `saved`, `path`, and `bytes`.
+
 `script` returns `scriptResult` in both normal and `--full` output, beside the
 change summary and persistence result. `return {value:42}` yields
 `{"hasValue":true,"value":{"value":42}}`. JSON data is validated and detached
@@ -249,4 +252,5 @@ WebP is the default, at quality 0.9. Use `--format png` for lossless PNG output.
 Format is not inferred from the filename. `--quality` accepts 0–1 for WebP
 (including when `--format` is omitted) and is rejected with `--format png`.
 Selection, bounds, scale, and revision checks work with both formats. The result
-includes `format`; output remains unchanged on render or revision failures.
+includes `format`, the captured `revision`, and `sha256` of the exported image
+bytes. Output remains unchanged on render or revision failures.

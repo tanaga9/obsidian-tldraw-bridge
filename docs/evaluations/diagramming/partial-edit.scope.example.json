@@ -1,0 +1,139 @@
+{
+  "editable_ids": [
+    "shape:eval-worker",
+    "shape:eval-enqueue",
+    "shape:eval-persist",
+    "binding:eval-enqueue-start",
+    "binding:eval-enqueue-end",
+    "binding:eval-persist-start",
+    "binding:eval-persist-end"
+  ],
+  "protected_ids": [
+    "shape:eval-frame",
+    "shape:eval-client",
+    "shape:eval-api",
+    "shape:eval-database",
+    "shape:eval-request",
+    "binding:eval-request-start",
+    "binding:eval-request-end"
+  ],
+  "allow_new_records": false,
+  "existing_defects": [
+    {
+      "id": "worker-readability",
+      "record_ids": [
+        "shape:eval-worker"
+      ],
+      "scope": "editable",
+      "status": "verify",
+      "description": "Inspect Worker wrapping and overlap; this is the requested repair target."
+    },
+    {
+      "id": "persist-label-clipping",
+      "record_ids": [
+        "shape:eval-persist"
+      ],
+      "scope": "editable",
+      "status": "verify",
+      "description": "Inspect Save result at detail scale; classify independently of the Worker text."
+    },
+    {
+      "id": "protected-request-wrapping",
+      "record_ids": [
+        "shape:eval-request"
+      ],
+      "scope": "protected",
+      "status": "verify",
+      "description": "Inspect Request wrapping; preserve this protected arrow even if a defect exists."
+    }
+  ],
+  "preserve_properties": [
+    {
+      "id": "shape:eval-worker",
+      "paths": [
+        [
+          "props",
+          "richText"
+        ]
+      ]
+    },
+    {
+      "id": "shape:eval-enqueue",
+      "paths": [
+        [
+          "props",
+          "richText"
+        ]
+      ]
+    },
+    {
+      "id": "shape:eval-persist",
+      "paths": [
+        [
+          "props",
+          "richText"
+        ]
+      ]
+    },
+    {
+      "id": "binding:eval-enqueue-start",
+      "paths": [
+        [
+          "fromId"
+        ],
+        [
+          "toId"
+        ],
+        [
+          "props",
+          "terminal"
+        ]
+      ]
+    },
+    {
+      "id": "binding:eval-enqueue-end",
+      "paths": [
+        [
+          "fromId"
+        ],
+        [
+          "toId"
+        ],
+        [
+          "props",
+          "terminal"
+        ]
+      ]
+    },
+    {
+      "id": "binding:eval-persist-start",
+      "paths": [
+        [
+          "fromId"
+        ],
+        [
+          "toId"
+        ],
+        [
+          "props",
+          "terminal"
+        ]
+      ]
+    },
+    {
+      "id": "binding:eval-persist-end",
+      "paths": [
+        [
+          "fromId"
+        ],
+        [
+          "toId"
+        ],
+        [
+          "props",
+          "terminal"
+        ]
+      ]
+    }
+  ]
+}
