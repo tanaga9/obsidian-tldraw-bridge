@@ -283,7 +283,7 @@ tags:
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.8,
+					"scale": 0.9,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -574,11 +574,11 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 328,
+					"w": 380,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.8,
+					"scale": 0.9,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1302,12 +1302,12 @@ tags:
 				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "black",
-					"size": "xl",
+					"size": "l",
 					"w": 1180,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
-					"scale": 0.9,
+					"scale": 1,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1508,7 +1508,7 @@ tags:
 			},
 			{
 				"x": 48,
-				"y": 150,
+				"y": 146,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1518,7 +1518,7 @@ tags:
 				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "black",
-					"size": "s",
+					"size": "m",
 					"w": 355,
 					"font": "sans",
 					"textAlign": "start",
@@ -2319,7 +2319,7 @@ tags:
 			},
 			{
 				"x": 432,
-				"y": 150,
+				"y": 146,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2329,7 +2329,7 @@ tags:
 				"parentId": "shape:readme-architecture",
 				"props": {
 					"color": "black",
-					"size": "s",
+					"size": "m",
 					"w": 720,
 					"font": "sans",
 					"textAlign": "start",

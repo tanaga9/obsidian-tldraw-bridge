@@ -116,8 +116,8 @@ tags:
 				"parentId": "shape:guide-system",
 				"props": {
 					"color": "violet",
-					"size": "m",
-					"w": 1200,
+					"size": "l",
+					"w": 350,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -130,7 +130,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "MAINTENANCE — select the path for the question"
+										"text": "MAINTENANCE"
 									}
 								]
 							}
@@ -138,6 +138,42 @@ tags:
 					}
 				},
 				"index": "aVBGb",
+				"typeName": "shape"
+			},
+			{
+				"x": 410,
+				"y": 622,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:use-subheading",
+				"type": "text",
+				"parentId": "shape:guide-system",
+				"props": {
+					"color": "green",
+					"size": "s",
+					"w": 300,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Request to useful diagram"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "ajsJE",
 				"typeName": "shape"
 			},
 			{
@@ -920,7 +956,7 @@ tags:
 				"parentId": "shape:guide-system",
 				"props": {
 					"color": "violet",
-					"size": "m",
+					"size": "l",
 					"w": 380,
 					"font": "sans",
 					"textAlign": "start",
@@ -1622,8 +1658,8 @@ tags:
 				"parentId": "shape:guide-system",
 				"props": {
 					"color": "green",
-					"size": "m",
-					"w": 600,
+					"size": "l",
+					"w": 310,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1636,7 +1672,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "NORMAL USE — request to useful diagram"
+										"text": "NORMAL USE"
 									}
 								]
 							}
@@ -1644,6 +1680,42 @@ tags:
 					}
 				},
 				"index": "aDVwX",
+				"typeName": "shape"
+			},
+			{
+				"x": 470,
+				"y": 1172,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:maintenance-subheading",
+				"type": "text",
+				"parentId": "shape:guide-system",
+				"props": {
+					"color": "violet",
+					"size": "s",
+					"w": 850,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Select the path for the question"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "akk0z",
 				"typeName": "shape"
 			},
 			{
@@ -2618,7 +2690,7 @@ tags:
 				"parentId": "shape:guide-system",
 				"props": {
 					"color": "blue",
-					"size": "m",
+					"size": "l",
 					"w": 750,
 					"font": "sans",
 					"textAlign": "start",
