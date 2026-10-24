@@ -38,8 +38,10 @@ embedded drawing JSON on disk.
 
 `create` and `open` reuse a live GUI Editor for SDK initialization. If none is
 available, they open one initialization tab. They do not restore a previous tab
-or reopen a tab the user closes. Once initialized, the bridge session works
-independently of GUI tabs. If initialization stops because its tab or window was
+or reopen a tab the user closes. Once initialized, continue editing, saving, and
+previewing through the dedicated Editor even when the user closes the GUI tab;
+tab closure alone calls for no pause or recovery request.
+If initialization stops because its tab or window was
 closed, report the retained note path rather than repeatedly reopening it.
 Showing a diagram in a GUI tab is a separate action, not a prerequisite for edits
 or previews.
@@ -50,6 +52,20 @@ can also recreate sessions after checking persistence, restoring their selected
 pages but resetting bridge Undo history. Failed reopens appear in
 `doctor.reloadErrors`; retry with `open` or dismiss the recovery entry with
 `close`. Other documents remain usable.
+
+Treat initialization interrupted by a closed tab or window, and app exits, as
+ordinary interruptions. Briefly explain what remains unfinished and any
+unconfirmed save; ask the user to reopen Obsidian and the target vault or view
+when needed. Do not repeatedly reopen views or retry unavailable connections.
+Adapt recovery to the situation with the user; no automatic app restart or fixed
+recovery checklist is required. A connection error alone does not establish an
+app exit; use [connection diagnostics](#cli-connection-failures-in-codex) if unclear.
+
+After an Obsidian restart, reopen the retained note and inspect its saved content
+before continuing only the remaining work. Receipts and deduplication do not
+survive restart: an unavailable receipt does not mean the edit was unapplied,
+and reusing its ID cannot prevent a duplicate. If saved content leaves intent
+unclear, resolve that with the user rather than replaying the old edit blindly.
 
 ## Vault enumeration
 
@@ -411,7 +427,10 @@ available, `requestId` and `details`:
   include the revision produced by the edit.
 - `RESULT_UNKNOWN` with outcome `unknown`: a transport failure or timeout left
   execution uncertain. Use `status <request-id>` or repeat the identical request
-  with the same explicit ID. Never retry under a new ID.
+  with the same explicit ID while its receipt is retained. After a restart or
+  `REQUEST_NOT_FOUND`, inspect the saved document and plan remaining work as
+  described in [session lifecycle](#session-lifecycle); do not replay the uncertain
+  edit under either the old ID or a new ID without checking its effects.
 - `RUNTIME_BUSY` / `RECEIPT_CAPACITY`: the new request was not admitted. Wait for the running request or release completed receipts before resubmitting.
 - `REQUEST_ID_REUSED`: choose a fresh ID for a different intended request.
 - `REQUEST_NOT_FOUND`: the receipt is unavailable, possibly after a restart or `forget`. This does not prove the edit was not applied; inspect the document.

@@ -55,10 +55,14 @@ rather than substituting another vault.
 3. Use `apply <path> --revision <revision> --input <file>` for named edits. Give consequential edits a unique `--request-id`. On a revision conflict, observe and re-plan. Before uncertain style choices, use [style discovery](references/operations.md#style-discovery) and inspect the rendered result.
 4. Export `preview <path> --output <absolute-image-path>` and inspect affected meaning, connections, and readability. Confirm persistence with `saved` or `close` before delivery. `close` disposes the bridge Editor without closing human GUI tabs.
 
-An initialized bridge session works independently of GUI tabs. Do not reopen a
-tab the user closed or require a visible diagram for edits and previews. Before
-recovering an initialization or reopening failure, read
+An initialized bridge session works independently of GUI tabs. Continue editing,
+saving, and previewing when the user closes a tab; no pause or user action is
+needed for tab closure alone. Do not reopen the tab or require a visible diagram.
+Before recovering an initialization or reopening failure, read
 [session lifecycle](references/operations.md#session-lifecycle).
+Treat initialization interrupted by a closed tab or window, or an Obsidian exit,
+as ordinary interruptions; use that guidance to resume or ask for the app and
+target vault to be reopened as needed.
 
 For image insertion, use [image operations](references/operations.md#image-insertion);
 original bytes are preserved unless processing is explicitly requested. For
@@ -75,5 +79,7 @@ On a timeout or uncertain outcome, follow [failure recovery](references/operatio
 Inspect `status <request-id>`, `state`, and `saved` before retrying.
 `SAVE_UNCONFIRMED` or `SAVE_CONFLICT` with outcome `applied` must not be reapplied.
 `RESULT_UNKNOWN` may be retried
-only as the identical request with the same ID. Release completed receipts with
-`forget` when needed; doing so removes deduplication protection.
+only as the identical request with the same ID while its receipt is retained.
+After a restart or a missing receipt, inspect the saved document before planning
+remaining work; the same ID no longer prevents duplicate execution. Release
+completed receipts with `forget` when needed; doing so removes deduplication protection.
