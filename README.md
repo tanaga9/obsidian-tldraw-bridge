@@ -33,6 +33,14 @@ Tell Codex the vault, diagram, and desired change. For example:
 
 The bridge synchronizes edits through the existing plugin and verifies persistence. Revision checks detect conflicts without locking human editing. Bridge and GUI Editors have separate Undo histories.
 
+To customize drawing or image export behavior, use the conversation or guidance
+the agent loads. Selecting a vault does not automatically load its `AGENTS.md`.
+
+![Agent instruction scope: workspace instructions inform the agent; Bridge edits the selected vault. External vault instructions can be read separately when needed.](docs/diagrams/agent-instruction-scope.webp)
+
+See [agent instruction scope](docs/agent-instructions.md) for path examples and
+sample export instructions.
+
 ## Diagramming guide design
 
 The Skill distills design knowledge into practical drawing guidance. Normal use follows a check–revise loop through saved delivery; maintainers improve the guidance through selected cases and evidence.
@@ -43,6 +51,7 @@ See the [design explanation](docs/diagramming-guide-design-system.md) and [edita
 
 ## Documentation
 
+- [Agent instruction scope](docs/agent-instructions.md): workspace and vault paths, instruction loading, and export preferences.
 - [CLI reference](docs/cli.md): commands, note creation, connection settings, and sessions.
 - [Python API](docs/api.md): shared interface for programmatic callers and future adapters.
 - [Operations and recovery](integrations/codex/skills/obsidian-tldraw/references/operations.md): observation, named edits, SDK scripts, results, and retries.
