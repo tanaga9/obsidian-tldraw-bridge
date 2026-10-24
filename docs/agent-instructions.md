@@ -23,7 +23,6 @@ For these examples, the working directory is `/work/project`.
 | Vault root | Instruction loading |
 | --- | --- |
 | `/work/project` | Workspace and vault share the same root `AGENTS.md`, loaded in this example. |
-| `/work/project/notes` | Its own `AGENTS.md` is outside startup discovery from `/work/project`; read it separately if needed. |
 | `/notes/team` | Selecting this vault does not load its `AGENTS.md`; read it separately if needed. |
 
 ## Load instructions from another vault
