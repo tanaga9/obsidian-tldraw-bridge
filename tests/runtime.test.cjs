@@ -1172,3 +1172,97 @@ test('style-spec isolates broken SDK fields from otherwise available values',asy
   await assert.rejects(h.invoke('style-spec',{path:'a.md',shapeType:'geo'},'no-utils'),/editor.shapeUtils/)
   assert.equal(JSON.parse(h.api.poll(h.app,'no-utils')).failure.code,'TLDRAW_UNSUPPORTED')
 })
+
+test('language checkpoint uses revision, rollback, persistence and retained receipts without editing shapes',async()=>{
+  const h=setup()
+  h.values().push({id:'page:ja',typeName:'page',name:'日本語',meta:{}},
+    {id:'shape:ja',typeName:'shape',parentId:'page:ja',type:'geo',props:{text:'確認'}})
+  h.values().find(r=>r.id==='shape:a').parentId='page:a'
+  const puts=[]
+  h.editor.store.put=rs=>{puts.push(...rs);for(const r of rs){const i=h.values().findIndex(x=>x.id===r.id);h.values()[i]=r}}
+  h.app.vault.read=async()=>h.markdown(copy(h.values()))
+  const beforeShapes=copy(h.values().filter(r=>r.typeName==='shape'))
+  const checkpoint={diagramId:'overview',editingSourcePageId:'page:a',languages:{en:'page:a',ja:'page:ja'},targetLanguage:'ja',kind:'adopt',reviewed:true,reason:'Both pages inspected'}
+  const result=await h.invoke('language-checkpoint',{path:'a.md',revision:h.access.revision(h.editor),checkpoint},'checkpoint')
+  assert.equal(result.persistence.saved,true)
+  assert.deepEqual(h.values().filter(r=>r.typeName==='shape'),beforeShapes)
+  const report=await h.invoke('language-status',{path:'a.md'},'status-after-checkpoint')
+  assert.equal(report.diagrams.find(r=>r.language==='ja').status,'current')
+  const duplicate=JSON.parse(h.api.poll(h.app,'checkpoint'));assert.equal(duplicate.result.revision,result.revision)
+  const before=h.access.revision(h.editor)
+  await assert.rejects(h.invoke('language-checkpoint',{path:'a.md',revision:'stale',checkpoint},'stale-checkpoint'),/Revision conflict/)
+  assert.equal(h.access.revision(h.editor),before)
+  h.values().find(r=>r.id==='shape:ja').props.text='独立した変更'
+  const changed=h.access.revision(h.editor)
+  await assert.rejects(h.invoke('language-checkpoint',{path:'a.md',revision:changed,checkpoint:{...checkpoint,kind:'layout'}},'invalid-layout'),/Layout checkpoint cannot accept content changes/)
+  assert.equal(h.access.revision(h.editor),changed)
+})
+
+function languageHarness() {
+  const h=setup()
+  h.values().find(r=>r.id==='shape:a').parentId='page:a'
+  for(const name of ['ja','fr','workflow-en','workflow-ja']) {
+    h.values().push({id:'page:'+name,typeName:'page',name,meta:{}},
+      {id:'shape:'+name,typeName:'shape',parentId:'page:'+name,type:'geo',props:{text:name}})
+  }
+  h.editor.store.put=rs=>{for(const r of rs){const i=h.values().findIndex(x=>x.id===r.id);h.values()[i]=r}}
+  h.app.vault.read=async()=>h.markdown(copy(h.values()))
+  let sequence=0
+  h.checkpoint=async checkpoint=>h.invoke('language-checkpoint',{
+    path:'a.md',revision:h.access.revision(h.editor),checkpoint:{kind:'adopt',reviewed:true,reason:'Inspected corresponding fixture pages',...checkpoint}
+  },'language-check-'+(++sequence))
+  h.review=async()=>h.invoke('language-status',{path:'a.md'},'language-report-'+(++sequence))
+  h.group=name=>h.values().find(r=>r.typeName==='document').meta.multilingualDiagrams[name]
+  return h
+}
+
+test('valid diagram and language keys do not collide with inherited object properties',async()=>{
+  const h=languageHarness()
+  await h.checkpoint({diagramId:'toString',editingSourcePageId:'page:a',languages:{en:'page:a',ja:'page:ja'},targetLanguage:'ja'})
+  assert.equal((await h.review()).diagrams.find(r=>r.language==='ja').status,'current')
+  await h.checkpoint({diagramId:'valueOf',editingSourcePageId:'page:workflow-en',languages:{en:'page:workflow-en',toString:'page:workflow-ja'},targetLanguage:'toString'})
+  const report=await h.review()
+  assert.equal(report.errors.length,0)
+  assert.equal(report.diagrams.find(r=>r.diagramId==='valueOf'&&r.language==='toString').status,'current')
+  delete h.group('valueOf').checkpoints.toString
+  assert.equal((await h.review()).diagrams.find(r=>r.diagramId==='valueOf'&&r.language==='toString').status,'untracked')
+})
+
+test('three-language handoff retains third-language review and isolates other diagrams',async()=>{
+  const h=languageHarness()
+  const overview={diagramId:'overview',editingSourcePageId:'page:a',languages:{en:'page:a',ja:'page:ja',fr:'page:fr'}}
+  await h.checkpoint({...overview,targetLanguage:'ja'})
+  await h.checkpoint({...overview,targetLanguage:'fr'})
+  const workflow={diagramId:'workflow',editingSourcePageId:'page:workflow-en',languages:{en:'page:workflow-en',ja:'page:workflow-ja'},targetLanguage:'ja'}
+  await h.checkpoint(workflow)
+  const protectedGroup=copy(h.group('workflow'))
+  const protectedRecords=copy(h.values().filter(r=>r.id.includes('workflow')))
+  const jaSource={...overview,editingSourcePageId:'page:ja'}
+  // Simulate a reviewed content update and explicit handoff to Japanese.
+  h.values().find(r=>r.id==='shape:a').props.text='Approve'
+  h.values().find(r=>r.id==='shape:ja').props.text='承認'
+  await h.checkpoint({...jaSource,targetLanguage:'en',kind:'translation'})
+  let report=await h.review()
+  const status=(diagram,lang)=>report.diagrams.find(r=>r.diagramId===diagram&&r.language===lang).status
+  assert.equal(status('overview','ja'),'editing-source')
+  assert.equal(status('overview','en'),'current')
+  assert.equal(status('overview','fr'),'source-changed')
+  assert.equal(report.requiresReview,true)
+  assert.equal(status('workflow','ja'),'current')
+  h.values().find(r=>r.id==='shape:fr').props.text='Approuver'
+  await h.checkpoint({...jaSource,targetLanguage:'fr',kind:'translation'})
+  report=await h.review()
+  assert.equal(status('overview','fr'),'current')
+  assert.equal(report.requiresReview,false)
+  // Accepting one pair's layout must not acknowledge a different target.
+  h.values().find(r=>r.id==='shape:ja').x=100
+  h.values().find(r=>r.id==='shape:fr').x=120
+  await h.checkpoint({...jaSource,targetLanguage:'fr',kind:'layout'})
+  report=await h.review()
+  assert.equal(status('overview','fr'),'current')
+  assert.equal(status('overview','en'),'presentation-review')
+  assert.equal(report.requiresReview,true)
+  assert.equal(status('workflow','ja'),'current')
+  assert.deepEqual(copy(h.group('workflow')),protectedGroup)
+  assert.deepEqual(copy(h.values().filter(r=>r.id.includes('workflow'))),protectedRecords)
+})

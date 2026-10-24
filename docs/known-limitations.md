@@ -7,6 +7,8 @@ Python 3.9.6+ is an environment prerequisite. The bridge does not bundle or inst
 | Item | Status | Current approach |
 | --- | --- | --- |
 | Public plugin directory publication | Not published | A local marketplace package is provided. |
+| Automatic translation, GUI freshness indicators, periodic notices, and automatic Git-hook installation | Not implemented by design | Reflect changes on explicit request; inspect registered language pages with `language-status` and use the read-only commit reviewer. |
+| Dedicated language retirement/removal command | Not implemented | Inspect both versions, then edit the page and related metadata together through the SDK; see [multilingual boundaries](multilingual.md#current-boundaries). |
 | Automatic session recovery or forced disposal after file rename/deletion or disabling the existing plugin | Not implemented | If normal session closure cannot recover, restart Obsidian and reopen an existing document using its current path. This does not restore a deleted document. |
 | Updating the runtime loader itself | Requires restart | Drawing runtime source changes at the same installed path reload automatically after persistence checks. Changes to `loader.cjs` itself require restarting Obsidian. |
 | Cancelling or restoring arbitrary asynchronous scripts | Unsupported | Use synchronous scripts only. Detecting a Promise does not cancel already scheduled work. |

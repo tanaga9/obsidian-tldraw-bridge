@@ -38,6 +38,8 @@ class Bridge:
         fields = {
             "doctor": set(), "capabilities": set(), "create": {"path"},
             "style-spec": {"path", "shapeType"},
+            "language-status": {"path", "diagramId"},
+            "language-checkpoint": {"path", "revision", "checkpoint", "full"},
             "open": {"path", "currentPageId"}, "state": {"path"}, "saved": {"path"}, "close": {"path"},
             "observe": {"path", "revision", "pageId", "limit", "offset", "ids", "bounds"},
             "apply": {"path", "revision", "pageId", "operations", "full"}, "batch": {"path", "revision", "operations", "full"},
@@ -60,9 +62,32 @@ class Bridge:
             if (not isinstance(path, str) or not path or path.startswith("/") or
                     ".." in path.split("/") or "\\" in path or not path.endswith(".md")):
                 invalid("Use a vault-relative Markdown path without traversal")
-        if action in {"apply", "batch", "script", "freehand", "insert-image"}:
+        if action in {"apply", "batch", "script", "freehand", "insert-image", "language-checkpoint"}:
             if not isinstance(args.get("revision"), str) or not args["revision"]:
                 invalid("A revision is required for edits")
+        if action == 'language-status' and 'diagramId' in args:
+            if not isinstance(args['diagramId'], str) or not args['diagramId'].strip():
+                invalid('diagramId must be nonempty')
+        if action == 'language-checkpoint':
+            check = args.get('checkpoint')
+            required = {'diagramId', 'editingSourcePageId', 'languages', 'targetLanguage', 'kind', 'reason', 'reviewed'}
+            if not isinstance(check, dict) or set(check) != required:
+                invalid('checkpoint requires diagramId, editingSourcePageId, languages, targetLanguage, kind, reason, reviewed')
+            for key in ('diagramId', 'editingSourcePageId', 'targetLanguage', 'reason'):
+                if not isinstance(check[key], str) or not check[key].strip():
+                    invalid(key + ' must be nonempty')
+            if check['kind'] not in ('translation', 'adopt', 'layout') or check['reviewed'] is not True:
+                invalid('Checkpoint requires a supported kind and reviewed=true after inspecting both pages')
+            languages = check['languages']
+            reserved = {'__proto__', 'constructor', 'prototype'}
+            if (check['diagramId'] in reserved or not isinstance(languages, dict) or len(languages) < 2 or
+                any(not isinstance(k, str) or not k.strip() or k in reserved or not isinstance(v, str) or
+                    not v.startswith('page:') for k, v in languages.items()) or
+                len(set(languages.values())) != len(languages) or
+                check['editingSourcePageId'] not in languages.values() or
+                check['targetLanguage'] not in languages or
+                languages[check['targetLanguage']] == check['editingSourcePageId']):
+                invalid('Use distinct registered source/target pages and valid diagram/language keys')
         if action in {"insert-image", "image-info"}:
             for key in ('maxDimension', 'maxBytes'):
                 if key in args and (type(args[key]) is not int or args[key] <= 0):

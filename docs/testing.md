@@ -27,6 +27,7 @@ These checks do not require a running Obsidian instance. They cover:
 
 | Area | Expected behavior |
 | --- | --- |
+| Multilingual pages | Read-only per-diagram freshness, content-signature versus presentation changes, asset changes, missing/duplicate identities, source handoff, legacy asset-baseline uncertainty, locale-independent current fingerprints, missing tldraw start markers in index/worktree versions, reviewed checkpoint validation/rollback/persistence/replay, and independent staged/working-tree review. No translation or shape changes from inspection/checkpointing. |
 | Agent operation API | Shared validation before connecting; named edit schemas; scoped, bounded observations and revision-pinned pagination; structured failures and non-executing receipt queries. |
 | Freehand drawing | Authored curves preserve geometry and pressure through point encoding; closed strokes accept fill and opacity in the same edit. Redraws reset omitted styles and preserve unrelated shapes. Invalid styles, open fills, and targets fail before edits. |
 | Image insertion | PNG/WebP/JPEG bytes are preserved by default. Read-only size reports, opt-in pixel resizing/WebP conversion, optional byte limits and animation protection are checked. Invalid data, ID collisions, and stale revisions/pages do not add records. Asset/shape creation shares a rollback boundary; request replay does not duplicate an insertion. |
@@ -259,3 +260,27 @@ and image replacement before or during review preparation), matching final/previ
 of missing or stale saved revisions in otherwise valid bundles), and required
 property preservation inside otherwise editable records. A valid review bound
 to a changed label or reconnected binding cannot override a property violation.
+
+## Multilingual integration check
+
+```sh
+python3 tests/live_languages.py --vault obsidian-tldraw-bridge
+```
+
+Creates its own temporary Note with English and Japanese pages using an isolated
+runtime. Verifies metadata-only adoption, read-only status and unchanged selected
+page, retained replay, presentation review, layout checkpointing, content-change
+rejection for layout acknowledgement, and persistence. It removes its temporary
+Note and closes its session. No production diagram or preview is edited.
+
+This live check covers two languages of one logical diagram. Runtime unit tests
+exercise three-language checkpoint handoff, a third language retaining an old
+source lineage, pair-specific layout acknowledgement, and preservation of a
+separate diagram's records and checkpoints. They also cover dictionary-like IDs
+such as `toString` without treating inherited properties as saved registration.
+These tests do not establish real SDK behavior for every multi-diagram or
+three-language editing/retirement sequence; keep this scope explicit.
+
+The Git-review regression also checks repair of a malformed historical Note:
+valid current data receives full diagram inspection with a baseline warning,
+while malformed current data still fails in either index or working-tree mode.

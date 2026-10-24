@@ -3,6 +3,157 @@
 // A plain local script, not an Obsidian Plugin. No HTTP listener is created.
 const apps = new WeakMap()
 const crypto = require('node:crypto')
+// Hashes detect edits; they do not establish semantic equivalence. Presentation
+// changes still require inspection because position and color can convey meaning.
+function languageCanonical(value) {
+  if (Array.isArray(value)) return value.map(languageCanonical)
+  if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key, languageCanonical(value[key])]))
+  return value
+}
+function languageRecordOrder(a, b) {
+  // Checkpoints cross machines/locales: use UTF-16 code-unit order, not collation.
+  return a.id < b.id ? -1 : a.id > b.id ? 1 : 0
+}
+function languageHashes(values, pageId) {
+  if (!values.some(r => r.typeName === 'page' && r.id === pageId)) throw new Error(`Missing language page: ${pageId}`)
+  const ids = new Set([pageId])
+  let changed = true
+  while (changed) {
+    changed = false
+    for (const r of values) if (r.typeName === 'shape' && ids.has(r.parentId) && !ids.has(r.id)) { ids.add(r.id); changed = true }
+  }
+  const records = values.filter(r => (r.typeName === 'shape' && ids.has(r.id)) || (r.typeName === 'binding' && ids.has(r.fromId)))
+    .map(r => { const copy = JSON.parse(JSON.stringify(r)); delete copy.meta; delete copy.isLocked; return copy })
+    .sort(languageRecordOrder)
+  // Assets can change without changing their referencing shape.
+  const assets = new Set(records.map(r => r.props?.assetId).filter(Boolean))
+  const assetRecords = values.filter(r => r.typeName === 'asset' && assets.has(r.id))
+    .map(r => { const copy = JSON.parse(JSON.stringify(r)); delete copy.meta; return copy })
+    .sort(languageRecordOrder)
+  const digest = v => crypto.createHash('sha256').update(JSON.stringify(languageCanonical(v))).digest('hex')
+  const content = records.map(r => {
+    const c = JSON.parse(JSON.stringify(r))
+    delete c.x; delete c.y; delete c.rotation; delete c.index; delete c.opacity
+    if (c.typeName === 'shape') {
+      // Only known geometry is excluded. Unknown/custom props remain conservative.
+      for (const key of ['w','h','growY','scale','font','size','align','verticalAlign','textAlign','autoSize']) delete c.props[key]
+      if (c.type === 'arrow') for (const key of ['start','end','bend','elbowMidPoint','labelPosition']) delete c.props[key]
+      if (c.type === 'frame') delete c.props.name
+    } else if (c.typeName === 'binding') {
+      for (const key of ['normalizedAnchor','isPrecise','isExact','snap']) delete c.props[key]
+    }
+    return c
+  })
+  return { full: digest({records, assets:assetRecords}), content: digest({records:content, assets:assetRecords}),
+    // Legacy fingerprints retain their original collation and omit assets;
+    // never use them to establish freshness for pages referencing assets.
+    legacy: digest([...records].sort((a,b) => a.id.localeCompare(b.id))), hasAssets: assets.size > 0 }
+}
+function languageGroups(values) {
+  const metadata = values.find(r => r.typeName === 'document')?.meta?.multilingualDiagrams ?? {}
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) throw new Error('Invalid multilingualDiagrams metadata')
+  return metadata
+}
+function languageEntry(table, key) {
+  return table && Object.hasOwn(table, key) ? table[key] : undefined
+}
+function validateLanguageGroup(values, diagramId, group) {
+  const bad = message => { throw new Error(`${diagramId}: ${message}`) }
+  if (!group || typeof group !== 'object' || !group.languages || typeof group.languages !== 'object' || Array.isArray(group.languages)) bad('Missing language map')
+  const entries = Object.entries(group.languages)
+  if (!entries.length || entries.some(([lang, pid]) => !lang.trim() || typeof pid !== 'string')) bad('Invalid language map')
+  const ids = entries.map(([,pid]) => pid)
+  if (new Set(ids).size !== ids.length || !ids.includes(group.editingSourcePageId)) bad('Duplicate pages or missing editing source')
+  for (const [lang,pid] of entries) {
+    const page = values.find(r => r.typeName === 'page' && r.id === pid)
+    if (!page) bad(`Missing page ${pid}`)
+    if (page.meta?.diagramId !== diagramId || page.meta?.language !== lang) bad(`Page metadata mismatch: ${pid}`)
+  }
+  const duplicates = values.filter(r => r.typeName === 'page' && r.meta?.diagramId === diagramId)
+  if (duplicates.some(r => group.languages[r.meta.language] !== r.id)) bad('Unregistered or duplicate diagram/language page')
+}
+function reviewLanguages(values, diagramId) {
+  const groups = languageGroups(values), results = [], errors = []
+  if (diagramId && !Object.hasOwn(groups, diagramId)) errors.push({diagramId, message:'Unknown diagram ID'})
+  const used = new Map()
+  for (const [key,g] of Object.entries(groups)) {
+    if (diagramId && diagramId !== key) continue
+    try {
+      validateLanguageGroup(values,key,g)
+      for (const [lang,pid] of Object.entries(g.languages)) {
+        if (used.has(pid)) throw new Error(`Page registered more than once: ${pid}`)
+        used.set(pid,key)
+        const hashes = languageHashes(values,pid)
+        if (pid === g.editingSourcePageId) { results.push({diagramId:key,language:lang,pageId:pid,status:'editing-source',hashes}); continue }
+        const base = languageEntry(g.checkpoints, lang)
+        let status = 'untracked', sourceChanged = null, targetChanged = null, reviewReason
+        if (base && base.sourcePageId === g.editingSourcePageId) {
+          if (base.algorithm !== 'page-content-v2' || !base.source?.full || !base.source?.content || !base.target?.full || !base.target?.content) throw new Error(`Invalid checkpoint: ${lang}`)
+          const source = languageHashes(values,base.sourcePageId)
+          sourceChanged = source.full !== base.source.full; targetChanged = hashes.full !== base.target.full
+          const sc = source.content !== base.source.content, tc = hashes.content !== base.target.content
+          status = sc && tc ? 'diverged' : sc ? 'source-content-changed' : tc ? 'target-content-changed'
+            : sourceChanged || targetChanged ? 'presentation-review' : 'current'
+        } else if (base) status = 'source-changed'
+        else {
+          const old = languageEntry(g.translations, lang)
+          if (old?.sourcePageId === g.editingSourcePageId && old.hashAlgorithm === 'sha256-page-records-v1') {
+            const source = languageHashes(values,old.sourcePageId)
+            sourceChanged = source.hasAssets ? null : source.legacy !== old.sourceHash
+            targetChanged = hashes.hasAssets ? null : hashes.legacy !== old.targetHash
+            const assetBaselineMissing = source.hasAssets || hashes.hasAssets
+            if (assetBaselineMissing) reviewReason = 'legacy-baseline-excludes-assets'
+            status = !assetBaselineMissing && !sourceChanged && !targetChanged ? 'current' : 'needs-review'
+            const reviewed = g.layoutReview
+            const sourceLang = Object.keys(g.languages).find(k => g.languages[k] === old.sourcePageId)
+            if (!assetBaselineMissing && reviewed?.classification === 'layout-only' && reviewed.editingSourcePageId === g.editingSourcePageId
+              && reviewed.pageHashes?.[lang] === hashes.legacy && reviewed.pageHashes?.[sourceLang] === source.legacy) status = 'reviewed-layout'
+          }
+        }
+        results.push({diagramId:key,language:lang,pageId:pid,status,sourceChanged,targetChanged,hashes,
+          ...(reviewReason ? {reviewReason} : {}),
+          action: ['current','reviewed-layout'].includes(status) ? 'reuse' : 'inspect-both-pages; do-not-auto-translate'})
+      }
+    } catch (error) { errors.push({diagramId:key,message:errorMessage(error)}) }
+  }
+  // Tagged pages without a registered group must not silently pass commit review.
+  for (const p of values.filter(r => r.typeName === 'page' && r.meta?.diagramId)) {
+    if ((!diagramId || diagramId === p.meta.diagramId) && !Object.hasOwn(groups,p.meta.diagramId)) errors.push({diagramId:p.meta.diagramId,message:`Unregistered page: ${p.id}`})
+  }
+  return {diagrams:results,errors,requiresReview:errors.length > 0 || results.some(r => !['editing-source','current','reviewed-layout'].includes(r.status)),
+    note:'Hashes detect record changes, not semantic equivalence. Inspect presentation changes; translate only on explicit request.'}
+}
+function checkpointLanguages(editor, input) {
+  const {diagramId,editingSourcePageId,languages,targetLanguage,kind,reason,reviewed} = input
+  if (reviewed !== true || !['translation','adopt','layout'].includes(kind) || typeof reason !== 'string' || !reason.trim()) throw new Error('Checkpoint requires kind, reviewed=true and a review reason')
+  if (!diagramId || ['__proto__','constructor','prototype'].includes(diagramId) || !languages || typeof languages !== 'object' || Array.isArray(languages)) throw new Error('Invalid diagram registration')
+  const values = editor.store.allRecords(), doc = values.find(r => r.typeName === 'document')
+  const groups = languageGroups(values), previous = languageEntry(groups, diagramId)
+  const group = {...previous, schemaVersion:2,editingSourcePageId,languages:{...languages}}
+  if (!Object.hasOwn(languages,targetLanguage) || languages[targetLanguage] === editingSourcePageId) throw new Error('Specify a distinct target language')
+  for (const [key,other] of Object.entries(groups)) if (key !== diagramId && Object.values(other.languages ?? {}).some(pid => Object.values(languages).includes(pid))) throw new Error('Page already belongs to another diagram')
+  // Registration is additive. Removing language pages is a separate, reviewed edit.
+  if (previous && Object.entries(previous.languages).some(([lang,pid]) => languages[lang] !== pid)) throw new Error('Checkpoint cannot remove or replace registered language pages')
+  const pages = Object.entries(languages).map(([lang,pid]) => {
+    if (['__proto__','constructor','prototype'].includes(lang)) throw new Error('Invalid language key')
+    const page = values.find(r => r.typeName === 'page' && r.id === pid)
+    if (!page || (page.meta?.diagramId && page.meta.diagramId !== diagramId) || (page.meta?.language && page.meta.language !== lang)) throw new Error('Missing page or conflicting page metadata')
+    return {...page,meta:{...page.meta,diagramId,language:lang}}
+  })
+  validateLanguageGroup(values.map(r => pages.find(p => p.id === r.id) ?? r),diagramId,group)
+  const source = languageHashes(values,editingSourcePageId), target = languageHashes(values,languages[targetLanguage])
+  if (kind === 'layout') {
+    const prior = languageEntry(previous?.checkpoints, targetLanguage)
+    if (!prior || prior.sourcePageId !== editingSourcePageId || prior.algorithm !== 'page-content-v2'
+      || prior.source.content !== source.content || prior.target.content !== target.content) throw new Error('Layout checkpoint cannot accept content changes; inspect both pages and use adopt or translation')
+  }
+  const baseline = {algorithm:'page-content-v2',sourcePageId:editingSourcePageId,source,target,kind,reason:reason.trim(),reviewedAt:new Date().toISOString()}
+  group.checkpoints = {...group.checkpoints,[targetLanguage]:baseline}
+  // No translations, shape clones, page creation, or file writes occur here.
+  editor.store.put([...pages,{...doc,meta:{...doc.meta,multilingualDiagrams:{...groups,[diagramId]:group}}}])
+  return {diagramId,targetLanguage,kind,checkpoint:baseline}
+}
+
 function sessionsFor(app) {
   if (!apps.has(app)) apps.set(app, new Map())
   return apps.get(app)
@@ -198,7 +349,7 @@ function requireEditing(editor) {
 function capabilities(app) {
   const plugin = app.plugins.getPlugin('tldraw')
   return { apiVersion: 1, ...pluginSupport(plugin),
-    actions: ['doctor','capabilities','style-spec','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','close'],
+    actions: ['doctor','capabilities','style-spec','language-status','language-checkpoint','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','close'],
     imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
       optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
     preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9 },
@@ -533,7 +684,7 @@ function batch(app, path, operations, expected, full = false) {
   else runWithRollback(editor, 'Obsidian tldraw bridge', apply)
   return editResult(app, path, before, full)
 }
-function script(app, path, code, expected, full = false) {
+function script(app, path, code, expected, full = false, handler) {
   const session = sessionFor(app, path)
   assertRevision(app, session, expected)
   if (typeof code !== 'string' || !code.trim()) throw new Error('Script is empty')
@@ -542,7 +693,7 @@ function script(app, path, code, expected, full = false) {
   // Trusted synchronous code, not a sandbox. A returned Promise is detected only
   // after execution: this check cannot cancel already scheduled work.
   const before = JSON.parse(JSON.stringify(records(editor)))
-  const fn = new Function('editor', 'app', 'plugin', 'require', code)
+  const fn = handler || new Function('editor', 'app', 'plugin', 'require', code)
   let returned
   try { runWithRollback(editor, 'Obsidian tldraw bridge script', () => {
     const result = fn(editor, app, app.plugins.getPlugin('tldraw'), require)
@@ -725,6 +876,10 @@ async function execute(app, action, args) {
   if (action === 'create') return create(app, args.path)
   if (action === 'open') return open(app, args.path, args.currentPageId)
   if (action === 'state') return state(app, args.path)
+  if (action === 'language-status') {
+    const snapshot = state(app, args.path)
+    return {path:args.path,revision:snapshot.revision,...reviewLanguages(snapshot.records,args.diagramId)}
+  }
   if (action === 'apply') {
     if (args.pageId !== undefined && args.pageId !== sessionFor(app,args.path).editor.getCurrentPageId()) {
       throw fault('PAGE_CONFLICT', 'Current page changed; observe again before editing')
@@ -732,10 +887,11 @@ async function execute(app, action, args) {
     args = { ...args, operations: namedOperations(args.operations) }
     action = 'batch'
   }
-  if (action === 'batch' || action === 'script' || action === 'insert-image') {
+  if (action === 'batch' || action === 'script' || action === 'insert-image' || action === 'language-checkpoint') {
     let result
     try {
-      result = action === 'insert-image' ? await insertImage(app, args)
+      result = action === 'language-checkpoint' ? script(app,args.path,'checkpoint',args.revision,args.full,editor => checkpointLanguages(editor,args.checkpoint))
+        : action === 'insert-image' ? await insertImage(app, args)
         : action === 'batch' ? batch(app,args.path,args.operations,args.revision,args.full) : script(app,args.path,args.code,args.revision,args.full)
     } catch (error) {
       if (error?.code) throw error
@@ -811,7 +967,7 @@ async function execute(app, action, args) {
   throw new Error('Unknown action')
 }
 
-module.exports = {
+module.exports = { reviewLanguages, languageHashes, parseMarkdown,
   // Return synchronously: older Obsidian CLI does not await eval's Promise output.
   dispatch(app, action, args = {}, requestedId) {
     let queue = jobs.get(app)

@@ -126,3 +126,33 @@ class StyleSpecAndScriptResultTest(unittest.TestCase):
                     client.return_value.call.assert_called_once_with('script', args, 'result-id')
                     actual = json.loads(errors.getvalue())['error']['details']['result'] if broken else json.loads(output.getvalue())
                     self.assertEqual(actual, result)
+
+class LanguageActionsTest(unittest.TestCase):
+    def checkpoint(self):
+        return {'diagramId': 'overview', 'editingSourcePageId': 'page:en',
+                'languages': {'en': 'page:en', 'ja': 'page:ja'}, 'targetLanguage': 'ja',
+                'kind': 'adopt', 'reason': 'Both pages inspected', 'reviewed': True}
+
+    def test_language_cli_and_api_contract(self):
+        data = self.checkpoint()
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, \
+                patch('sys.stdin', io.StringIO(json.dumps(data))), contextlib.redirect_stdout(io.StringIO()):
+            client.return_value.call.return_value = {'persistence': {'saved': True}}
+            self.assertEqual(main(['--vault', 'V', '--request-id', 'review-1', 'language-checkpoint',
+                                   'a.md', '--revision', 'r', '--input', '-']), 0)
+            client.return_value.call.assert_called_once_with('language-checkpoint',
+                {'path': 'a.md', 'revision': 'r', 'checkpoint': data}, 'review-1')
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, contextlib.redirect_stdout(io.StringIO()):
+            client.return_value.call.return_value = {}
+            self.assertEqual(main(['--vault', 'V', 'language-status', 'a.md', '--diagram-id', 'overview']), 0)
+            client.return_value.call.assert_called_once_with('language-status', {'path': 'a.md', 'diagramId': 'overview'}, None)
+
+    def test_invalid_checkpoints_fail_before_connecting(self):
+        factory = Mock()
+        bridge = Bridge('V', client_factory=factory)
+        for change in ({'reviewed': False}, {'kind': 'automatic'}, {'reason': ''},
+                       {'diagramId': '__proto__'}, {'languages': {'en': 'page:en', 'ja': 'page:en'}},
+                       {'languages': ['en', 'ja']}, {'targetLanguage': 'en'}, {'extra': True}):
+            with self.subTest(change=change), self.assertRaises(BridgeError):
+                bridge.call('language-checkpoint', {'path': 'a.md', 'revision': 'r', 'checkpoint': {**self.checkpoint(), **change}})
+        factory.assert_not_called()

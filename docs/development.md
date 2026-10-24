@@ -76,6 +76,16 @@ After knowledge-only changes, rebuild the plugin, run `python3 scripts/build_plu
 Local notes and demo files go in `workspace/` (drawings in `workspace/drawings/`).
 Both `/workspace/` and local Obsidian settings in `/.obsidian/` are ignored by Git.
 
+## Multilingual diagram review
+
+Before committing changed tldraw Notes, run
+`node scripts/review_translations.cjs --staged` after staging the intended files.
+The default invocation also checks working-tree versions; it does not stage them.
+Inspect findings and report deferred translation updates. Do not translate,
+reset checkpoints, or add language copies merely to clear a review finding.
+See [multilingual workflow](multilingual.md) for the operating rules. No Git hook
+or periodic monitor is installed automatically.
+
 ## Local distribution testing
 
 For local distribution testing, register the repository's marketplace:

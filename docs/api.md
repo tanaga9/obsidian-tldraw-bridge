@@ -41,7 +41,7 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
 - `Bridge(vault)` selects the vault; transport initialization is lazy.
 - `call(action, args, request_id=None)` returns a JSON-compatible result. Actions
   include `capabilities`, `style-spec`, `doctor`, `create`, `open`, `observe`, `state`, `apply`,
-  `batch`, `script`, `freehand`, `image-info`, `insert-image`, `saved`, `preview`, and `close`.
+  `batch`, `script`, `language-status`, `language-checkpoint`, `freehand`, `image-info`, `insert-image`, `saved`, `preview`, and `close`.
 - `style-spec` takes `path` and `shapeType` for an already-open document. It
   reports installed style enums, separate SDK/shape defaults and current creation
   styles with per-field availability/source; it does not edit or save the note.
@@ -74,3 +74,15 @@ The canonical [operations reference](../integrations/codex/skills/obsidian-tldra
 defines discovery, operation fields, coordinates, results, errors, and recovery.
 Use [the freehand reference](../integrations/codex/skills/obsidian-tldraw/references/freehand.md)
 for drawing input. These interfaces follow the [compatibility policy](development.md#compatibility-policy).
+
+## Language-page actions
+
+`language-status` takes `path` and optional `diagramId`; it returns a read-only
+review of all relevant language pages and the observed document revision.
+`language-checkpoint` takes `path`, `revision`, `checkpoint`, and optional `full`.
+The checkpoint object requires `diagramId`, `editingSourcePageId`, `languages`,
+`targetLanguage`, `kind` (`translation`, `adopt`, `layout`), `reason`, and
+`reviewed: true`. It registers existing pages and updates only metadata through
+revision checks, rollback, saved-state verification, and retained receipts.
+The result includes `scriptResult`. Neither action performs translation.
+See [multilingual workflow](multilingual.md) for interpretation and limitations.

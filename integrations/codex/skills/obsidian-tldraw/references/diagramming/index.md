@@ -41,6 +41,9 @@ When an established format such as UML is the best fit, suggest a dedicated tool
 
 When none fits the intended meaning well, use a **Freeform Diagram** (also called an Informal Diagram or Ad hoc Diagram): choose or combine boxes and arrows, concept maps, rich pictures, sketchnotes, cluster diagrams, causal loop diagrams, and architecture sketches to express the intended relationships and structure. Include flowchart or swimlane elements where useful. These building blocks can also be established formats in their own right; the composition need not conform to one notation. Make relationship meanings clear with labels or a small legend when needed. The common rules below still apply.
 
+For language variants and shared layout adjustments across languages, use the
+[multilingual workflow](../multilingual.md).
+
 ## Common rules
 
 - **Show structure:** Use layout, grouping, and connections rather than turning headings and paragraphs into boxes. Avoid diagrams where most elements are explanatory prose, including short passages or annotations. Prefer concise labels, but use sentences when needed for clarity or accuracy. Put supporting explanation in annotations or supporting Markdown for extended detail. Markdown may live outside the drawing data block in the same note; it is not visible in the drawing view, so keep essential reader-facing information in the diagram or response. Follow [Markdown body edits](../operations.md#markdown-body-edits) when updating it.

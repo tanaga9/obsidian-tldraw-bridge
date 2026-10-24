@@ -254,3 +254,12 @@ Format is not inferred from the filename. `--quality` accepts 0–1 for WebP
 Selection, bounds, scale, and revision checks work with both formats. The result
 includes `format`, the captured `revision`, and `sha256` of the exported image
 bytes. Output remains unchanged on render or revision failures.
+
+## Multilingual diagrams
+
+`language-status <path> [--diagram-id <id>]` inspects registered language pages
+without edits or translation. `language-checkpoint <path> --revision <revision>
+--input <file>` records an explicitly reviewed pair after reflection or layout
+inspection; it never translates or creates pages. Both use the shared API.
+See [multilingual workflow](multilingual.md) for JSON fields, statuses, and the
+repository-only, read-only commit reviewer.

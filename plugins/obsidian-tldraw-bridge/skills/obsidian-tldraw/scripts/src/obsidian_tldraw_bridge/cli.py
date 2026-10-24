@@ -21,6 +21,13 @@ def parser():
     style_spec = sub.add_parser("style-spec", help="Read installed style values and defaults from an open document")
     style_spec.add_argument("path", help="Open vault-relative .md path")
     style_spec.add_argument("--shape-type", required=True, help="Registered shape type, e.g. geo")
+    languages = sub.add_parser('language-status', help='Inspect language freshness without translating or changing pages')
+    languages.add_argument('path')
+    languages.add_argument('--diagram-id', help='Inspect one logical diagram in this note')
+    checkpoint = sub.add_parser('language-checkpoint', help='Record a reviewed translation/layout checkpoint; never translates')
+    checkpoint.add_argument('path')
+    checkpoint.add_argument('--revision', required=True)
+    checkpoint.add_argument('--input', required=True, help='Reviewed checkpoint JSON file, or - for stdin')
     sub.add_parser("status", help="Inspect a retained request without re-executing it").add_argument("id")
     observe = sub.add_parser("observe", help="Read compact current-page shapes, text, bounds, and connections")
     observe.add_argument("path")
@@ -67,7 +74,7 @@ def parser():
     image.add_argument('--parent-id', help="Parent shape on the current page; coordinates are parent-local")
     image.add_argument('--page-id', help="Pin the current page")
     image.add_argument('--shape-id', help="Optional new shape: ID (existing shapes are never replaced)")
-    for edit_parser in (apply, batch, script, freehand, image):
+    for edit_parser in (apply, batch, script, freehand, image, checkpoint):
         edit_parser.add_argument("--full", action="store_true", help="Include full document records and editor diagnostics in the result")
     preview = sub.add_parser("preview")
     preview.add_argument("path")
@@ -133,6 +140,8 @@ def _execute(options):
         args["revision"] = options.revision
     if options.command == "style-spec":
         args["shapeType"] = options.shape_type
+    if options.command == 'language-status' and options.diagram_id is not None:
+        args['diagramId'] = options.diagram_id
     if options.command in ('insert-image', 'image-info'):
         args['file'] = options.file
         for option, key in (('max_dimension', 'maxDimension'), ('format', 'format'), ('quality', 'quality'), ('max_bytes', 'maxBytes')):
@@ -146,13 +155,15 @@ def _execute(options):
                 args[{'parent_id': 'parentId', 'page_id': 'pageId', 'shape_id': 'shapeId'}.get(key, key)] = value
         if options.full:
             args['full'] = True
-    if options.command in ("apply", "batch", "script", "freehand"):
+    if options.command in ("apply", "batch", "script", "freehand", "language-checkpoint"):
         if options.full:
             args["full"] = True
         source = _read_input(options.input)
         if options.command in ("apply", "batch"):
             data = json.loads(source)
             args["operations"] = data["operations"] if isinstance(data, dict) else data
+        elif options.command == 'language-checkpoint':
+            args['checkpoint'] = json.loads(source)
         elif options.command == "freehand":
             args["drawing"] = json.loads(source)
         else:
@@ -203,7 +214,7 @@ def _output(options, result):
             except (OSError, ValueError):
                 pass
         mutating = options.command in {'create', 'open', 'close', 'apply', 'batch', 'script',
-                                       'freehand', 'insert-image', 'preview', 'forget'}
+                                       'freehand', 'insert-image', 'preview', 'forget', 'language-checkpoint'}
         outcome = 'applied' if mutating else 'unknown' if options.command == 'status' else 'not_applied'
         request_id = options.id if options.command in {'status', 'forget'} else options.request_id
         error = BridgeError('Could not output completed command result: ' + str(exc),
