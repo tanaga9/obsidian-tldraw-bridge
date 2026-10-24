@@ -9,6 +9,12 @@ additional approval within the task's scope; see the
 
 For diagram work, use the [diagramming guidance](integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md).
 
+For tldraw diagrams used in this repository's documentation:
+
+- Update the editable tldraw note and its referenced preview images together.
+- Export previews as WebP and inspect readability at the intended display size.
+- Keep intermediate previews in a temporary directory, outside tracked documentation.
+
 Maintain canonical Skill sources under `integrations/codex/skills/obsidian-tldraw/`;
 `plugins/obsidian-tldraw-bridge/` is generated. Follow the
 [development guide](docs/development.md) when extending the guidance or rebuilding
