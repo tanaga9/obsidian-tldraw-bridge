@@ -83,6 +83,51 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 935,
+				"y": 590,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:secondary-discovery-note",
+				"type": "text",
+				"parentId": "shape:nested-agent-instruction-scope",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 300,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Secondary folders do not"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "load these instructions."
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aXHa2",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:nested-load-project-end",
 				"type": "arrow",
@@ -180,7 +225,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Workspace / vault"
+										"text": "Primary folder / vault"
 									}
 								]
 							}
@@ -342,7 +387,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Vault outside workspace"
+										"text": "Other vault"
 									}
 								]
 							}
@@ -386,7 +431,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Separate read"
+										"text": "Explicit read"
 									}
 								]
 							}
@@ -1119,7 +1164,16 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Read if present and not loaded."
+										"text": "Read when the user or loaded"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "project instructions direct it."
 									}
 								]
 							}
@@ -1323,7 +1377,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Codex example: working directory /work/project; root AGENTS.md already loaded."
+										"text": "Codex example: /work/project is the primary folder and working directory."
 									}
 								]
 							}

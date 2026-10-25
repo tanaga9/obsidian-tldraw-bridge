@@ -21,6 +21,14 @@ Maintain canonical Skill sources under `integrations/codex/skills/obsidian-tldra
 packages, and the [testing guide](docs/testing.md) for appropriate checks.
 
 Before committing changed tldraw Notes, use the read-only
-[multilingual review](docs/multilingual.md#commit-review). Inspect and report
-findings; do not translate or advance checkpoints merely to clear the review.
+[multilingual review](docs/multilingual.md#commit-review). The review itself must
+not modify diagrams or metadata. Inspect and report its findings; a finding alone
+does not authorize translation or checkpoint advancement.
+
 Reflect language changes only on explicit request or existing task authorization.
+After an authorized multilingual update, a separate checkpoint operation may
+record the review actually performed, once both source and target pages have
+been inspected for meaning and rendering and their persistence verified. This
+does not require additional approval solely because the read-only review reports
+changes. Preserve and report uncertain independent edits or unreviewed differences;
+do not translate or advance checkpoints merely to clear review findings.

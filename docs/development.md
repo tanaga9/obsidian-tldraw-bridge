@@ -34,7 +34,7 @@ The plugin display name is **Obsidian Tldraw Bridge**, defined in `scripts/build
 The README uses [architecture.webp](diagrams/architecture.webp), rendered from the
 editable Obsidian tldraw note [architecture.md](diagrams/architecture.md). Open the
 note in Obsidian with the tldraw plugin, edit the diagram, and render the named
-`README architecture` frame directly to WebP with a light background:
+`architecture` frame directly to WebP with a light background:
 
 ```sh
 python3 bridge.py --vault obsidian-tldraw-bridge open docs/diagrams/architecture.md

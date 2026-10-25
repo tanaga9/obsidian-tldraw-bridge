@@ -218,7 +218,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "次の変更の根拠がない、または2回修正しても"
+										"text": "次の変更の根拠がない、または修正を重ねても"
 									}
 								]
 							},
@@ -1846,7 +1846,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 265,
+					"w": 330,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1859,7 +1859,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "必要な回答を得てから"
+										"text": "検証した試作だけを数える。"
 									}
 								]
 							},
@@ -1868,7 +1868,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "再開する。"
+										"text": "API呼び出し・再出力は含めない。"
 									}
 								]
 							}
@@ -2236,7 +2236,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Check • save"
+										"text": "Recheck conditions"
 									}
 								]
 							}
@@ -2326,7 +2326,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "ONGOING DIAGRAM CREATION AND IMPROVEMENT"
+										"text": "Diagram work in progress"
 									}
 								]
 							}
@@ -2654,7 +2654,7 @@ tags:
 				"parentId": "shape:improvement-recovery-en",
 				"props": {
 					"w": 265,
-					"h": 110,
+					"h": 145,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -2677,7 +2677,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "No finding twice?"
+										"text": "Same unknown, two trials,"
 									}
 								]
 							},
@@ -2686,7 +2686,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Ask one specific question;"
+										"text": "no useful finding?"
 									}
 								]
 							},
@@ -2695,7 +2695,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "wait for the answer"
+										"text": "Ask; wait for the answer."
 									}
 								]
 							}
@@ -2722,6 +2722,51 @@ tags:
 					"terminal": "start"
 				},
 				"typeName": "binding"
+			},
+			{
+				"x": 80,
+				"y": 1028,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ja-local-review-note",
+				"type": "text",
+				"parentId": "shape:ja-guide-system",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 430,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "部分修正は、影響する周辺を確認。"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "影響が広がれば、確認範囲も広げる。"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "al1kb",
+				"typeName": "shape"
 			},
 			{
 				"meta": {},
@@ -3566,7 +3611,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "確認・保存"
+										"text": "必須条件を再確認"
 									}
 								]
 							}
@@ -3691,7 +3736,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Draw an actual small example"
+										"text": "Draw one small trial"
 									}
 								]
 							},
@@ -4147,6 +4192,51 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 80,
+				"y": 1028,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:local-review-note",
+				"type": "text",
+				"parentId": "shape:guide-system",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 430,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Local fixes: inspect affected context."
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Widen review if effects spread."
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aloub",
+				"typeName": "shape"
+			},
+			{
 				"x": 1000,
 				"y": 925,
 				"rotation": 0,
@@ -4574,7 +4664,7 @@ tags:
 					"h": 130,
 					"geo": "rectangle",
 					"dash": "draw",
-					"growY": 22,
+					"growY": 0,
 					"url": "",
 					"scale": 1,
 					"flipX": false,
@@ -4603,7 +4693,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Rejected → change the hypothesis"
+										"text": "Rejected → revise the hypothesis"
 									}
 								]
 							},
@@ -4612,7 +4702,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "before another trial"
+										"text": "Inconclusive → repair or clarify the trial"
 									}
 								]
 							}
@@ -6315,7 +6405,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "No supported next change, or two revisions"
+										"text": "No supported next change, or repeated revisions"
 									}
 								]
 							},
@@ -7836,7 +7926,7 @@ tags:
 				"parentId": "shape:improvement-recovery-ja",
 				"props": {
 					"w": 265,
-					"h": 110,
+					"h": 145,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -7859,7 +7949,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "2回試しても手がかりなし"
+										"text": "同じ不明点を2回検証しても"
 									}
 								]
 							},
@@ -7868,7 +7958,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "具体的に一つ聞き、"
+										"text": "手がかりが得られない？"
 									}
 								]
 							},
@@ -7877,7 +7967,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "必要な回答を待つ"
+										"text": "具体的に聞き、回答を待つ"
 									}
 								]
 							}
@@ -8106,7 +8196,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 265,
+					"w": 330,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -8119,7 +8209,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Resume only after the"
+										"text": "Count inspected sketches;"
 									}
 								]
 							},
@@ -8128,7 +8218,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "needed answer is obtained."
+										"text": "API / export retries do not count."
 									}
 								]
 							}
@@ -8680,7 +8770,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "ASSESS THE PURPOSE AND CURRENT DIAGRAM"
+										"text": "Assess purpose and the current diagram"
 									}
 								]
 							},
@@ -8689,7 +8779,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Is there a supported measure or next hypothesis?"
+										"text": "Is the next measure or hypothesis supported?"
 									}
 								]
 							}
@@ -8711,7 +8801,7 @@ tags:
 				"props": {
 					"w": 1440,
 					"h": 1779.2942613079692,
-					"name": "From design knowledge to useful diagrams",
+					"name": "diagramming-guide-design-system",
 					"color": "black"
 				},
 				"parentId": "page:page",
@@ -8878,7 +8968,7 @@ tags:
 				"meta": {
 					"multilingualDiagrams": {
 						"diagramming-guide-design-system": {
-							"schemaVersion": 1,
+							"schemaVersion": 2,
 							"editingSourcePageId": "page:page",
 							"languages": {
 								"en": "page:page",
@@ -8913,6 +9003,27 @@ tags:
 									"ja": "55a66b5f326974a269cb83a68d0446da645d5884597c448db362a96e0024d9c5"
 								},
 								"note": "Japanese layout adjustments applied to English; English text and all bindings preserved. Original translation baselines retained."
+							},
+							"checkpoints": {
+								"ja": {
+									"algorithm": "page-content-v2",
+									"sourcePageId": "page:page",
+									"source": {
+										"full": "45aaa5844a9c0aceb6a0e4d7f40006c855e9f66b299127ee5817a39f03f675d4",
+										"content": "57695ad5815ce05171a84d4ddd8169b4012fa5125fe1e24cc117c0c96e6bec50",
+										"legacy": "a7290dbe6558a188960a92a9f6d404b9def0150fdbf44fa23e22863fe986028a",
+										"hasAssets": false
+									},
+									"target": {
+										"full": "c1147a08e15e740bca3894f5aa9ac9190f06cde8b997a1f11f0c744d9b1b0e3c",
+										"content": "72f89b4b5d11a99e5032706ac9e86da899c79def2db77fcc959ed8ccd881cc67",
+										"legacy": "8f4980d95b54cb5838240f1266a565cfaec29309ce9348fa807da7568dfe3ca3",
+										"hasAssets": false
+									},
+									"kind": "translation",
+									"reason": "Reviewed both English and Japanese renderings after the authorized updates: local fixes inspect affected context and widen review when effects spread; refinement rechecks completion conditions. Existing translations and language-specific geometry were preserved.",
+									"reviewedAt": "2026-10-25T13:32:51.423Z"
+								}
 							}
 						},
 						"diagram-improvement-recovery": {
@@ -8927,20 +9038,20 @@ tags:
 									"algorithm": "page-content-v2",
 									"sourcePageId": "page:improvement-recovery-en",
 									"source": {
-										"full": "008ce9d2a7f3eacbae1dfc0522670d99594d78f49bd9cb7b7e011b7874372895",
-										"content": "e7deb9c6ef4f42fd4f4e796fda6a17e52a11be8c52a582535eb3fd666a9d014a",
-										"legacy": "1fc1d4145e04d3a242770d0e43a220fe8086044c0a28310138f27d1df2e9be1d",
+										"full": "aa471197a112f50c4dd23633282a334403aad4f4798228de00720ec55a110bd6",
+										"content": "f84e8dd3de542e906bd3dc7f8f4cad9aa9127a4a99ea54211f65c56217a67820",
+										"legacy": "29cc9e392adbf257662fdd41ff3786ad48f147c1fcb983a46f0afc1d653207c0",
 										"hasAssets": false
 									},
 									"target": {
-										"full": "f9a7fa57c94b2d48e75bb04785d1c5700f43aa6eb5fbfd8127a2927e9d8b5304",
-										"content": "b928fa3621929342a16b81234f2d9bc085ed1c70e4cb7711a7d4e301380e350f",
-										"legacy": "e9993a4e76442d78d1409b981c0d41953de564e00ce349cf297ba1679014d91f",
+										"full": "55efdcca9982447eaccac73bb1ce8fbc39600489b4d0a7105e05b2aa8ebb1c0a",
+										"content": "89ad5f5043cc234a43e0a4329d467b6c93af68bc3ffcba8c1f13d28abe6bc4f0",
+										"legacy": "8a439a214d23686a65d3cf79a4198cfc477b79798abb3f221b93f714406b00b8",
 										"hasAssets": false
 									},
 									"kind": "translation",
-									"reason": "Reviewed clarified stall condition in both rendered languages: unresolved issue after two revisions without a useful new finding, or no supported next change. All user geometry, bindings, and other labels preserved.",
-									"reviewedAt": "2026-10-25T12:09:18.729Z"
+									"reason": "Reviewed both English and Japanese renderings after the authorized updates: repeated revisions without new findings trigger recovery; two inspected trials of the same uncertainty without useful findings trigger a question. Rejected and inconclusive outcomes have distinct next actions. Existing relationships and unchanged translations were preserved.",
+									"reviewedAt": "2026-10-25T13:32:59.739Z"
 								}
 							}
 						}
@@ -9446,7 +9557,7 @@ tags:
 					"h": 130,
 					"geo": "rectangle",
 					"dash": "draw",
-					"growY": 22,
+					"growY": 0,
 					"url": "",
 					"scale": 1,
 					"flipX": false,
@@ -9466,7 +9577,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "描画結果を確認"
+										"text": "描画結果を確認：支持・否定・判断できない"
 									}
 								]
 							},
@@ -9475,7 +9586,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "仮説を支持・否定・判断できない"
+										"text": "否定 → 仮説を見直す"
 									}
 								]
 							},
@@ -9484,7 +9595,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "否定なら、仮説を変えて再試行"
+										"text": "判断できない → 試作の不備や情報不足を補う"
 									}
 								]
 							}

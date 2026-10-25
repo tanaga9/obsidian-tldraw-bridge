@@ -652,7 +652,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 357,
+				"x": 344,
 				"y": 552,
 				"rotation": 0,
 				"isLocked": false,
@@ -664,7 +664,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "s",
-					"w": 62.5,
+					"w": 100,
 					"font": "sans",
 					"textAlign": "middle",
 					"autoSize": false,
@@ -677,7 +677,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "eval"
+										"text": "load + eval"
 									}
 								]
 							}
@@ -938,7 +938,7 @@ tags:
 				}
 			},
 			{
-				"x": 357,
+				"x": 340,
 				"y": 551,
 				"rotation": 0,
 				"isLocked": false,
@@ -948,7 +948,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"w": 50,
+					"w": 88,
 					"h": 24,
 					"geo": "rectangle",
 					"dash": "none",
@@ -1303,7 +1303,7 @@ tags:
 				"props": {
 					"color": "black",
 					"size": "l",
-					"w": 1180,
+					"w": 1104,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1715,7 +1715,7 @@ tags:
 				"props": {
 					"w": 1200,
 					"h": 840,
-					"name": "README architecture",
+					"name": "architecture",
 					"color": "grey"
 				},
 				"index": "a171I",
@@ -2111,7 +2111,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Own view + Undo history"
+										"text": "Continues after GUI tab closes"
 									}
 								]
 							}

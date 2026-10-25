@@ -22,7 +22,7 @@ primary folder's instructions asking the agent to read them, or ask directly
 in the conversation.
 See the [official project folder documentation](https://learn.chatgpt.com/docs/projects#use-local-projects-for-folders-and-codebases).
 
-![The workspace and vault share /work/project and its AGENTS.md; an external vault may require a separate instruction read. Bridge edits either target.](diagrams/agent-instruction-scope.webp)
+![The primary folder and vault share /work/project and its AGENTS.md; another vault's instructions are read when the user or loaded project guidance directs it. Bridge edits either target.](diagrams/agent-instruction-scope.webp)
 
 In this diagram, the workspace is the primary folder, `/work/project`, and is
 also Codex's working directory. Its root `AGENTS.md` is already loaded. The other
@@ -37,7 +37,7 @@ For these examples, the primary folder and working directory are `/work/project`
 | Vault root | Instruction loading |
 | --- | --- |
 | `/work/project` | Workspace and vault share the same root `AGENTS.md`, loaded in this example. |
-| `/notes/team` | Whether it is a secondary folder or outside the project's folders, selecting this vault does not load its `AGENTS.md`; read it separately if needed. |
+| `/notes/team` | Whether it is a secondary folder or outside the project's folders, selecting this vault does not load its `AGENTS.md`; read it separately when the user or loaded project guidance directs it. |
 
 ## Load instructions from another vault
 

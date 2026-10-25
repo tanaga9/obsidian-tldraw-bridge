@@ -55,8 +55,8 @@ The same editable note also contains a separate diagram,
 as its starting state. **User feedback** or **agent observation** leads to
 assessment of the purpose and current diagram, then
 to improvement or design recovery according to the available evidence. This
-supplement does not repeat the main diagram's normal-use lifecycle. The original
-design-system pages are unchanged.
+supplement complements the main diagram's normal-use lifecycle with the
+conditions for choosing a concrete improvement or a small design trial.
 
 - **Improvement:** connect an observed symptom to a concrete measure and expected
   reader benefit. Examples include separating chronology from causality, adding
@@ -65,8 +65,9 @@ design-system pages are unchanged.
 - **Design recovery:** when the next change has no testable rationale, or repeated
   fixes leave the same difficulty unresolved without a useful new finding,
   isolate an unknown, draw a small
-  trial, and inspect what it establishes. Change a rejected hypothesis; after
-  two trials without a useful finding, ask for one missing choice or fact and
+  trial, and inspect what it establishes. Change a rejected hypothesis; repair
+  an inconclusive trial or retrieve the missing information. After two inspected
+  trials of the same uncertainty without a useful finding, ask for one missing choice or fact and
   wait for a required answer. Recovery can also precede the first structural draft.
 
 A known correction and equivalent acceptable layouts stay in ordinary work.
@@ -112,7 +113,8 @@ uses the knowledge and when, rather than prescribing four layers to read.
   purpose, readability, and edit-integrity conditions. Failure returns to
   structural revision and another check; defaults may be adjusted while meaning
   is preserved. Passing candidates proceed to refinement, verification, saving,
-  and delivery.
+  and delivery. Recheck the completion conditions after refinement. For local
+  fixes, inspect the affected context and widen the review when effects spread.
 - **Maintenance:** select a case and a question, freeze editable/protected
   records and initial defects, and record elapsed time and CLI calls. Diagnose
   failures through minimal reproduction and targeted checks; compare guides on
@@ -155,7 +157,7 @@ improvement.
 ## Edit and refresh the preview
 
 Open the source in Obsidian with the tldraw plugin and choose a language page.
-The English frame is named `From design knowledge to useful diagrams`; the
+The English frame is named `diagramming-guide-design-system`; the
 Japanese frame is named `diagramming-guide-design-system.ja`, matching its export
 filename. For bridge edits, use the current Skill's revision, inspection, and
 persistence procedures. Do not replace the embedded drawing JSON by hand.
