@@ -10,6 +10,18 @@ the requested diagram/language; do not create the full diagram × language matri
 Single-language diagrams need no translation metadata. Do not register arbitrary
 manual duplicates as translations without inspecting their purpose.
 
+Use each diagram's base-language name as the shared leading portion of its
+tldraw page names, export filenames, and export-source frame names. Keep most
+of the name identical from the start across languages; put language codes and
+optional translated titles at the end, not the beginning. For example, use
+`Architecture overview (en)` / `Architecture overview (ja)` for pages and frames,
+and `architecture-overview.en.webp` / `architecture-overview.ja.webp` for exports.
+Use a distinct shared prefix for each theme so multiple diagrams and languages
+in one Note remain visibly paired. Do not translate the entire name or rely on
+language-only page/frame names. Keep this naming base when the editing source
+changes; it does not replace stable IDs. Update Markdown references when
+renaming existing exports.
+
 Within each diagram, name one editing source page. It may change between work
 sessions; different diagrams in one Note may have different source languages.
 Do not select the newest language by modification time. Never resolve independent

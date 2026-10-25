@@ -28,6 +28,21 @@ workflow handoff, not proof that independent changes have been merged. Page name
 can change without changing identity. Existing language pages are updated in
 place; do not create a Note or revision page for each reflection.
 
+For each diagram, use its base-language name as the shared leading portion of
+tldraw page names, export filenames, and the names of frames used for export.
+Keep most of each name identical from the start across languages; append a
+language code and, if useful, a translated title. For example, pages and export
+frames can be `Architecture overview (en)` and `Architecture overview (ja)`,
+with files `architecture-overview.en.webp` and `architecture-overview.ja.webp`.
+Give a different theme its own shared prefix, such as `Data flow` and
+`data-flow`. This keeps the correspondence visible when one Note contains
+multiple diagrams in multiple languages. A language code at the beginning or
+wholly translated names would obscure that correspondence.
+The naming base is independent of the current editing source: a source handoff
+alone does not change it. Names support human recognition; stable diagram/page
+IDs remain the operational identity. When renaming existing exports, update
+their Markdown references together.
+
 Reflect changes on explicit user request or within already authorized translation
 work. During commit review, inspect the changed diagrams and report unresolved
 items; do not automatically translate or acknowledge them. No periodic monitor or
