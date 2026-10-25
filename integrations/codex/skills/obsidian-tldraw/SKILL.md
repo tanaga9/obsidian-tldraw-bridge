@@ -10,6 +10,8 @@ Markdown note and its embedded drawing data.
 ## Guidance to load
 
 - For diagram creation, edits, or reviews, read [diagramming guidance](references/diagramming/index.md). It defines the check–revise workflow, completion conditions, and project conventions. Keep local corrections local and preserve useful existing content.
+- If the initial structure cannot be chosen or revisions stop producing useful evidence, use [design recovery](references/diagramming/design-recovery.md) to detect the stall and choose a small, decision-bearing trial.
+- When the user requests improvements or expresses dissatisfaction, or an observed issue warrants a proactive suggestion, read [improvement guidance](references/diagramming/improvement-patterns.md) for proposal conditions, diagnosis, intuitive questions, and optional visual comparisons.
 - For multilingual diagrams, language-page updates, or commit reviews involving them, read [multilingual workflow](references/multilingual.md). Preserve existing target wording/layout; checking does not authorize translation.
 - For directly authored line art, read [freehand drawing](references/freehand.md).
 - Before editing, read [observation](references/operations.md#observe-before-editing), [named edits](references/operations.md#apply-named-operations), and [failure recovery](references/operations.md#results-and-failure-recovery). For custom SDK scripts, also read the scripting sections linked below; load image and diagnostic details only when needed.

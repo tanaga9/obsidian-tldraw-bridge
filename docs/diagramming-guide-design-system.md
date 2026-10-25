@@ -48,6 +48,50 @@ and verify/export every affected language. Language-specific line wrapping and
 box widths can differ. Always read the target before reflection and retain valid
 unchanged translations; a hash mismatch alone never authorizes an overwrite.
 
+## Improvement and design recovery
+
+The same editable note also contains a separate diagram,
+`diagram-improvement-recovery`, with **ongoing diagram creation and improvement**
+as its starting state. **User feedback** or **agent observation** leads to
+assessment of the purpose and current diagram, then
+to improvement or design recovery according to the available evidence. This
+supplement does not repeat the main diagram's normal-use lifecycle. The original
+design-system pages are unchanged.
+
+- **Improvement:** connect an observed symptom to a concrete measure and expected
+  reader benefit. Examples include separating chronology from causality, adding
+  selective labeled icons, and separating overview from detail. Propose or edit
+  within the user's scope; a request for suggestions alone ends with a proposal.
+- **Design recovery:** when the next change has no testable rationale, or repeated
+  fixes leave the same difficulty unresolved without a useful new finding,
+  isolate an unknown, draw a small
+  trial, and inspect what it establishes. Change a rejected hypothesis; after
+  two trials without a useful finding, ask for one missing choice or fact and
+  wait for a required answer. Recovery can also precede the first structural draft.
+
+A known correction and equivalent acceptable layouts stay in ordinary work.
+Count inspected design trials, not API calls or export retries; an informative
+rejection that narrows the next choice is progress. The
+[targeted decision cases](evaluations/diagramming/README.md#targeted-improvement-and-recovery-checks)
+cover these boundaries separately from drawing-quality comparisons.
+
+Once evidence supports the next design choice, proceed with that step within
+the requested scope. An upward return arrow along the outer edge reconnects to
+the starting state. These are not mandatory extra phases, and SDK/connection/saving failures
+use operation recovery instead. The agent-facing sources are
+[improvement conversations](../integrations/codex/skills/obsidian-tldraw/references/diagramming/improvement-patterns.md)
+and [design recovery](../integrations/codex/skills/obsidian-tldraw/references/diagramming/design-recovery.md).
+
+The editable source is the [Obsidian tldraw note](diagrams/diagramming-guide-design-system.md).
+
+![Improvement and recovery in diagram work](diagrams/improvement-and-recovery.webp)
+
+Select the corresponding page before exporting its named frame. Frames
+`improvement-and-recovery` and `improvement-and-recovery.ja` match their preview
+filenames. Both are 1600 × 1860 canvas units; export at scale `0.6` for a width of
+1920 pixels with the SDK's raster pixel ratio of 2. Keep draft exports outside
+tracked documentation, and update the editable note and affected previews together.
+
 ## Model and implementation
 
 The diagram follows the path from maintainer knowledge to a focused Skill,

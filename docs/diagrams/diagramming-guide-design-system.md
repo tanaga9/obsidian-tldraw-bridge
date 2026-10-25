@@ -94,12 +94,290 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-test-hypothesis-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-test-hypothesis-en",
+				"toId": "shape:ir-trial-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 1183.5120922352262,
+				"y": 160,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-loop-label-en",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"color": "green",
+					"size": "m",
+					"w": 296.4879077647738,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Return to diagram work"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aoyQn",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-branch-recover-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-branch-recover-en",
+				"toId": "shape:ir-recover-trigger-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-return-improvement-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-return-improvement-en",
+				"toId": "shape:ir-resume-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.22857142857142856,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 810,
+				"y": 630,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-recover-trigger-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 640,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "orange",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "次の変更の根拠がない、または2回修正しても"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "同じ問題が残り、新しい手がかりもない"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aDnfb",
+				"typeName": "shape"
+			},
+			{
+				"x": 835,
+				"y": 800,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-recover-title-ja",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"color": "violet",
+					"size": "m",
+					"w": 590,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "回復：小さな試行で判断材料を得る"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aVfMj",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-branch-recover-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "orange",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 930,
+						"y": 565
+					},
+					"end": {
+						"x": 1130,
+						"y": 630
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aFqev",
+				"typeName": "shape"
+			},
+			{
 				"x": 0,
 				"y": 0,
 				"lastActivityTimestamp": 0,
 				"meta": {},
 				"id": "pointer:pointer",
 				"typeName": "pointer"
+			},
+			{
+				"x": 375,
+				"y": 1010,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-measure-0-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 285,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Time axis +"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "causal connections"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aKgBQ",
+				"typeName": "shape"
 			},
 			{
 				"x": 60,
@@ -150,6 +428,50 @@ tags:
 				"typeName": "user"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-example-2-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 325,
+						"y": 1285
+					},
+					"end": {
+						"x": 375,
+						"y": 1285
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aREhU",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:ja-pass-end",
 				"type": "arrow",
@@ -166,6 +488,50 @@ tags:
 					"terminal": "end"
 				},
 				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-return-improvement-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "green",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 370,
+						"y": 1520
+					},
+					"end": {
+						"x": 370,
+						"y": 1660
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aiTYE",
+				"typeName": "shape"
 			},
 			{
 				"x": 410,
@@ -249,6 +615,24 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-inspect-trial-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-inspect-trial-ja",
+				"toId": "shape:ir-trial-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 410,
 				"y": 622,
 				"rotation": 0,
@@ -286,6 +670,60 @@ tags:
 			},
 			{
 				"meta": {},
+				"id": "binding:ir-example-2-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-example-2-en",
+				"toId": "shape:ir-symptom-2-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 50,
+				"y": 90,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-subtitle-ja",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"color": "black",
+					"size": "m",
+					"w": 1400,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "問題に具体策を当てる。次の判断に根拠がないときは、小さく試して方向を探る。"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a26TQ",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
 				"id": "binding:retry-end",
 				"type": "arrow",
 				"fromId": "shape:retry",
@@ -298,6 +736,132 @@ tags:
 						"y": 1
 					},
 					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 80,
+				"y": 1400,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-apply-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 580,
+					"h": 120,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "依頼範囲で提案・編集"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "部分修正も全面再設計も可。情報を引き継ぐ"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aSO7b",
+				"typeName": "shape"
+			},
+			{
+				"x": 80,
+				"y": 1240,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-symptom-2-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 245,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "grey",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "全体表示では"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "文字が読めない"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aPGiv",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-loop-up-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-loop-up-ja",
+				"toId": "shape:ir-loop-label-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": false,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "edge-point",
 					"terminal": "end"
 				},
 				"typeName": "binding"
@@ -384,6 +948,158 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 845,
+				"y": 1410,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-supported-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 265,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "根拠が得られた"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "次の変更を決める"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "addwz",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-example-1-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 325,
+						"y": 1170
+					},
+					"end": {
+						"x": 375,
+						"y": 1170
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aOSxQ",
+				"typeName": "shape"
+			},
+			{
+				"x": 50,
+				"y": 1810,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-boundary-en",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 1400,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "These are conditional aids, not mandatory extra phases. SDK or saving errors use operation recovery."
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "alUzsV",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-1-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-example-1-en",
+				"toId": "shape:ir-symptom-1-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"meta": {
 					"diagramId": "diagramming-guide-design-system",
 					"language": "ja"
@@ -392,6 +1108,90 @@ tags:
 				"name": "Design system / 日本語",
 				"index": "a2IQX",
 				"typeName": "page"
+			},
+			{
+				"x": 50,
+				"y": 780,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-improve-region-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 640,
+					"h": 780,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": []
+							}
+						]
+					}
+				},
+				"index": "aGFeM",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-start-improve-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 370,
+						"y": 710
+					},
+					"end": {
+						"x": 370,
+						"y": 865
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aGzz9rX",
+				"typeName": "shape"
 			},
 			{
 				"x": 1320,
@@ -436,6 +1236,113 @@ tags:
 					"scale": 1
 				},
 				"index": "ahFsI",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-result-ask-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "orange",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1265,
+						"y": 1335
+					},
+					"end": {
+						"x": 1272,
+						"y": 1410
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "agzyi",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-result-supported-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-result-supported-ja",
+				"toId": "shape:ir-inspect-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.25,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 80,
+				"y": 1125,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-symptom-1-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 245,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "grey",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "対象を想像しにくい"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aMREb",
 				"typeName": "shape"
 			},
 			{
@@ -493,6 +1400,50 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-example-0-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 325,
+						"y": 1055
+					},
+					"end": {
+						"x": 375,
+						"y": 1055
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aLKze",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:ja-finish-end",
 				"type": "arrow",
@@ -530,6 +1481,69 @@ tags:
 			},
 			{
 				"meta": {},
+				"id": "binding:ir-ongoing-user-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-ongoing-user-ja",
+				"toId": "shape:ir-ongoing-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.25,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 80,
+				"y": 1010,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-symptom-0-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 245,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "grey",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "時系列と因果が混在"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aJsWX",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
 				"id": "binding:distill-start",
 				"type": "arrow",
 				"fromId": "shape:distill",
@@ -563,6 +1577,122 @@ tags:
 					"terminal": "end"
 				},
 				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-start-improve-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-start-improve-en",
+				"toId": "shape:ir-improve-trigger-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-0-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-example-0-en",
+				"toId": "shape:ir-symptom-0-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-normal-candidate-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-normal-candidate-ja",
+				"toId": "shape:ir-candidate-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-normal-refine-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-normal-refine-en",
+				"toId": "shape:ir-check-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.75,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-inspect-trial-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1125,
+						"y": 1160
+					},
+					"end": {
+						"x": 1125,
+						"y": 1235
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "abNtz",
+				"typeName": "shape"
 			},
 			{
 				"x": 60,
@@ -686,6 +1816,69 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-ongoing-agent-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-ongoing-agent-en",
+				"toId": "shape:ir-deliver-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 1140,
+				"y": 1575,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-wait-note-ja",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 265,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "必要な回答を得てから"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "再開する。"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "akqXv",
+				"typeName": "shape"
+			},
+			{
 				"x": 80,
 				"y": 1205,
 				"rotation": 0,
@@ -720,6 +1913,24 @@ tags:
 				},
 				"index": "aWyxf",
 				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-return-recovery-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-return-recovery-en",
+				"toId": "shape:ir-resume-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.6621428571428571,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
 			},
 			{
 				"x": 1000,
@@ -836,6 +2047,42 @@ tags:
 				"meta": {},
 				"id": "camera:page:page",
 				"typeName": "camera"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-branch-improve-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-branch-improve-en",
+				"toId": "shape:ir-check-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.25,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-start-recover-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-start-recover-ja",
+				"toId": "shape:ir-recover-trigger-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
 			},
 			{
 				"x": 410,
@@ -1045,6 +2292,51 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 390,
+				"y": 155,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-ongoing-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 720,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "blue",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "ONGOING DIAGRAM CREATION AND IMPROVEMENT"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "anIIA",
+				"typeName": "shape"
+			},
+			{
 				"x": 80,
 				"y": 705,
 				"rotation": 0,
@@ -1171,6 +2463,114 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 390,
+				"y": 470,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-check-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 720,
+					"h": 95,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "blue",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "目的と現状を確認する"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "問題に合う施策、または次の仮説を選べるか？"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a6K8I",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-test-hypothesis-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-test-hypothesis-ja",
+				"toId": "shape:ir-hypothesis-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-return-improvement-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-return-improvement-ja",
+				"toId": "shape:ir-apply-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-branch-recover-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-branch-recover-ja",
+				"toId": "shape:ir-check-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.75,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"meta": {},
 				"id": "binding:apply-end",
 				"type": "arrow",
@@ -1243,6 +2643,69 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 1140,
+				"y": 1410,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-ask-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 265,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "orange",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "s",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "No finding twice?"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Ask one specific question;"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "wait for the answer"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aeIjz",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:fail-start",
 				"type": "arrow",
@@ -1257,6 +2720,24 @@ tags:
 					},
 					"snap": "none",
 					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-inspect-trial-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-inspect-trial-ja",
+				"toId": "shape:ir-inspect-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
 				},
 				"typeName": "binding"
 			},
@@ -1277,6 +2758,68 @@ tags:
 					"terminal": "end"
 				},
 				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-2-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-example-2-en",
+				"toId": "shape:ir-measure-2-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-start-recover-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1130,
+						"y": 710
+					},
+					"end": {
+						"x": 1125,
+						"y": 865
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aUrd8V",
+				"typeName": "shape"
 			},
 			{
 				"meta": {},
@@ -1316,6 +2859,24 @@ tags:
 			},
 			{
 				"meta": {},
+				"id": "binding:ir-result-ask-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-result-ask-en",
+				"toId": "shape:ir-inspect-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.75,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
 				"id": "binding:ja-finish-start",
 				"type": "arrow",
 				"fromId": "shape:ja-finish",
@@ -1329,6 +2890,24 @@ tags:
 					},
 					"snap": "none",
 					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-1-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-example-1-en",
+				"toId": "shape:ir-measure-1-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "end"
 				},
 				"typeName": "binding"
 			},
@@ -1405,6 +2984,42 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 50,
+				"y": 30,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-title-en",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"color": "black",
+					"size": "l",
+					"w": 1400,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Improvement and recovery in diagram work"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a1ItI",
+				"typeName": "shape"
+			},
+			{
 				"x": 490,
 				"y": 1290,
 				"rotation": 0,
@@ -1457,6 +3072,24 @@ tags:
 				},
 				"index": "aYBTn",
 				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-result-supported-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-result-supported-ja",
+				"toId": "shape:ir-supported-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
 			},
 			{
 				"x": 80,
@@ -1513,6 +3146,60 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 80,
+				"y": 865,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-match-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 580,
+					"h": 105,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "兆候 → 施策 → 期待する効果"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "必要なら、直感的な選択肢で確かめる"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aIX2X",
+				"typeName": "shape"
+			},
+			{
 				"x": 920,
 				"y": 780,
 				"rotation": 0,
@@ -1558,6 +3245,50 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-test-hypothesis-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1125,
+						"y": 975
+					},
+					"end": {
+						"x": 1125,
+						"y": 1050
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aXo7DV",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:ja-maint-compare-verdicts-start",
 				"type": "arrow",
@@ -1572,6 +3303,24 @@ tags:
 					},
 					"snap": "none",
 					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-normal-candidate-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-normal-candidate-ja",
+				"toId": "shape:ir-check-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.25,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
 				},
 				"typeName": "binding"
 			},
@@ -1675,6 +3424,60 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 810,
+				"y": 300,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-deliver-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 640,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "blue",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "エージェントの自律検知"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "具体的な問題・改善の機会・設計の停滞"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a84JE",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:ja-maint-verdicts-decision-end",
 				"type": "arrow",
@@ -1683,6 +3486,24 @@ tags:
 				"props": {
 					"isPrecise": true,
 					"isExact": false,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-ongoing-user-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-ongoing-user-ja",
+				"toId": "shape:ir-candidate-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
 					"normalizedAnchor": {
 						"x": 0.5,
 						"y": 0
@@ -1756,6 +3577,140 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-example-0-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-example-0-en",
+				"toId": "shape:ir-measure-0-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-start-improve-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-start-improve-en",
+				"toId": "shape:ir-improve-region-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-loop-up-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "elbow",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "m",
+					"fill": "none",
+					"color": "green",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1450,
+						"y": 1725
+					},
+					"end": {
+						"x": 1110,
+						"y": 200
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "apT1I",
+				"typeName": "shape"
+			},
+			{
+				"x": 845,
+				"y": 1029,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-trial-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 560,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Draw an actual small example"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Core 3–5 elements / one case / two drafts"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aXQw6",
+				"typeName": "shape"
+			},
+			{
 				"editingShapeId": null,
 				"croppingShapeId": null,
 				"selectedShapeIds": [],
@@ -1780,6 +3735,42 @@ tags:
 					"normalizedAnchor": {
 						"x": 1,
 						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-ongoing-agent-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-ongoing-agent-ja",
+				"toId": "shape:ir-ongoing-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.75,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-normal-refine-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-normal-refine-ja",
+				"toId": "shape:ir-deliver-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1940,6 +3931,87 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-branch-improve-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-branch-improve-en",
+				"toId": "shape:ir-improve-trigger-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 375,
+				"y": 1240,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-measure-2-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 285,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "概要と詳細を分ける"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aQpgz",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-start-recover-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-start-recover-ja",
+				"toId": "shape:ir-recover-region-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 360,
 				"y": 1410,
 				"rotation": 0,
@@ -1982,6 +4054,96 @@ tags:
 					"scale": 1
 				},
 				"index": "aYn6xV",
+				"typeName": "shape"
+			},
+			{
+				"x": 50,
+				"y": 300,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-candidate-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 640,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "orange",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "ユーザーの声"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "「わかりにくい」「もっと伝わる図にしたい」"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a50o6",
+				"typeName": "shape"
+			},
+			{
+				"x": 75,
+				"y": 800,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-improve-title-ja",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"color": "green",
+					"size": "m",
+					"w": 590,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "改善：問題に合う具体策を選ぶ"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aHkrA",
 				"typeName": "shape"
 			},
 			{
@@ -2039,6 +4201,60 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 272.38484174786504,
+				"y": 1660,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-resume-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 944.9706844022611,
+					"h": 130,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "根拠ある次の一手を得る"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "依頼範囲で修正・確認・仕上げ・保存。不要な試作は整理。"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "ahD4I",
+				"typeName": "shape"
+			},
+			{
 				"x": 1160,
 				"y": 855,
 				"rotation": 0,
@@ -2084,6 +4300,140 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 50,
+				"y": 630,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-improve-trigger-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 640,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "orange",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "兆候と改善効果を説明でき、"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "具体策を選べる"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aCjrz",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-loop-up-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-loop-up-en",
+				"toId": "shape:ir-resume-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-return-recovery-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-return-recovery-ja",
+				"toId": "shape:ir-supported-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-branch-improve-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "orange",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 570,
+						"y": 565
+					},
+					"end": {
+						"x": 370,
+						"y": 630
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aCssfl",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:ja-fail-end",
 				"type": "arrow",
@@ -2100,6 +4450,16 @@ tags:
 					"terminal": "end"
 				},
 				"typeName": "binding"
+			},
+			{
+				"meta": {
+					"diagramId": "diagram-improvement-recovery",
+					"language": "ja"
+				},
+				"id": "page:improvement-recovery-ja",
+				"name": "Improvement and recovery / 日本語",
+				"index": "a4ic2",
+				"typeName": "page"
 			},
 			{
 				"x": 490,
@@ -2200,6 +4560,149 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 845,
+				"y": 1197,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-inspect-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 560,
+					"h": 130,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 22,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Inspect: supported / rejected / inconclusive"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Rejected → change the hypothesis"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "before another trial"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aYPzR",
+				"typeName": "shape"
+			},
+			{
+				"x": 1145,
+				"y": 745,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-initial-recovery-en",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 300,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Also for initial design."
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "am7eE",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-result-supported-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "green",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 985,
+						"y": 1335
+					},
+					"end": {
+						"x": 977,
+						"y": 1410
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "adsKpV",
+				"typeName": "shape"
+			},
+			{
 				"x": 870,
 				"y": 1530,
 				"rotation": 0,
@@ -2242,6 +4745,60 @@ tags:
 					"scale": 1
 				},
 				"index": "aaj6o8",
+				"typeName": "shape"
+			},
+			{
+				"x": 375,
+				"y": 1125,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-measure-1-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 285,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "要所に小さなアイコン"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "ラベルも残す"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aNThA",
 				"typeName": "shape"
 			},
 			{
@@ -2291,6 +4848,366 @@ tags:
 			},
 			{
 				"meta": {},
+				"id": "binding:ir-test-hypothesis-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-test-hypothesis-ja",
+				"toId": "shape:ir-trial-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 1183.5120922352262,
+				"y": 160,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-loop-label-ja",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"color": "green",
+					"size": "m",
+					"w": 296.4879077647738,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "通常の作図・改善へ戻る"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aoOEn",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-branch-recover-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-branch-recover-ja",
+				"toId": "shape:ir-recover-trigger-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-return-improvement-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-return-improvement-ja",
+				"toId": "shape:ir-resume-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.22857142857142856,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-ongoing-agent-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 930,
+						"y": 245
+					},
+					"end": {
+						"x": 1130,
+						"y": 300
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "anTWdl",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-ongoing-user-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 570,
+						"y": 245
+					},
+					"end": {
+						"x": 370,
+						"y": 300
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "ansUkV",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-normal-refine-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1130,
+						"y": 410
+					},
+					"end": {
+						"x": 930,
+						"y": 470
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aByfE",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-normal-candidate-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 370,
+						"y": 410
+					},
+					"end": {
+						"x": 570,
+						"y": 470
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "a6goOV",
+				"typeName": "shape"
+			},
+			{
+				"x": 375,
+				"y": 1010,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-measure-0-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 285,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "時間軸と"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "因果の矢印を分ける"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aK9hz",
+				"typeName": "shape"
+			},
+			{
+				"x": 810,
+				"y": 780,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-recover-region-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 640,
+					"h": 780,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": []
+							}
+						]
+					}
+				},
+				"index": "aUZhI",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
 				"id": "binding:apply-start",
 				"type": "arrow",
 				"fromId": "shape:apply",
@@ -2306,6 +5223,86 @@ tags:
 					"terminal": "start"
 				},
 				"typeName": "binding"
+			},
+			{
+				"x": 50,
+				"y": 1810,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-boundary-ja",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 1400,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "毎回必須の工程ではありません。SDK・保存の不具合は、別の操作復旧手順で対応します。"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "alagQ",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-return-recovery-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "green",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 977,
+						"y": 1520
+					},
+					"end": {
+						"x": 977,
+						"y": 1660
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aj8lv",
+				"typeName": "shape"
 			},
 			{
 				"x": 530,
@@ -2407,6 +5404,24 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-example-2-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-example-2-ja",
+				"toId": "shape:ir-symptom-2-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 60,
 				"y": 205,
 				"rotation": 0,
@@ -2443,6 +5458,60 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 845,
+				"y": 865,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-hypothesis-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 560,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Name one unknown and one hypothesis"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Define what result would decide the next step"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aW7fQ",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:maint-diagnose-verdicts-end",
 				"type": "arrow",
@@ -2459,6 +5528,64 @@ tags:
 					"terminal": "end"
 				},
 				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-1-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-example-1-ja",
+				"toId": "shape:ir-symptom-1-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 50,
+				"y": 780,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-improve-region-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 640,
+					"h": 780,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": []
+							}
+						]
+					}
+				},
+				"index": "aGzxB",
+				"typeName": "shape"
 			},
 			{
 				"x": 1160,
@@ -2503,6 +5630,50 @@ tags:
 					"scale": 1
 				},
 				"index": "aJzmKl",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-result-ask-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "orange",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1265,
+						"y": 1335
+					},
+					"end": {
+						"x": 1272,
+						"y": 1410
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "agtzD",
 				"typeName": "shape"
 			},
 			{
@@ -2562,6 +5733,24 @@ tags:
 					"normalizedAnchor": {
 						"x": 0,
 						"y": 0.4714285714285714
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-result-ask-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-result-ask-en",
+				"toId": "shape:ir-ask-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -2785,6 +5974,25 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:improvement-recovery-en",
+				"type": "frame",
+				"parentId": "page:improvement-recovery-en",
+				"props": {
+					"w": 1600,
+					"h": 1860,
+					"name": "improvement-and-recovery",
+					"color": "black"
+				},
+				"index": "a18TA",
+				"typeName": "shape"
+			},
+			{
 				"x": 530,
 				"y": 925,
 				"rotation": 0,
@@ -2929,6 +6137,42 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-start-improve-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-start-improve-ja",
+				"toId": "shape:ir-improve-trigger-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-0-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-example-0-ja",
+				"toId": "shape:ir-symptom-0-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 60,
 				"y": 100,
 				"rotation": 0,
@@ -2963,6 +6207,42 @@ tags:
 				},
 				"index": "a2JUm",
 				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-ongoing-agent-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-ongoing-agent-ja",
+				"toId": "shape:ir-deliver-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-normal-refine-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-normal-refine-ja",
+				"toId": "shape:ir-check-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.75,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
 			},
 			{
 				"x": 270,
@@ -3001,6 +6281,60 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 810,
+				"y": 630,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-recover-trigger-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 640,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "orange",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "No supported next change, or two revisions"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "leave the same issue without a new finding"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aDAij",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:ja-candidate-check-start",
 				"type": "arrow",
@@ -3019,6 +6353,398 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 835,
+				"y": 800,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-recover-title-en",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"color": "violet",
+					"size": "m",
+					"w": 590,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "RECOVERY: learn through a small trial"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aVKgX",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-branch-recover-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "orange",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 930,
+						"y": 565
+					},
+					"end": {
+						"x": 1130,
+						"y": 630
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aFdcv",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-inspect-trial-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1125,
+						"y": 1160
+					},
+					"end": {
+						"x": 1125,
+						"y": 1235
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "abUIe",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-example-2-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 325,
+						"y": 1285
+					},
+					"end": {
+						"x": 375,
+						"y": 1285
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aRdzq",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-return-improvement-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "green",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 370,
+						"y": 1520
+					},
+					"end": {
+						"x": 370,
+						"y": 1660
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "ailsQ",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-inspect-trial-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-inspect-trial-en",
+				"toId": "shape:ir-trial-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 50,
+				"y": 90,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-subtitle-en",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"color": "black",
+					"size": "m",
+					"w": 1400,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Improve a known problem. Recover when the next design decision has no support."
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a2WxU",
+				"typeName": "shape"
+			},
+			{
+				"x": 80,
+				"y": 1400,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-apply-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 580,
+					"h": 120,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Recommend / edit within scope"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Local fix or full rebuild; retain useful facts"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aS89v",
+				"typeName": "shape"
+			},
+			{
+				"x": 80,
+				"y": 1240,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-symptom-2-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 245,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "grey",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Overview text"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "is too small"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aPRIQ",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-loop-up-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-loop-up-en",
+				"toId": "shape:ir-loop-label-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": false,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "edge-point",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
 				"editingShapeId": null,
 				"croppingShapeId": null,
 				"selectedShapeIds": [],
@@ -3030,6 +6756,78 @@ tags:
 				"id": "instance_page_state:page:guide-design-system-ja",
 				"pageId": "page:guide-design-system-ja",
 				"typeName": "instance_page_state"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-return-recovery-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-return-recovery-ja",
+				"toId": "shape:ir-resume-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.6621428571428571,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 845,
+				"y": 1410,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-supported-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 265,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Evidence supports"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "the next change"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "adMdr",
+				"typeName": "shape"
 			},
 			{
 				"x": 360,
@@ -3077,6 +6875,68 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-example-1-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 325,
+						"y": 1170
+					},
+					"end": {
+						"x": 375,
+						"y": 1170
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aOAOz",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-branch-improve-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-branch-improve-ja",
+				"toId": "shape:ir-check-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.25,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 80,
 				"y": 1688,
 				"rotation": 0,
@@ -3113,6 +6973,50 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-start-improve-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 370,
+						"y": 710
+					},
+					"end": {
+						"x": 370,
+						"y": 865
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aGrtGV",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:ja-feedback-end",
 				"type": "arrow",
@@ -3129,6 +7033,78 @@ tags:
 					"terminal": "end"
 				},
 				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-result-supported-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-result-supported-en",
+				"toId": "shape:ir-inspect-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.25,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 80,
+				"y": 1125,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-symptom-1-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 245,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "grey",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Entities are hard"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "to picture"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aMAtv",
+				"typeName": "shape"
 			},
 			{
 				"x": 540,
@@ -3171,6 +7147,50 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-example-0-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 325,
+						"y": 1055
+					},
+					"end": {
+						"x": 375,
+						"y": 1055
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aL9YI",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:pass-end",
 				"type": "arrow",
@@ -3207,6 +7227,51 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 390,
+				"y": 155,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-ongoing-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 720,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "blue",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "通常の作図・改善"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "anuQA",
+				"typeName": "shape"
+			},
+			{
 				"x": 933,
 				"y": 742,
 				"rotation": 0,
@@ -3240,6 +7305,78 @@ tags:
 					}
 				},
 				"index": "aMuIQ",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-ongoing-user-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-ongoing-user-en",
+				"toId": "shape:ir-ongoing-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.25,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 80,
+				"y": 1010,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-symptom-0-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 245,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "grey",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Order and cause"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "are mixed"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aJQ9f",
 				"typeName": "shape"
 			},
 			{
@@ -3540,6 +7677,24 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-normal-candidate-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-normal-candidate-en",
+				"toId": "shape:ir-candidate-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 80,
 				"y": 655,
 				"rotation": 0,
@@ -3670,6 +7825,87 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 1140,
+				"y": 1410,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-ask-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 265,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "orange",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "s",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "2回試しても手がかりなし"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "具体的に一つ聞き、"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "必要な回答を待つ"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "ae3Hf",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-2-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-example-2-ja",
+				"toId": "shape:ir-measure-2-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 950.26171875,
 				"y": 364.08984375,
 				"rotation": 0,
@@ -3740,6 +7976,50 @@ tags:
 					"terminal": "end"
 				},
 				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-start-recover-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1130,
+						"y": 710
+					},
+					"end": {
+						"x": 1125,
+						"y": 865
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aUyWyG",
+				"typeName": "shape"
 			},
 			{
 				"x": 490,
@@ -3814,6 +8094,51 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 1140,
+				"y": 1575,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-wait-note-en",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 265,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Resume only after the"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "needed answer is obtained."
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "akzKs",
+				"typeName": "shape"
+			},
+			{
 				"x": 60,
 				"y": 465,
 				"rotation": 0,
@@ -3878,6 +8203,24 @@ tags:
 			},
 			{
 				"meta": {},
+				"id": "binding:ir-result-ask-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-result-ask-ja",
+				"toId": "shape:ir-inspect-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.75,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
 				"id": "binding:maint-compare-verdicts-end",
 				"type": "arrow",
 				"fromId": "shape:maint-compare-verdicts",
@@ -3888,6 +8231,24 @@ tags:
 					"normalizedAnchor": {
 						"x": 0,
 						"y": 0.75
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-1-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-example-1-ja",
+				"toId": "shape:ir-measure-1-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -3927,6 +8288,60 @@ tags:
 					},
 					"snap": "none",
 					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 50,
+				"y": 30,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-title-ja",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"color": "black",
+					"size": "l",
+					"w": 1400,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "図の改善と、行き詰まりからの回復"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a1Y1j",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-start-recover-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-start-recover-en",
+				"toId": "shape:ir-recover-trigger-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
 				},
 				"typeName": "binding"
 			},
@@ -4021,6 +8436,86 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-start-improve-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-start-improve-ja",
+				"toId": "shape:ir-improve-region-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-example-0-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-example-0-ja",
+				"toId": "shape:ir-measure-0-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-test-hypothesis-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1125,
+						"y": 975
+					},
+					"end": {
+						"x": 1125,
+						"y": 1050
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aXzpMWV",
+				"typeName": "shape"
+			},
+			{
 				"x": 540,
 				"y": 218.91371270584597,
 				"rotation": 0,
@@ -4097,6 +8592,114 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 845,
+				"y": 1029,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-trial-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 560,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "実際に小さく描く"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "核の3〜5要素・具体例1件・ラフ2案"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aXzJu",
+				"typeName": "shape"
+			},
+			{
+				"x": 390,
+				"y": 470,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-check-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 720,
+					"h": 95,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "blue",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "ASSESS THE PURPOSE AND CURRENT DIAGRAM"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Is there a supported measure or next hypothesis?"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a6AUB",
+				"typeName": "shape"
+			},
+			{
 				"x": 0,
 				"y": 0,
 				"rotation": 0,
@@ -4152,6 +8755,60 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-test-hypothesis-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-test-hypothesis-en",
+				"toId": "shape:ir-hypothesis-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-return-improvement-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-return-improvement-en",
+				"toId": "shape:ir-apply-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-branch-recover-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-branch-recover-en",
+				"toId": "shape:ir-check-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.75,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 80,
 				"y": 655,
 				"rotation": 0,
@@ -4198,6 +8855,24 @@ tags:
 				"typeName": "page"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-branch-improve-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-branch-improve-ja",
+				"toId": "shape:ir-improve-trigger-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
 				"gridSize": 10,
 				"name": "",
 				"meta": {
@@ -4239,11 +8914,58 @@ tags:
 								},
 								"note": "Japanese layout adjustments applied to English; English text and all bindings preserved. Original translation baselines retained."
 							}
+						},
+						"diagram-improvement-recovery": {
+							"schemaVersion": 2,
+							"editingSourcePageId": "page:improvement-recovery-en",
+							"languages": {
+								"en": "page:improvement-recovery-en",
+								"ja": "page:improvement-recovery-ja"
+							},
+							"checkpoints": {
+								"ja": {
+									"algorithm": "page-content-v2",
+									"sourcePageId": "page:improvement-recovery-en",
+									"source": {
+										"full": "008ce9d2a7f3eacbae1dfc0522670d99594d78f49bd9cb7b7e011b7874372895",
+										"content": "e7deb9c6ef4f42fd4f4e796fda6a17e52a11be8c52a582535eb3fd666a9d014a",
+										"legacy": "1fc1d4145e04d3a242770d0e43a220fe8086044c0a28310138f27d1df2e9be1d",
+										"hasAssets": false
+									},
+									"target": {
+										"full": "f9a7fa57c94b2d48e75bb04785d1c5700f43aa6eb5fbfd8127a2927e9d8b5304",
+										"content": "b928fa3621929342a16b81234f2d9bc085ed1c70e4cb7711a7d4e301380e350f",
+										"legacy": "e9993a4e76442d78d1409b981c0d41953de564e00ce349cf297ba1679014d91f",
+										"hasAssets": false
+									},
+									"kind": "translation",
+									"reason": "Reviewed clarified stall condition in both rendered languages: unresolved issue after two revisions without a useful new finding, or no supported next change. All user geometry, bindings, and other labels preserved.",
+									"reviewedAt": "2026-10-25T12:09:18.729Z"
+								}
+							}
 						}
 					}
 				},
 				"id": "document:document",
 				"typeName": "document"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-inspect-trial-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-inspect-trial-en",
+				"toId": "shape:ir-inspect-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
 			},
 			{
 				"x": 60,
@@ -4485,6 +9207,24 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-loop-up-start-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-loop-up-ja",
+				"toId": "shape:ir-resume-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 1,
+						"y": 0.5
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 60,
 				"y": 465,
 				"rotation": 0,
@@ -4674,6 +9414,123 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:ir-result-supported-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-result-supported-en",
+				"toId": "shape:ir-supported-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 845,
+				"y": 1197,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-inspect-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 560,
+					"h": 130,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 22,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "描画結果を確認"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "仮説を支持・否定・判断できない"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "否定なら、仮説を変えて再試行"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aYmqQ",
+				"typeName": "shape"
+			},
+			{
+				"x": 1145,
+				"y": 745,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-initial-recovery-ja",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"color": "black",
+					"size": "s",
+					"w": 300,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "初期設計の迷いも対象。"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "am2WA",
+				"typeName": "shape"
+			},
+			{
 				"x": 560,
 				"y": 316.6290228659914,
 				"rotation": 0,
@@ -4782,6 +9639,50 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-result-supported-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "green",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 985,
+						"y": 1335
+					},
+					"end": {
+						"x": 977,
+						"y": 1410
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "adwZZV",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:pass-start",
 				"type": "arrow",
@@ -4816,6 +9717,100 @@ tags:
 					"terminal": "end"
 				},
 				"typeName": "binding"
+			},
+			{
+				"x": 810,
+				"y": 780,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-recover-region-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 640,
+					"h": 780,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": []
+							}
+						]
+					}
+				},
+				"index": "aUeKf",
+				"typeName": "shape"
+			},
+			{
+				"x": 810,
+				"y": 300,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-deliver-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 640,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "blue",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "AGENT OBSERVATION"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "A concrete issue, improvement opportunity, or stall"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a8LzW",
+				"typeName": "shape"
 			},
 			{
 				"x": 732.1914714825828,
@@ -4855,6 +9850,200 @@ tags:
 			},
 			{
 				"meta": {},
+				"id": "binding:ir-ongoing-user-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-ongoing-user-en",
+				"toId": "shape:ir-candidate-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-ongoing-agent-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 930,
+						"y": 245
+					},
+					"end": {
+						"x": 1130,
+						"y": 300
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "anvm0E",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-ongoing-user-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 570,
+						"y": 245
+					},
+					"end": {
+						"x": 370,
+						"y": 300
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "anyJzZ",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-normal-refine-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1130,
+						"y": 410
+					},
+					"end": {
+						"x": 930,
+						"y": 470
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aBkUq",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-normal-candidate-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "grey",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 370,
+						"y": 410
+					},
+					"end": {
+						"x": 570,
+						"y": 470
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "a6k3pV",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
 				"id": "binding:distill-end",
 				"type": "arrow",
 				"fromId": "shape:distill",
@@ -4890,6 +10079,132 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 80,
+				"y": 865,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-match-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 580,
+					"h": 105,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Observed symptom → measure → benefit"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Ask intuitive choices if needed"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aIdaQ",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-normal-candidate-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-normal-candidate-en",
+				"toId": "shape:ir-check-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.25,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 845,
+				"y": 865,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-hypothesis-ja",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"w": 560,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "violet",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "不明点と仮説を一つに絞る"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "何が分かれば次を決められるか定める"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aWL6A",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:ja-maint-case-diagnose-start",
 				"type": "arrow",
@@ -4901,6 +10216,42 @@ tags:
 					"normalizedAnchor": {
 						"x": 1,
 						"y": 0.25
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-ongoing-agent-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-ongoing-agent-en",
+				"toId": "shape:ir-ongoing-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.75,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-normal-refine-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-normal-refine-en",
+				"toId": "shape:ir-deliver-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -4924,6 +10275,50 @@ tags:
 				},
 				"parentId": "page:guide-design-system-ja",
 				"index": "a1v7v",
+				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-return-recovery-ja",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-ja",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "green",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 977,
+						"y": 1520
+					},
+					"end": {
+						"x": 977,
+						"y": 1660
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "ajURa",
 				"typeName": "shape"
 			},
 			{
@@ -5017,6 +10412,68 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-loop-up-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "elbow",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "m",
+					"fill": "none",
+					"color": "green",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 1450,
+						"y": 1725
+					},
+					"end": {
+						"x": 1110,
+						"y": 200
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "apFl6",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-start-recover-end-en",
+				"type": "arrow",
+				"fromId": "shape:ir-start-recover-en",
+				"toId": "shape:ir-recover-region-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 870,
 				"y": 1350,
 				"rotation": 0,
@@ -5098,6 +10555,60 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"x": 50,
+				"y": 300,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-candidate-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 640,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "orange",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "USER FEEDBACK"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "“Hard to understand” / “Make it clearer”"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "a5TGf",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:maint-compare-verdicts-start",
 				"type": "arrow",
@@ -5116,6 +10627,212 @@ tags:
 				"typeName": "binding"
 			},
 			{
+				"x": 75,
+				"y": 800,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-improve-title-en",
+				"type": "text",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"color": "green",
+					"size": "m",
+					"w": 590,
+					"font": "sans",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "IMPROVEMENT: choose a concrete measure"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aHyJ2",
+				"typeName": "shape"
+			},
+			{
+				"x": 272.38484174786504,
+				"y": 1660,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-resume-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 944.9706844022611,
+					"h": 130,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "GAIN A SUPPORTED NEXT STEP"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Revise, check, refine, and save within scope. Retire unused drafts when appropriate."
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "ahLIf",
+				"typeName": "shape"
+			},
+			{
+				"x": 50,
+				"y": 630,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-improve-trigger-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 640,
+					"h": 110,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 0,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "orange",
+					"labelColor": "black",
+					"fill": "solid",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "A concrete measure can be linked"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "to an observed symptom and reading benefit"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aCJPX",
+				"typeName": "shape"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-return-recovery-start-en",
+				"type": "arrow",
+				"fromId": "shape:ir-return-recovery-en",
+				"toId": "shape:ir-supported-en",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-branch-improve-en",
+				"type": "arrow",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"kind": "arc",
+					"elbowMidPoint": 0.5,
+					"dash": "solid",
+					"size": "s",
+					"fill": "none",
+					"color": "orange",
+					"labelColor": "black",
+					"bend": 0,
+					"start": {
+						"x": 570,
+						"y": 565
+					},
+					"end": {
+						"x": 370,
+						"y": 630
+					},
+					"arrowheadStart": "none",
+					"arrowheadEnd": "arrow",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph"
+							}
+						]
+					},
+					"labelPosition": 0.5,
+					"font": "draw",
+					"scale": 1
+				},
+				"index": "aCiqH",
+				"typeName": "shape"
+			},
+			{
 				"meta": {},
 				"id": "binding:candidate-check-start",
 				"type": "arrow",
@@ -5130,6 +10847,24 @@ tags:
 					},
 					"snap": "none",
 					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"meta": {},
+				"id": "binding:ir-result-ask-end-ja",
+				"type": "arrow",
+				"fromId": "shape:ir-result-ask-ja",
+				"toId": "shape:ir-ask-ja",
+				"props": {
+					"isPrecise": true,
+					"isExact": true,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
 				},
 				"typeName": "binding"
 			},
@@ -5176,6 +10911,60 @@ tags:
 					"scale": 1
 				},
 				"index": "ahFsI",
+				"typeName": "shape"
+			},
+			{
+				"x": 375,
+				"y": 1240,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-measure-2-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 285,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Linked overview"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "and detail"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aQWrj",
 				"typeName": "shape"
 			},
 			{
@@ -5366,6 +11155,89 @@ tags:
 				},
 				"index": "a6uir",
 				"typeName": "shape"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:improvement-recovery-ja",
+				"type": "frame",
+				"parentId": "page:improvement-recovery-ja",
+				"props": {
+					"w": 1600,
+					"h": 1860,
+					"name": "improvement-and-recovery.ja",
+					"color": "black"
+				},
+				"index": "a1USe",
+				"typeName": "shape"
+			},
+			{
+				"x": 375,
+				"y": 1125,
+				"rotation": 0,
+				"isLocked": false,
+				"opacity": 1,
+				"meta": {},
+				"id": "shape:ir-measure-1-en",
+				"type": "geo",
+				"parentId": "shape:improvement-recovery-en",
+				"props": {
+					"w": 285,
+					"h": 90,
+					"geo": "rectangle",
+					"dash": "draw",
+					"growY": 2,
+					"url": "",
+					"scale": 1,
+					"flipX": false,
+					"flipY": false,
+					"color": "green",
+					"labelColor": "black",
+					"fill": "none",
+					"size": "m",
+					"font": "sans",
+					"align": "start",
+					"verticalAlign": "middle",
+					"richText": {
+						"type": "doc",
+						"content": [
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "A few recognizable"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "icons with labels"
+									}
+								]
+							}
+						]
+					}
+				},
+				"index": "aNvmA",
+				"typeName": "shape"
+			},
+			{
+				"meta": {
+					"diagramId": "diagram-improvement-recovery",
+					"language": "en"
+				},
+				"id": "page:improvement-recovery-en",
+				"name": "Improvement and recovery / English",
+				"index": "a3igX",
+				"typeName": "page"
 			}
 		]
 	}

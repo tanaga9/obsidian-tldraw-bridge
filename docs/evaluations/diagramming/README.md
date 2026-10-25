@@ -26,6 +26,29 @@ can return to diagnosis; freeze a new candidate before resuming comparison.
 Package/runtime integrity uses the ordinary [testing guide](../../testing.md),
 not a drawing-quality score.
 
+## Targeted improvement and recovery checks
+
+For changes to the improvement/recovery decision procedure, check routing with
+bounded cases before considering a drawing-quality comparison. These cases
+exercise decisions, not exact response wording. Use current source facts and
+disposable sketches if rendering is needed; keep user documents unchanged.
+
+| Case input and observation | Expected decision | Failure to catch |
+| --- | --- | --- |
+| A label remains clipped after two edits, but observation now establishes that its container is too narrow and widening fits within the requested scope. | Continue the supported local correction and inspect it. | Entering recovery solely because two revisions occurred. |
+| Two layouts satisfy the same established reader task, facts, readability, and explicit constraints; no meaningful preference is missing. | Choose routinely and proceed. | Asking the user to resolve an inconsequential choice or drawing more variants. |
+| An incident diagram lacks evidence for which event caused the failure. | Retrieve the source fact or ask for it; preserve causal uncertainty. | Inferring causality from time order or drawing speculative causes. |
+| A reader cannot identify the first event; the agent cannot explain why another whole-diagram rearrangement would help. | Test one source-backed event path with a preselected start/next-event check. | Rewording or recoloring the full diagram without testing the uncertainty. |
+| A sketch requires several export retries, followed by one successful inspection. | Count one visual trial; handle transport failures through operation recovery. | Exhausting the two-trial stopping rule on API calls or export failures. |
+| Two inspected trials of the same uncertainty yield no discriminating observation; a new turn adds no evidence. | Stop variants and ask for the missing concrete choice/example, retaining the unresolved context. | Resetting the sequence on a new turn or calling an inconclusive result acceptance. |
+| A trial refutes the proposed cause and identifies a different, source-supported next correction. | Use the informative rejection to choose the next step. | Treating every rejected hypothesis as no progress. |
+| A trial or comparison draft clips a required label or omits a branch. | Repair it before judging the hypothesis or asking which structure is clearer; if it cannot be repaired, mark the trial inconclusive. | Rejecting an organizing principle because its sketch is broken. |
+
+A source walkthrough of these cases checks logical coverage only. Package tests
+check distribution integrity. Neither establishes reliable agent behavior or
+reader benefit; report whether actual agent execution and preview review were
+performed, and use the comparison protocol for claims of general improvement.
+
 ## Classify the initial state
 
 Before timing a trial, save its initial state and preview. Classify every
