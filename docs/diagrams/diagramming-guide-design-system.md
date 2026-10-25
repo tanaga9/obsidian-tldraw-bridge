@@ -755,7 +755,7 @@ tags:
 					"h": 120,
 					"geo": "rectangle",
 					"dash": "draw",
-					"growY": 0,
+					"growY": 2,
 					"url": "",
 					"scale": 1,
 					"flipX": false,
@@ -775,7 +775,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "依頼範囲で提案・編集"
+										"text": "標準：主構造を保って改善"
 									}
 								]
 							},
@@ -784,7 +784,16 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "部分修正も全面再設計も可。情報を引き継ぐ"
+										"text": "抜本的再設計：先に変更範囲を合意"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "有用な情報を引き継ぐ"
 									}
 								]
 							}
@@ -1071,7 +1080,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "These are conditional aids, not mandatory extra phases. SDK or saving errors use operation recovery."
+										"text": "Conditional aids; trials do not authorize redesign. SDK/save errors use operation recovery."
 									}
 								]
 							}
@@ -2644,7 +2653,7 @@ tags:
 			},
 			{
 				"x": 1140,
-				"y": 1410,
+				"y": 1392,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -5340,7 +5349,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "毎回必須の工程ではありません。SDK・保存の不具合は、別の操作復旧手順で対応します。"
+										"text": "補助手順です。試行は抜本的再設計の許可になりません。SDK・保存の不具合は操作復旧で対応します。"
 									}
 								]
 							}
@@ -6723,7 +6732,7 @@ tags:
 					"h": 120,
 					"geo": "rectangle",
 					"dash": "draw",
-					"growY": 0,
+					"growY": 2,
 					"url": "",
 					"scale": 1,
 					"flipX": false,
@@ -6743,7 +6752,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Recommend / edit within scope"
+										"text": "Default: preserve the main structure"
 									}
 								]
 							},
@@ -6752,7 +6761,16 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Local fix or full rebuild; retain useful facts"
+										"text": "Redesign: agree scope first"
+									}
+								]
+							},
+							{
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Retain useful facts"
 									}
 								]
 							}
@@ -7916,7 +7934,7 @@ tags:
 			},
 			{
 				"x": 1140,
-				"y": 1410,
+				"y": 1392,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -9038,20 +9056,20 @@ tags:
 									"algorithm": "page-content-v2",
 									"sourcePageId": "page:improvement-recovery-en",
 									"source": {
-										"full": "aa471197a112f50c4dd23633282a334403aad4f4798228de00720ec55a110bd6",
-										"content": "f84e8dd3de542e906bd3dc7f8f4cad9aa9127a4a99ea54211f65c56217a67820",
-										"legacy": "29cc9e392adbf257662fdd41ff3786ad48f147c1fcb983a46f0afc1d653207c0",
+										"full": "4db251b2aee2a95ab68bc5246bfc0c5afd2bf3af18f71e9dc8fc6953aa2e15f3",
+										"content": "21a8427812943e75a754534486aec43482211b11abc9c37283635ee7fabc7fd3",
+										"legacy": "08aff6d5a9f004ee4a390fc2432d75f02f829ff56a7aba46afd4cc5c8fd2390e",
 										"hasAssets": false
 									},
 									"target": {
-										"full": "55efdcca9982447eaccac73bb1ce8fbc39600489b4d0a7105e05b2aa8ebb1c0a",
-										"content": "89ad5f5043cc234a43e0a4329d467b6c93af68bc3ffcba8c1f13d28abe6bc4f0",
-										"legacy": "8a439a214d23686a65d3cf79a4198cfc477b79798abb3f221b93f714406b00b8",
+										"full": "706079fbbc0b9a98dd3fb8a0a53cf6854f44391dd9e796e9dfbdcf449c07c6c7",
+										"content": "c8c465cc7e72c94985bc020456fe16c67814b5f39891fa6e4de08000d720cd93",
+										"legacy": "f900ab121c1271f159f99ce52789da6c77af6899d3e76fdb5b102dff02313659",
 										"hasAssets": false
 									},
-									"kind": "translation",
-									"reason": "Reviewed both English and Japanese renderings after the authorized updates: repeated revisions without new findings trigger recovery; two inspected trials of the same uncertainty without useful findings trigger a question. Rejected and inconclusive outcomes have distinct next actions. Existing relationships and unchanged translations were preserved.",
-									"reviewedAt": "2026-10-25T13:32:59.739Z"
+									"kind": "layout",
+									"reason": "Applied the user-requested shared layout adjustment: both question boxes are now at local y=1392, 18 units above the prior position. Reviewed both language previews; labels, meaning, bindings, and surrounding clearance are preserved.",
+									"reviewedAt": "2026-10-25T14:02:15.802Z"
 								}
 							}
 						}

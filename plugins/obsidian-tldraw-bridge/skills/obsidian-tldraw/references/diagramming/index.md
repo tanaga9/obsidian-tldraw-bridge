@@ -2,7 +2,12 @@
 
 ## Production workflow
 
-For new diagrams or substantial structural revisions:
+Use this workflow for new diagrams or authorized substantial structural revisions.
+
+For an existing diagram, first establish that a substantial structural revision
+is within the agreed scope using the [improvement and redesign conditions](improvement-patterns.md#ordinary-improvement-and-structural-redesign).
+A general improvement request defaults to preserving the main structure;
+choosing this production workflow does not itself authorize a redesign.
 
 1. **Establish the task:** Use the user's purpose, source facts, audience, and viewing conditions to state what the reader should understand or decide. Identify the required facts and relationships, including useful content to preserve in an existing diagram, and choose the [format and layout](#format-selection).
 2. **Draw a structural candidate:** If confidence in the design direction is insufficient, gather the missing information before committing to a structure, using the clarification guidance below. Once the direction is sufficiently supported, draw short element names and meaningful connections before visual polish or extended explanation. Use placement and containment to communicate the relationships. Keep necessary qualifications visible; distinguish different connection meanings, such as chronology and causality, with labels, line styles, or a small legend when direction alone is ambiguous.

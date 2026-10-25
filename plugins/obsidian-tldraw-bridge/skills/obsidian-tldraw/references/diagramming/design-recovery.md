@@ -37,7 +37,10 @@ Produce and inspect an actual sketch through the bridge workflow. Preserve the
 current usable diagram, required relationships, and relevant qualifications;
 limit the trial's scope rather than stripping essential meaning. Follow
 [improvement conversations](improvement-patterns.md) for intuitive questions,
-comparison choices, and editing scope. No separate trial report is needed.
+comparison choices, and editing scope. Keep trials that change the main structure
+in separate drafts. Recovery and successful trials do not authorize applying a
+structural redesign; follow the [redesign scope conditions](improvement-patterns.md#ordinary-improvement-and-structural-redesign)
+before replacing the delivered diagram. No separate trial report is needed.
 
 ## Use the result
 

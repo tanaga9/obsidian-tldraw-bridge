@@ -62,6 +62,11 @@ conditions for choosing a concrete improvement or a small design trial.
   reader benefit. Examples include separating chronology from causality, adding
   selective labeled icons, and separating overview from detail. Propose or edit
   within the user's scope; a request for suggestions alone ends with a proposal.
+- **Structural redesign:** substantially changing the main organization,
+  representation, or division into overview/detail views requires an explicit
+  request for that extent or agreement to a concrete proposal. Generic requests
+  to improve an existing diagram default to preserving its main structure.
+  Local corrections within the agreed scope proceed normally.
 - **Design recovery:** when the next change has no testable rationale, or repeated
   fixes leave the same difficulty unresolved without a useful new finding,
   isolate an unknown, draw a small
@@ -71,6 +76,9 @@ conditions for choosing a concrete improvement or a small design trial.
   wait for a required answer. Recovery can also precede the first structural draft.
 
 A known correction and equivalent acceptable layouts stay in ordinary work.
+Recovery trials gather decision evidence and do not authorize structural
+redesign. Keep trials of a new main structure separate from the usable diagram;
+agree on the proposed extent before applying an otherwise unauthorized redesign.
 Count inspected design trials, not API calls or export retries; an informative
 rejection that narrows the next choice is progress. The
 [targeted decision cases](evaluations/diagramming/README.md#targeted-improvement-and-recovery-checks)

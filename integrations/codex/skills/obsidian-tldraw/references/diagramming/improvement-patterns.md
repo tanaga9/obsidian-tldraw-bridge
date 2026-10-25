@@ -16,6 +16,32 @@ for improvements or propose preference-only changes. A proposal does not expand
 editing scope: perform known in-scope corrections normally, and keep broader
 changes as suggestions unless already authorized.
 
+## Ordinary improvement and structural redesign
+
+For an existing diagram, default to ordinary improvement: resolve the requested
+problem while retaining its main structure, representation, and useful content.
+Local regrouping, spacing, label, and connection corrections remain routine
+when they preserve that overall organization.
+
+Structural redesign substantially replaces the diagram's main organization or
+representation, or splits/combines its overview and detail views. Proceed when
+the user explicitly requests that extent or has agreed to a concrete proposal
+covering it. Reuse that authorization; do not ask again for routine decisions
+within the agreed scope. A generic request such as "improve this" or "make it
+clearer" alone does not authorize structural redesign.
+
+When redesign appears necessary but is not yet authorized, explain the observed
+reader problem, why retaining the structure would not resolve it, what would
+change, and what useful content would remain. Prepare the smallest useful
+comparison sketch in a separate draft when needed to make the proposal
+reviewable, preserving the current usable diagram. Agree on the proposed extent
+before applying the redesign to the delivered diagram. Continue known in-scope
+corrections without waiting when they remain useful independently.
+
+Design recovery gathers evidence for a next decision. Entering recovery or
+finding a promising trial does not authorize structural redesign or expand the
+agreed editing scope.
+
 ## Diagnose and ask
 
 Assume the user recognizes difficulty without knowing its cause. Inspect the
@@ -48,12 +74,12 @@ the intended effect after editing.
 | Text and simple symbols do not evoke the entities or roles. | Add small, recognizable icon images at a few useful points, paired with labels and consistent scale/style. | Picture and recognize the entities while following relationships. | Keep icons selective and recognizable at display size; omit decorative or ambiguous images that crowd labels or connections. |
 | Many elements compete; the main point or entry is hard to find. | Concentrate emphasis on the task's central elements using placement and restrained size, outline, or color differences. | Recognize where to start and what matters first. | Preserve equally critical branches, warnings, meaningful category cues, and adequate contrast. Essential meaning must survive without color. |
 
-Choose the editing extent needed to realize the measure: local refinement,
-regional restructuring, information organization, split/combined views, a change
-of representation, or a full rebuild. These are implementation choices, not
-substitutes for saying what will improve. They are not an escalation ladder:
-recommend rebuilding directly when the current structure obstructs the purpose.
-Carry forward required facts and useful existing strengths.
+Choose an editing extent within the agreed scope that realizes the measure.
+Recommend structural redesign directly when evidence shows the current structure
+obstructs the purpose; do not exhaust cosmetic edits first. Apply it only under
+the authorization conditions above. The extent of change does not substitute
+for explaining the reader benefit. Carry forward required facts and useful
+existing strengths.
 
 Usually recommend one direction. For example: "The explanations become too small
 at sharing width. Keep the main relationships in an overview and move supporting

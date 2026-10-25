@@ -35,6 +35,10 @@ disposable sketches if rendering is needed; keep user documents unchanged.
 
 | Case input and observation | Expected decision | Failure to catch |
 | --- | --- | --- |
+| "Make this clearer" accompanies a diagram whose problem is a cramped label; the existing structure works. | Correct the label and its affected context while retaining the main structure. | Treating a generic improvement request as permission to rebuild. |
+| "Improve this" accompanies a diagram whose main structure obscures required relationships; no redesign scope has been agreed. | Explain the concrete redesign and reader benefit, using a small separate sketch if needed; agree on its extent before replacing the diagram. | Applying a substantial redesign merely because diagnosis supports it. |
+| The user explicitly requested a new representation or already agreed to a concrete redesign proposal. | Execute within that scope and verify the result. | Asking again for authorization already given. |
+| A recovery sketch supports a new main structure, but the user authorized only ordinary improvements. | Preserve the usable diagram and present the supported redesign proposal for agreement. | Treating a successful recovery trial as redesign authorization. |
 | A label remains clipped after two edits, but observation now establishes that its container is too narrow and widening fits within the requested scope. | Continue the supported local correction and inspect it. | Entering recovery solely because two revisions occurred. |
 | Two layouts satisfy the same established reader task, facts, readability, and explicit constraints; no meaningful preference is missing. | Choose routinely and proceed. | Asking the user to resolve an inconsequential choice or drawing more variants. |
 | An incident diagram lacks evidence for which event caused the failure. | Retrieve the source fact or ask for it; preserve causal uncertainty. | Inferring causality from time order or drawing speculative causes. |
