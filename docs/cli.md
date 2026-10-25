@@ -111,6 +111,7 @@ SDK access, result fields, errors, persistence, and request-ID recovery.
 | Installed style specification | `style-spec <path> --shape-type <type>`; the document must already be open |
 | Compact observation | `observe <path> [--ids <id> ... \| --bounds X Y W H] [--limit N]`; continue with `--offset N --revision <revision> --page-id <currentPageId>` |
 | Full records | `state <path>`; add `--full` to `apply`, `batch`, `script`, or `freehand` for full edit results |
+| Edit, save and export | `apply <path> --revision <revision> --page-id <page> --input <file> --preview-output <absolute-image-path>`; optional `--preview-ids`, `--preview-bounds`, `--preview-scale`, `--preview-format`, `--preview-quality` |
 | Freehand drawing | `freehand <path> --revision <revision> --input <file>`; see [drawing input](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) |
 | Inspect an image | `image-info --file <image> [--max-dimension N --format webp --quality Q]` |
 | Insert PNG/WebP/JPEG | `insert-image <path> --revision <revision> --file <image> [--x X --y Y --width W --height H]` |
@@ -254,6 +255,32 @@ Format is not inferred from the filename. `--quality` accepts 0–1 for WebP
 Selection, bounds, scale, and revision checks work with both formats. The result
 includes `format`, the captured `revision`, and `sha256` of the exported image
 bytes. Output remains unchanged on render or revision failures.
+
+## Repeated local edits
+
+Combine named edits, persistence verification and image export in one request:
+
+```sh
+python3 bridge.py --vault Documents --request-id revise-example-1 apply 'Drawings/example.md' --revision '<revision-from-observe>' --page-id '<currentPageId>' --input edits.json --preview-output /absolute/path/example.webp
+```
+
+Observe current targets and affected context first, then inspect the exported
+image at its intended viewing size. Reuse the successful edit's persistence
+receipt when it matches the inspected preview revision. Each new edit needs a
+fresh request ID. Cached IDs and prior images do not establish the current state.
+
+Use `--preview-bounds X Y W H` for a crop including surrounding shapes, or
+`--preview-ids <id> ...` to export only selected shapes. Include affected
+connections and context; widen the review if the change propagates. Format,
+quality and scale follow standalone preview semantics. Options are validated
+before editing; selectors resolve after editing and can include new shapes.
+
+Success adds `preview` to the edit result. Saving failures skip export. If export
+fails after saving, `EDIT_PREVIEW_FAILED` reports `applied` and preserves the
+saved edit in `details.result`; inspect the current state and export separately
+instead of reapplying. Replay with the same retained ID returns the original
+result/failure without editing or exporting again. See the canonical
+[contract](../integrations/codex/skills/obsidian-tldraw/references/operations.md#apply-with-a-preview).
 
 ## Multilingual diagrams
 

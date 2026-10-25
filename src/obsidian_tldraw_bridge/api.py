@@ -42,7 +42,7 @@ class Bridge:
             "language-checkpoint": {"path", "revision", "checkpoint", "full"},
             "open": {"path", "currentPageId"}, "state": {"path"}, "saved": {"path"}, "close": {"path"},
             "observe": {"path", "revision", "pageId", "limit", "offset", "ids", "bounds"},
-            "apply": {"path", "revision", "pageId", "operations", "full"}, "batch": {"path", "revision", "operations", "full"},
+            "apply": {"path", "revision", "pageId", "operations", "full", "preview"}, "batch": {"path", "revision", "operations", "full"},
             "script": {"path", "revision", "code", "full"}, "freehand": {"path", "revision", "drawing", "full"},
             "image-info": {"file", "maxDimension", "format", "quality", "maxBytes"},
             "insert-image": {"path", "revision", "file", "x", "y", "width", "height", "parentId", "pageId", "shapeId", "full",
@@ -54,6 +54,14 @@ class Bridge:
         if not isinstance(arguments, dict) or set(arguments) - fields[action]:
             invalid("Arguments must be an object with known fields")
         args = dict(arguments)
+        if action == "apply" and "preview" in args:
+            preview = args["preview"]
+            allowed = {"output", "ids", "bounds", "scale", "format", "quality"}
+            if not isinstance(preview, dict) or set(preview) - allowed:
+                invalid("Edit preview must be an object with output and optional ids, bounds, scale, format, quality")
+            prepared = Bridge.prepare("preview", {"path": args.get("path"), **preview})
+            prepared.pop("path")
+            args["preview"] = prepared
         if action == "style-spec":
             if not isinstance(args.get("shapeType"), str) or not args["shapeType"].strip():
                 invalid("Specify a nonempty shapeType")
@@ -149,8 +157,12 @@ class Bridge:
             scale = args.get("scale", 1)
             if isinstance(scale, bool) or not isinstance(scale, (int, float)) or not 0 < scale <= 4:
                 invalid("Preview scale must be greater than 0 and at most 4")
-            output = Path(args.get("output", "")).expanduser().resolve()
-            if not args.get("output") or not output.parent.is_dir():
+            if not isinstance(args.get("output"), str) or not args["output"]:
+                invalid("Specify a preview output file")
+            output = Path(args["output"]).expanduser().resolve()
+            if not output.parent.is_dir():
                 invalid("Preview output directory does not exist")
+            if output.is_dir():
+                invalid("Preview output must be a file, not a directory")
             args["output"] = str(output)
         return args

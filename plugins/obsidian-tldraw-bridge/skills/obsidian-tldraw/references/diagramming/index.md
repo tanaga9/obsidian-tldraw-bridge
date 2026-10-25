@@ -14,6 +14,69 @@ Reuse what the conversation and available source material already establish. Whe
 
 Local corrections reuse the existing purpose and structure. Apply the check–revise loop to the affected content and connections, preserve unrelated content, and verify and deliver the saved result without restarting the whole design. Stop revising when the completion conditions are met; do not keep polishing without a task-relevant reason.
 
+### Local revision loop
+
+For successive corrections to an existing diagram:
+
+1. Reuse the established purpose, representation, viewing conditions, and useful
+   design choices. Reuse known IDs as lookup hints, not proof of current state.
+   Observe the current targets and affected context before planning the edit;
+   use exact records only where compact observation is insufficient.
+2. Choose the review scope using the [scope decisions](#scope-decisions) below.
+   Include incident connections and their labels, connected endpoints, affected
+   containers, and nearby content as relevant. A subset's bindings may refer to
+   shapes outside that subset; fetch their relevant context as well.
+3. Batch related, understood edits in one `apply`. When the review region is
+   known, include `--preview-output` and appropriate preview options to verify
+   saving and export the resulting revision in the same request. Bounds crops
+   retain surrounding content; ID-only exports omit unselected neighbors and
+   connections. Choose enough context to detect affected defects.
+4. Inspect the resulting image at the established viewing size and check affected
+   meaning, connections, readability, and preservation of useful existing content.
+   If a crop cannot establish the broader effect, inspect a wider export too.
+   Reuse matching edit persistence evidence; re-observe and recheck saving after
+   intervening changes. Correct remaining in-scope defects and inspect again;
+   stop once the requested change and completion conditions are satisfied.
+
+This combines execution and reuses context, not quality verdicts. Reconsider
+structure when the request or observed effects require it. Follow the full
+production workflow for substantial structural revisions; handle uncertain
+outcomes through the operation recovery contract.
+
+#### Scope decisions
+
+Use the smallest scope that can establish the completion conditions from current
+evidence. Choose autonomously for routine edits; the operation name alone does
+not establish risk. A color change can alter meaning, and a short text change
+can resize a box. Use these conditions rather than a mandatory score or report:
+
+| Observed or expected effect | Review scope |
+| --- | --- |
+| Meaning, geometry, connections, and viewing scale remain stable; for example, a nonsemantic style adjustment | Inspect the changed content with enough surrounding context to judge contrast and consistency. A fresh local render is sufficient when effects stay contained. |
+| Text wrapping, movement, resizing, alignment, rebinding, or grouping can affect neighbors | Inspect the changed elements, incident arrows and labels, endpoints, parent boundaries, and nearby peers. Prefer a context crop over isolated IDs; check actual rendered bounds and relevant bindings. |
+| Meaning, membership, reading order, shared styles, frame extent, or export scale changes across a diagram; or local effects cannot be bounded confidently | Inspect the affected diagram at overview size and relevant details at intended reading size. Recheck its relationships and useful existing content. Use the production workflow when the structure needs revision. |
+
+After the edit, widen the review if it reveals new wrapping or growth, clipped
+text, overlaps, changed arrow geometry, boundary crossings, or an unexpected
+change summary. Inspect exact records when needed to explain unexpected changes
+or establish preservation; do not infer correctness from an image alone. If
+effects reach a crop's edge or evidence does not establish their extent, inspect
+the containing group or diagram. Re-observe after intervening edits or revision
+conflicts; earlier review findings do not establish the quality of changed state.
+
+Broader inspection does not authorize broader edits. Preserve protected content;
+report an unrelated pre-existing defect instead of silently expanding the task.
+Make routine in-scope quality decisions without asking permission. Ask only when
+resolving an issue requires a consequential choice the task does not establish.
+
+If successive fixes move the same defect elsewhere or undo earlier improvements,
+diagnose its cause and reconsider the affected layout instead of continuing
+cosmetic adjustments. Stop when the requested change, affected quality, and
+preservation are supported by the inspected saved result. Reuse still-valid
+context and matching receipts; do not add full-page exports, repeated discovery,
+alternative designs, or written checklists without an identified reason. Briefly
+explain consequential tradeoffs or unresolved limitations in delivery.
+
 ## Resolving design conflicts
 
 Preserve accurate relationships, the requested purpose and scope, required readability and accessibility, and editing/persistence correctness. Treat these as completion conditions; visual polish or faster execution cannot compensate for failing them. Project conventions below are defaults, not universal perceptual constraints.

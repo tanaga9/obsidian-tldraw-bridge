@@ -43,6 +43,13 @@ def parser():
     apply.add_argument("--revision", required=True)
     apply.add_argument("--page-id", help="Reject if the dedicated Editor changed pages")
     apply.add_argument("--input", required=True, help="Operations JSON file, or - for stdin")
+    apply.add_argument("--preview-output", help="After saving, export this edit's revision for visual inspection")
+    preview_region = apply.add_mutually_exclusive_group()
+    preview_region.add_argument("--preview-ids", nargs="+", help="Export these shapes; include affected connections and context")
+    preview_region.add_argument("--preview-bounds", nargs=4, type=float, metavar=("X", "Y", "W", "H"))
+    apply.add_argument("--preview-scale", type=float)
+    apply.add_argument("--preview-format", choices=("png", "webp"))
+    apply.add_argument("--preview-quality", type=float)
     sub.add_parser("forget", help="Release a completed receipt; its id must not be retried afterwards").add_argument("id")
     sub.add_parser("create", help="Create a new tldraw Markdown note and open its editor session").add_argument("path", help="New vault-relative .md path")
     for command in ("open", "state", "saved", "close"):
@@ -175,6 +182,14 @@ def _execute(options):
             args["bounds"] = dict(zip(("x", "y", "w", "h"), options.bounds))
     if options.command == "apply" and options.page_id is not None:
         args["pageId"] = options.page_id
+    if options.command == "apply":
+        preview = {key: getattr(options, "preview_" + key) for key in
+                   ("output", "ids", "bounds", "scale", "format", "quality")
+                   if getattr(options, "preview_" + key) is not None}
+        if "bounds" in preview:
+            preview["bounds"] = dict(zip(("x", "y", "w", "h"), preview["bounds"]))
+        if preview:
+            args["preview"] = preview
     if options.command == "observe":
         args.update(limit=options.limit, offset=options.offset)
         if options.page_id is not None:

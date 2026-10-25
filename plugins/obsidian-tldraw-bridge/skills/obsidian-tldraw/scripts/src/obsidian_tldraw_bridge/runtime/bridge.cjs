@@ -352,7 +352,7 @@ function capabilities(app) {
     actions: ['doctor','capabilities','style-spec','language-status','language-checkpoint','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','close'],
     imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
       optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
-    preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9 },
+    preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9, afterApply: true },
     operations: operationFields, coordinates: { observeBounds: 'page', shapePosition: 'parent-local' }, observation: 'dedicated-editor-current-page',
     limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4,
       scriptResultBytes: SCRIPT_RESULT_BYTES, scriptResultDepth: SCRIPT_RESULT_DEPTH },
@@ -863,7 +863,48 @@ async function saved(app, path, expectedRevision) {
   throw new Error('Timed out waiting for Markdown persistence')
 }
 
+function validatePreview(args) {
+  const format = args.format === undefined ? 'webp' : args.format
+  if (!['png', 'webp'].includes(format)) throw fault('INVALID_INPUT', 'Preview format must be png or webp')
+  if (args.quality !== undefined && (typeof args.quality !== 'number' || !Number.isFinite(args.quality)
+    || args.quality < 0 || args.quality > 1 || format !== 'webp')) {
+    throw fault('INVALID_INPUT', 'Preview quality must be between 0 and 1 and is only supported for WebP')
+  }
+  if ([args.ids, args.part, args.bounds].filter(value => value !== undefined).length > 1) throw fault('INVALID_INPUT', 'Choose ids, part, or bounds, not more than one')
+  if (args.ids !== undefined && (!Array.isArray(args.ids) || !args.ids.length || args.ids.some(id => typeof id !== 'string'))) {
+    throw fault('INVALID_INPUT', 'Preview ids must be a nonempty list of shape IDs')
+  }
+  if (args.part !== undefined && (typeof args.part !== 'string' || !args.part.trim())) throw fault('INVALID_INPUT', 'Part must be a nonempty string')
+  const scale = args.scale ?? 1
+  if (!Number.isFinite(scale) || scale <= 0 || scale > 4) throw fault('INVALID_INPUT', 'Preview scale must be greater than 0 and at most 4')
+  if (args.bounds !== undefined) {
+    const b = args.bounds
+    if (!b || !['x', 'y', 'w', 'h'].every(key => Number.isFinite(b[key])) || b.w <= 0 || b.h <= 0) {
+      throw fault('INVALID_INPUT', 'Preview bounds must be finite with positive width and height')
+    }
+  }
+  return { format, scale }
+}
+
+function validateEditPreview(app, args) {
+  const preview = args.preview
+  const allowed = ['output', 'ids', 'bounds', 'scale', 'format', 'quality']
+  if (!preview || typeof preview !== 'object' || Array.isArray(preview) || Object.keys(preview).some(key => !allowed.includes(key))) {
+    throw fault('INVALID_INPUT', 'Invalid edit preview options')
+  }
+  validatePreview(preview)
+  const fs = require('node:fs'), path = require('node:path')
+  if (typeof preview.output !== 'string' || !path.isAbsolute(preview.output)) throw fault('INVALID_INPUT', 'Edit preview requires an absolute output path')
+  try {
+    if (!fs.statSync(path.dirname(preview.output)).isDirectory() || (fs.existsSync(preview.output) && fs.statSync(preview.output).isDirectory())) throw new Error('Invalid output path')
+  } catch (error) { throw fault('INVALID_INPUT', `Invalid preview output: ${errorMessage(error)}`) }
+  requireFunctions(sessionFor(app, args.path).editor, ['toImage'], 'editor')
+}
+
 async function execute(app, action, args) {
+  if (action !== 'apply' && args.preview !== undefined) {
+    throw fault('INVALID_INPUT', 'Edit preview is only supported by apply')
+  }
   if (action === 'doctor') {
     const plugin = app.plugins.getPlugin('tldraw')
     return {vault: app.vault.getName(), ...pluginSupport(plugin),
@@ -881,6 +922,7 @@ async function execute(app, action, args) {
     return {path:args.path,revision:snapshot.revision,...reviewLanguages(snapshot.records,args.diagramId)}
   }
   if (action === 'apply') {
+    if (args.preview !== undefined) validateEditPreview(app, args)
     if (args.pageId !== undefined && args.pageId !== sessionFor(app,args.path).editor.getCurrentPageId()) {
       throw fault('PAGE_CONFLICT', 'Current page changed; observe again before editing')
     }
@@ -899,7 +941,7 @@ async function execute(app, action, args) {
       throw fault('OPERATION_FAILED', errorMessage(error), unchanged ? 'not_applied' : 'unknown')
     }
     try {
-      return {...result, persistence: await saved(app,args.path,result.revision)}
+      result = {...result, persistence: await saved(app,args.path,result.revision)}
     } catch (error) {
       const scriptDetails = result.scriptResult === undefined ? {} : { scriptResult: result.scriptResult }
       if (error?.code === 'SAVE_CONFLICT') {
@@ -910,6 +952,20 @@ async function execute(app, action, args) {
         currentPageId: result.currentPageId, changes: result.changes, ...scriptDetails,
         recovery: 'Inspect state and saved; do not reapply the edit.' })
     }
+    if (args.preview !== undefined) {
+      try {
+        if (sessionFor(app, args.path).editor.getCurrentPageId() !== result.currentPageId) {
+          throw fault('PAGE_CONFLICT', 'Current page changed before edit preview')
+        }
+        const preview = await execute(app, 'preview', {...args.preview, path: args.path, revision: result.revision})
+        return {...result, preview}
+      } catch (error) {
+        throw fault('EDIT_PREVIEW_FAILED', 'Edit was saved, but its preview failed: ' + errorMessage(error), 'applied', {
+          result, cause: failureInfo(error),
+          recovery: 'Do not reapply the edit. Inspect current state and export a preview separately; confirm its revision is saved.' })
+      }
+    }
+    return result
   }
   if (action === 'saved') return saved(app, args.path)
   if (action === 'close') {
@@ -917,12 +973,7 @@ async function execute(app, action, args) {
     return close(app, args.path)
   }
   if (action === 'preview') {
-    const format = args.format === undefined ? 'webp' : args.format
-    if (!['png', 'webp'].includes(format)) throw fault('INVALID_INPUT', 'Preview format must be png or webp')
-    if (args.quality !== undefined && (typeof args.quality !== 'number' || !Number.isFinite(args.quality)
-      || args.quality < 0 || args.quality > 1 || format !== 'webp')) {
-      throw fault('INVALID_INPUT', 'Preview quality must be between 0 and 1 and is only supported for WebP')
-    }
+    const { format, scale } = validatePreview(args)
     const session = sessionFor(app, args.path)
     flushPendingChanges(app, session)
     if (args.revision) assertRevision(app, session,args.revision)
@@ -930,20 +981,13 @@ async function execute(app, action, args) {
     requireFunctions(editor, ['toImage'], 'editor')
     const capturedRevision = revision(editor)
     const pageIds = [...editor.getCurrentPageShapeIds()]
-    if ([args.ids, args.part, args.bounds].filter(value => value !== undefined).length > 1) throw new Error('Choose ids, part, or bounds, not more than one')
-    if (args.part !== undefined && (typeof args.part !== 'string' || !args.part.trim())) throw new Error('Part must be a nonempty string')
     const ids = args.part !== undefined
       ? pageIds.filter(id => editor.getShape(id)?.meta?.bridgeFreehand?.part === args.part)
       : args.ids ?? pageIds
     if (!Array.isArray(ids) || !ids.length || ids.some(id => !pageIds.includes(id))) throw new Error('Preview selection must contain existing current-page shapes')
-    const scale = args.scale ?? 1
-    if (!Number.isFinite(scale) || scale <= 0 || scale > 4) throw new Error('Preview scale must be greater than 0 and at most 4')
     let bounds
     if (args.bounds !== undefined) {
       const b = args.bounds
-      if (!b || !['x', 'y', 'w', 'h'].every(key => Number.isFinite(b[key])) || b.w <= 0 || b.h <= 0) {
-        throw new Error('Preview bounds must be finite with positive width and height')
-      }
       // Keep the SDK Box prototype required by toImage; never mutate cached geometry.
       const sample = ids.map(id => editor.getShapePageBounds(id)).find(Boolean)
       if (!sample) throw new Error('No shape bounds available for preview')

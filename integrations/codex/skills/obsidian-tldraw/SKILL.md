@@ -62,7 +62,15 @@ rather than substituting another vault.
 1. For a new diagram, use `create <vault-relative-path.md>` with an explicit `--request-id`. Continue with the returned actual path. If initialization fails after creation, recover the retained note with `open` and `saved` rather than creating another copy. For an existing note, use `open`.
 2. Use `observe` for current shapes, text, connections, and revision; use `state` for exact SDK records. Use parent-local `localPosition` for position edits, not page-space bounds. `capabilities` reports supported operations and limits.
 3. Use `apply <path> --revision <revision> --input <file>` for named edits. Give consequential edits a unique `--request-id`. On a revision conflict, observe and re-plan. Before uncertain style choices, use [style discovery](references/operations.md#style-discovery) and inspect the rendered result.
-4. Export `preview <path> --output <absolute-image-path>` and inspect affected meaning, connections, and readability. Confirm persistence with `saved` or `close` before delivery. `close` disposes the bridge Editor without closing human GUI tabs.
+4. Prefer `apply ... --preview-output <absolute-image-path>` to apply, verify persistence, and export that revision in one request; otherwise use `preview <path> --output <absolute-image-path>`. Inspect affected meaning, connections, and readability. A successful edit's `persistence` already confirms saving: reuse it when its revision matches the inspected preview. Use `saved` when evidence no longer matches; `close` additionally disposes the bridge Editor without closing human GUI tabs.
+
+For repeated local edits, use the [local revision loop](references/diagramming/index.md#local-revision-loop).
+Choose local, contextual, or diagram-wide review from the current effects and
+widen it when new evidence requires; use its scope decisions without a routine
+approval step. Keep image inspection and saved-revision evidence at every scope.
+Reuse established context and loaded guidance while they remain applicable; obtain
+current observation before editing. Do not repeat setup/discovery on each turn
+unless the connection, document, SDK, or task context changes or an error requires it.
 
 An initialized bridge session works independently of GUI tabs. Continue editing,
 saving, and previewing when the user closes a tab; no pause or user action is
@@ -86,7 +94,7 @@ revisions do not protect prose against concurrent saves.
 
 On a timeout or uncertain outcome, follow [failure recovery](references/operations.md#results-and-failure-recovery).
 Inspect `status <request-id>`, `state`, and `saved` before retrying.
-`SAVE_UNCONFIRMED` or `SAVE_CONFLICT` with outcome `applied` must not be reapplied.
+`SAVE_UNCONFIRMED`, `SAVE_CONFLICT`, or `EDIT_PREVIEW_FAILED` with outcome `applied` must not be reapplied.
 `RESULT_UNKNOWN` may be retried
 only as the identical request with the same ID while its receipt is retained.
 After a restart or a missing receipt, inspect the saved document before planning

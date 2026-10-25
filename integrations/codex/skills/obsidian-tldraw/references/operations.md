@@ -271,6 +271,38 @@ application; synchronous failures restore Store records. Ordinary batches share
 one history boundary. Use stable IDs for subsequent updates and preserve
 unrelated content. No automatic conflict resolution is performed.
 
+### Apply with a preview
+
+For repeated revisions, add `--preview-output <absolute-image-path>` to `apply`.
+Optional `--preview-ids <id> ...` or `--preview-bounds X Y W H` selects the
+review region; `--preview-scale`, `--preview-format`, and `--preview-quality`
+have the same semantics as standalone preview options. Without a region, export
+the whole current page. ID-only exports omit unselected context; bounds crops
+include surrounding shapes. Retain enough context for affected-quality review.
+
+Python callers pass `preview: {output, ids?, bounds?, scale?, format?, quality?}`
+alongside the normal `apply` arguments. Preview options and the export API are
+checked before editing; selectors are resolved against the resulting page, so
+newly created shapes may be selected. An invalid post-edit selection can still
+fail after the edit is saved.
+
+The request edits once, verifies persistence, then exports with the resulting
+revision pinned. The result adds `preview` with the usual image path, dimensions,
+format, revision and SHA-256. `result.revision`, `persistence.revision`, and
+`preview.revision` match on success. This is one retained request, not a
+transaction spanning editing and image output, and does not lock human edits.
+Inspect the image; successful export does not establish readability or meaning.
+Reuse its matching persistence receipt instead of an extra `saved` call unless
+intervening changes or recovery require fresh evidence.
+
+If saving fails, the existing save errors apply and no preview is attempted.
+If export fails after saving, `EDIT_PREVIEW_FAILED` has outcome `applied`;
+`details.result` contains the saved edit result and `details.cause` describes
+the export failure. Do not reapply. Inspect current state, export separately,
+and verify saving for that revision. Replaying the identical retained request
+returns the original success or failure without editing or exporting again;
+if the output was removed or overwritten, export separately with a fresh request.
+
 ## Image insertion
 
 `insert-image <path> --revision <revision> --file <local-image>` accepts PNG, WebP
@@ -425,6 +457,9 @@ available, `requestId` and `details`:
 - `SAVE_UNCONFIRMED` with outcome `applied`: the edit was applied but saving was
   not confirmed. Inspect `state` and `saved`; do not apply it again. Details
   include the revision produced by the edit.
+- `EDIT_PREVIEW_FAILED` with outcome `applied`: editing and saving succeeded,
+  but image export failed. Inspect `details.result` and `details.cause`; obtain a
+  fresh preview and matching saved evidence without reapplying the edit.
 - `RESULT_UNKNOWN` with outcome `unknown`: a transport failure or timeout left
   execution uncertain. Use `status <request-id>` or repeat the identical request
   with the same explicit ID while its receipt is retained. After a restart or

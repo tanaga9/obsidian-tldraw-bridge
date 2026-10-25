@@ -119,6 +119,144 @@ test('preview fails without replacing an output file if export changes revision'
   } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
 
+test('apply preview saves and renders one revision; retained replay performs neither again',async()=>{
+  const h=setup(), dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-apply-preview-')),output=path.join(dir,'out.webp')
+  let edits=0, renders=0, reads=0
+  const update=h.editor.updateShapes
+  h.editor.updateShapes=changes=>{edits++;update(changes)}
+  h.app.vault.read=async()=>{reads++;return h.markdown(h.values())}
+  const bytes=Buffer.from('RIFF1234WEBPencoded image')
+  h.editor.toImage=async(ids,options)=>{
+    renders++
+    assert.equal(reads,1,'Persistence must be checked before rendering')
+    assert.deepEqual(Array.from(ids),['shape:a'])
+    assert.equal(options.scale,.8)
+    return {blob:{type:'image/webp',arrayBuffer:async()=>bytes},width:200,height:100}
+  }
+  const args={path:'a.md',revision:h.access.revision(h.editor),pageId:'page:a',
+    operations:[{op:'updateShapes',shapes:[{id:'shape:a',x:20}]}],preview:{output,scale:.8}}
+  try {
+    const result=await h.invoke('apply',args,'edit-preview')
+    assert.notEqual(result.revision,args.revision)
+    assert.equal(result.persistence.saved,true)
+    assert.equal(result.revision,result.persistence.revision)
+    assert.equal(result.revision,result.preview.revision)
+    assert.equal(result.preview.sha256,require('node:crypto').createHash('sha256').update(bytes).digest('hex'))
+    assert.equal(result.changes.updated,1)
+    assert.deepEqual(fs.readFileSync(output),bytes)
+    fs.writeFileSync(output,'replaced after export')
+    assert.deepEqual(await h.invoke('apply',args,'edit-preview'),result)
+    assert.deepEqual([edits,renders,reads],[1,1,1])
+    assert.equal(fs.readFileSync(output,'utf8'),'replaced after export')
+    assert.throws(()=>h.api.dispatch(h.app,'apply',{...args,preview:{output,scale:1}},'edit-preview'),/already used/)
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('direct callers cannot attach edit previews to other mutation actions',async()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-unsupported-preview-')),output=path.join(dir,'out.webp')
+  try {
+    for(const action of ['batch','script','insert-image','language-checkpoint']) {
+      const h=setup(),before=copy(h.values())
+      h.app.vault.read=async()=>h.markdown(h.values())
+      h.editor.toImage=async()=>{throw new Error('Unexpected export')}
+      await assert.rejects(h.invoke(action,{path:'a.md',revision:h.access.revision(h.editor),
+        operations:[{method:'updateShapes',args:[[{id:'shape:a',x:20}]]}],
+        code:'editor.updateDocumentSettings({gridSize:999})',preview:{output}},action),/only supported by apply/)
+      const failure=JSON.parse(h.api.poll(h.app,action)).failure
+      assert.equal(failure.code,'INVALID_INPUT')
+      assert.equal(failure.outcome,'not_applied')
+      assert.deepEqual(copy(h.values()),before)
+      assert.equal(fs.existsSync(output),false)
+    }
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('invalid edit preview configuration fails before editing with an available export API',async()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-apply-invalid-')),output=path.join(dir,'out.webp')
+  try {
+    for(const preview of [null,[],{}, {output,revision:'override'}, {output,format:'jpeg'},
+      {output,format:'png',quality:.9}, {output,scale:0}, {output,ids:[]},
+      {output,ids:['shape:a'],bounds:{}}, {output,bounds:{x:0,y:0,w:0,h:1}},
+      {output:path.join(dir,'missing','out.webp')},{output:dir}]) {
+      const h=setup(),before=copy(h.values())
+      h.editor.toImage=async()=>{throw new Error('Unexpected export')}
+      await assert.rejects(h.invoke('apply',{path:'a.md',revision:h.access.revision(h.editor),
+        operations:[{op:'updateShapes',shapes:[{id:'shape:a',x:20}]}],preview}))
+      assert.deepEqual(copy(h.values()),before)
+      const failure=JSON.parse(h.api.poll(h.app,'job')).failure
+      assert.equal(failure.code,'INVALID_INPUT')
+      assert.equal(failure.outcome,'not_applied')
+    }
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('valid edit preview configuration with a missing export API fails before editing',async()=>{
+  const h=setup(),dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-apply-no-export-'))
+  const before=copy(h.values())
+  try {
+    await assert.rejects(h.invoke('apply',{path:'a.md',revision:h.access.revision(h.editor),
+      operations:[{op:'updateShapes',shapes:[{id:'shape:a',x:20}]}],
+      preview:{output:path.join(dir,'out.webp')}}),/editor.toImage/)
+    const failure=JSON.parse(h.api.poll(h.app,'job')).failure
+    assert.equal(failure.code,'TLDRAW_UNSUPPORTED')
+    assert.equal(failure.outcome,'not_applied')
+    assert.deepEqual(copy(h.values()),before)
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+for(const kind of ['stale','page','save','save-conflict','render','selection','during-render','write']) {
+  test(`apply preview recovers without reapplying after ${kind} failure`,async()=>{
+    const h=setup(),dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-apply-fail-')),output=path.join(dir,'out.webp')
+    fs.writeFileSync(output,'existing preview')
+    let edits=0,renders=0
+    const update=h.editor.updateShapes
+    h.editor.updateShapes=changes=>{edits++;update(changes)}
+    h.app.vault.read=async()=>{
+      if(kind==='save')throw new Error('disk unavailable')
+      if(kind==='save-conflict')h.editor.updateDocumentSettings({gridSize:30})
+      return h.markdown(h.values())
+    }
+    h.editor.toImage=async()=>{
+      renders++
+      if(kind==='render')throw new Error('encoder failed')
+      if(kind==='during-render')h.editor.updateDocumentSettings({gridSize:40})
+      if(kind==='write')fs.mkdirSync(output+'.dir')
+      return {blob:{type:'image/webp',arrayBuffer:async()=>Buffer.from('RIFF1234WEBPencoded image')},width:1,height:1}
+    }
+    const args={path:'a.md',revision:kind==='stale'?'old':h.access.revision(h.editor),
+      pageId:kind==='page'?'page:other':'page:a',
+      operations:[{op:'updateShapes',shapes:[{id:'shape:a',x:20}]}],
+      preview:{output:kind==='write'?output+'.dir':output,...(kind==='selection'?{ids:['shape:missing']}:{})}}
+    try {
+      await assert.rejects(h.invoke('apply',args,'failed-edit'))
+      const receipt=JSON.parse(h.api.poll(h.app,'failed-edit')),failure=receipt.failure
+      if(['stale','page'].includes(kind)) {
+        assert.equal(edits,0)
+        assert.equal(failure.outcome,'not_applied')
+        assert.equal(renders,0)
+      } else {
+        assert.equal(edits,1)
+        assert.equal(failure.outcome,'applied')
+        if(kind.startsWith('save')) {
+          assert.equal(failure.code,kind==='save'?'SAVE_UNCONFIRMED':'SAVE_CONFLICT')
+          assert.equal(renders,0)
+        } else {
+          assert.equal(failure.code,'EDIT_PREVIEW_FAILED')
+          assert.equal(failure.details.result.persistence.saved,true)
+          assert.equal(failure.details.result.revision,failure.details.result.persistence.revision)
+          assert.equal(failure.details.result.changes.updated,1)
+          if(kind==='during-render')assert.equal(failure.details.cause.code,'REVISION_CONFLICT')
+        }
+      }
+      assert.equal(fs.readFileSync(output,'utf8'),'existing preview')
+      const counts=[edits,renders]
+      await assert.rejects(h.invoke('apply',args,'failed-edit'))
+      assert.deepEqual([edits,renders],counts)
+      assert.deepEqual(JSON.parse(h.api.poll(h.app,'failed-edit')),receipt)
+    } finally {fs.rmSync(dir,{recursive:true,force:true})}
+  })
+}
+
 test('unchanged preview writes bytes tagged with the captured revision',async()=>{
   const h=setup(), dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-preview-')),output=path.join(dir,'out.png')
   h.editor.toImage=async(ids,options)=>{

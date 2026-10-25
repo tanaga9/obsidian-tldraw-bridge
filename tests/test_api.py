@@ -12,6 +12,61 @@ from obsidian_tldraw_bridge.cli import main
 
 
 class SharedApiTest(unittest.TestCase):
+    def test_edit_preview_is_validated_before_connecting(self):
+        factory = Mock()
+        bridge = Bridge('V', client_factory=factory)
+        output = str(Path.cwd() / 'review.webp')
+        for preview in (None, [], {}, {'output': None}, {'output': True}, {'output': str(Path.cwd())},
+                        {'output': output, 'path': 'other.md'},
+                        {'output': output, 'revision': 'stale'},
+                        {'output': output, 'format': 'png', 'quality': .9},
+                        {'output': output, 'scale': 0},
+                        {'output': output, 'bounds': {'x': 0, 'y': 0, 'w': -1, 'h': 3}},
+                        {'output': output, 'ids': ['shape:a'], 'bounds': {}},
+                        {'output': str(Path.cwd() / 'missing-directory' / 'out.webp')}):
+            with self.subTest(preview=preview), self.assertRaises(BridgeError) as failure:
+                bridge.call('apply', {'path': 'a.md', 'revision': 'r',
+                                     'operations': [], 'preview': preview})
+            self.assertEqual(failure.exception.outcome, 'not_applied')
+        factory.assert_not_called()
+
+    def test_edit_preview_cli_and_api_share_one_retained_request(self):
+        factory = Mock()
+        output = str(Path.cwd() / 'review.webp')
+        operations = [{'op': 'updateShapes', 'shapes': [{'id': 'shape:a', 'type': 'geo', 'x': 20}]}]
+        args = {'path': 'a.md', 'revision': 'r', 'pageId': 'page:a', 'operations': operations,
+                'preview': {'output': output, 'bounds': {'x': 0., 'y': 0., 'w': 500., 'h': 300.},
+                            'scale': .8, 'format': 'webp', 'quality': .9}}
+        result = {'revision': 'after', 'persistence': {'saved': True, 'revision': 'after'},
+                  'preview': {'path': output, 'revision': 'after', 'sha256': 'hash'}}
+        factory.return_value.call.return_value = result
+        self.assertEqual(Bridge('V', client_factory=factory).call('apply', args, 'edit-preview'), result)
+        factory.return_value.call.assert_called_once_with('apply', args, 'edit-preview')
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, \
+                patch('sys.stdin', io.StringIO(json.dumps(operations))), contextlib.redirect_stdout(io.StringIO()) as stdout:
+            client.return_value.call.return_value = result
+            self.assertEqual(main(['--vault', 'V', '--request-id', 'edit-preview', 'apply', 'a.md',
+                '--revision', 'r', '--page-id', 'page:a', '--input', '-', '--preview-output', output,
+                '--preview-bounds', '0', '0', '500', '300', '--preview-scale', '.8',
+                '--preview-format', 'webp', '--preview-quality', '.9']), 0)
+            client.return_value.call.assert_called_once_with('apply', args, 'edit-preview')
+            self.assertEqual(json.loads(stdout.getvalue()), result)
+
+    def test_preview_output_directory_error_describes_the_actual_problem(self):
+        factory = Mock()
+        with self.assertRaises(BridgeError) as failure:
+            Bridge('V', client_factory=factory).call('preview', {'path': 'a.md', 'output': str(Path.cwd())})
+        self.assertEqual(failure.exception.code, 'INVALID_INPUT')
+        self.assertIn('file, not a directory', str(failure.exception))
+        factory.assert_not_called()
+
+    def test_cli_preview_options_require_output_before_connecting(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, \
+                patch('sys.stdin', io.StringIO('[]')), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(main(['--vault', 'V', 'apply', 'a.md', '--revision', 'r',
+                                   '--input', '-', '--preview-scale', '.8']), 1)
+            client.assert_not_called()
+
     def test_preview_format_and_quality_validation(self):
         factory = Mock()
         bridge = Bridge('V', client_factory=factory)

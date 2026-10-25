@@ -42,6 +42,7 @@ These checks do not require a running Obsidian instance. They cover:
 | Synchronous rollback | Failed edits restore records, including history-ignored changes, without leaving forward changes queued for other Editors. |
 | Exceptions | Arbitrary thrown values become failed jobs with readable errors; subsequent requests remain usable. |
 | Preview | WebP defaults, explicit PNG export, format/quality validation, and encoder fallback checks. Part and ID selections export only current-page shapes at the requested scale. Bounds crop the whole page with surrounding shapes. Invalid selections, bounds, and revision conflicts leave output files unchanged. |
+| Apply with preview | One retained request edits, verifies persistence and exports the same revision. Invalid options and missing export APIs reject before editing. Stale revisions, page conflicts, save failures, post-edit selection/export/write failures, concurrent changes during export, and retained success/failure replay preserve applied-state reporting without duplicate edits. |
 | Receipt capacity | The limit rejects new work while preserving retained results and their deduplication protection. |
 | Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. Missing or non-function runtime exports are rejected before closing sessions; corrected code can load without restarting. |
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders preserve UTF-8 source bytes, generate the manifest with LF line endings, and exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
@@ -138,6 +139,21 @@ and Markdown during discovery, compact/full script results, retained replay/stat
 invalid-result rollback in shared records and persistence, and saved edits with
 results. It removes its note and closes its session. No production diagram is
 edited. The CLI/API adapter contract is also covered by the automated tests.
+
+## Apply with preview integration check
+
+```sh
+python3 tests/live_apply_preview.py --vault obsidian-tldraw-bridge
+```
+
+Select the registered vault explicitly. Uses an isolated runtime and creates its
+own temporary note in `workspace/drawings/`. Checks successive local edits,
+whole-page/ID/bounds exports, matching edit/save/export revisions, unrelated
+node and binding preservation, identical bytes from a standalone export,
+retained success/failure replay, applied export-failure recovery, and the CLI
+adapter. Removes its note and session; leaves a WebP in the OS temporary
+directory (or `--output`) for visual inspection. Inspect that image separately.
+This checks runtime behavior, not an overall Agent speed or drawing-quality gain.
 
 ## Freehand integration check
 

@@ -51,6 +51,14 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
   `{"hasValue":true,"value":null}`. Invalid results restore Store changes.
   See [script results](../integrations/codex/skills/obsidian-tldraw/references/operations.md#script-results)
   for allowed types, errors, and persistence-failure recovery.
+- `apply` optionally accepts `preview: {output, ids?, bounds?, scale?, format?, quality?}`.
+  It verifies the saved edit, then exports that revision in the same request.
+  Success adds a normal `preview` receipt whose revision matches both the edit
+  and persistence receipt. Visual inspection is still required. Export failure
+  after saving raises `EDIT_PREVIEW_FAILED` with outcome `applied`, saved edit
+  evidence in `details.result`, and export failure in `details.cause`; do not
+  reapply. Retained replay returns the original result/failure without exporting
+  again. See [apply with a preview](../integrations/codex/skills/obsidian-tldraw/references/operations.md#apply-with-a-preview).
 - `freehand` takes a `drawing` object, compiled to a synchronous SDK script.
 - `insert-image` takes `path`, `revision`, and a local image `file`, plus optional
   `x`, `y`, `width`, `height`, `parentId`, `pageId`, `shapeId`, and `full`.
