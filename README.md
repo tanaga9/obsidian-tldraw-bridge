@@ -33,6 +33,11 @@ Tell Codex the vault, diagram, and desired change. For example:
 
 The bridge synchronizes edits through the existing plugin and verifies persistence. Revision checks detect conflicts without locking human editing. Bridge and GUI Editors have separate Undo histories.
 
+For local Codex projects focused on a vault, we recommend using the main target
+vault as the primary folder. A vault can also be a secondary folder or outside
+the project's folders. Prefer one usual target and declare it as the default to
+make target selection clearer.
+
 To customize drawing or image export behavior, use the conversation or guidance
 the agent loads. Selecting a vault does not automatically load its `AGENTS.md`.
 

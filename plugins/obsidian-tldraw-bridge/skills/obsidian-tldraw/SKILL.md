@@ -38,12 +38,21 @@ when needed. A “cannot find Obsidian” error can result from sandbox restrict
 check [CLI connection failures](references/operations.md#cli-connection-failures-in-codex)
 before recommending a restart or reconfiguration.
 
+When advising on vault-focused local Codex projects, recommend making the main
+target vault the primary folder. Secondary folders and vaults outside the
+project's folders also work; prefer one usual target and an explicitly declared
+default.
+Codex does not automatically discover `AGENTS.md`, skills, or `config.toml` in
+secondary folders. Read and apply vault-specific instructions when directed by
+the user or loaded project instructions; attaching a folder does not load them.
+
 Resolve the vault before vault-scoped commands. Reuse the user's explicit choice
-for the same task. `--vault` takes a registered name or ID, not a path; resolve
-paths through `vaults` (without `--vault`). In a multi-vault environment, if there
-is any uncertainty, ask before proceeding. Present names, paths, and tldraw status
-for the relevant candidates; do not select from the active vault or recent use
-alone. See [vault enumeration](references/operations.md#vault-enumeration) for
+for the same task. Use an explicitly declared project default only when the user
+has not selected a vault for that task. `--vault` takes a registered name or ID,
+not a path; resolve paths through `vaults` (without `--vault`). In a multi-vault
+environment, if there is any uncertainty, ask before proceeding. Present names,
+paths, and tldraw status for the relevant candidates; do not select from the
+active vault or recent use alone. See [vault enumeration](references/operations.md#vault-enumeration) for
 unknown statuses and alternative config folders.
 If discovery fails or the requested vault is absent, ask for its name or path
 rather than substituting another vault.

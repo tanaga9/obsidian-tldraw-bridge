@@ -9,21 +9,35 @@ At startup, Codex loads global instructions and discovers project instructions
 along the path from the project root to its working directory. See the
 [official discovery rules](https://learn.chatgpt.com/docs/agent-configuration/agents-md#how-codex-discovers-guidance).
 
+## Recommended project setup
+
+For local Codex projects centered on drawing in a vault, use the main target
+vault as the **primary folder**. A vault can also be a **secondary folder** or
+outside the project's folders. In those setups, prefer one usual target vault
+and explicitly declare it as the default; a task can still select another vault.
+
+Codex does not automatically discover `AGENTS.md`, skills, or `config.toml` from
+secondary folders. To apply vault-specific instructions, add a rule to the
+primary folder's instructions asking the agent to read them, or ask directly
+in the conversation.
+See the [official project folder documentation](https://learn.chatgpt.com/docs/projects#use-local-projects-for-folders-and-codebases).
+
 ![The workspace and vault share /work/project and its AGENTS.md; an external vault may require a separate instruction read. Bridge edits either target.](diagrams/agent-instruction-scope.webp)
 
-This example assumes Codex's working directory is `/work/project` and its root
-`AGENTS.md` is already loaded. The workspace is the project folder; the
+In this diagram, the workspace is the primary folder, `/work/project`, and is
+also Codex's working directory. Its root `AGENTS.md` is already loaded. The other
+vault can be a secondary folder or outside the project's folders. The
 marketplace-installed Skill is separate. The [editable tldraw note](diagrams/agent-instruction-scope.md)
 contains the diagram's shapes and connections.
 
 ## Path examples
 
-For these examples, the working directory is `/work/project`.
+For these examples, the primary folder and working directory are `/work/project`.
 
 | Vault root | Instruction loading |
 | --- | --- |
 | `/work/project` | Workspace and vault share the same root `AGENTS.md`, loaded in this example. |
-| `/notes/team` | Selecting this vault does not load its `AGENTS.md`; read it separately if needed. |
+| `/notes/team` | Whether it is a secondary folder or outside the project's folders, selecting this vault does not load its `AGENTS.md`; read it separately if needed. |
 
 ## Load instructions from another vault
 
@@ -33,8 +47,8 @@ For example, tell the agent:
 > and apply its drawing and export instructions to this task. Report any read
 > failure.
 
-For repeated use, put this instruction in the workspace's `AGENTS.md`, using the
-intended vault's actual path.
+For repeated use, put this instruction in the primary folder's `AGENTS.md`, using
+the intended vault's actual path.
 
 ## Example drawing and export instructions
 
