@@ -10,12 +10,12 @@ A general improvement request defaults to preserving the main structure;
 choosing this production workflow does not itself authorize a redesign.
 
 1. **Establish the task:** Use the user's purpose, source facts, audience, and viewing conditions to state what the reader should understand or decide. Identify the required facts and relationships, including useful content to preserve in an existing diagram, and choose the [format and layout](#format-selection).
-2. **Draw a structural candidate:** If confidence in the design direction is insufficient, gather the missing information before committing to a structure, using the clarification guidance below. Once the direction is sufficiently supported, draw short element names and meaningful connections before visual polish or extended explanation. Use placement and containment to communicate the relationships. Keep necessary qualifications visible; distinguish different connection meanings, such as chronology and causality, with labels, line styles, or a small legend when direction alone is ambiguous.
+2. **Draw a structural candidate:** For a new diagram, use the [initial sketch and collaborative expansion](#starting-a-new-diagram) approach below. If confidence in the design direction is insufficient, gather the missing information before committing to a structure, using the clarification guidance below. Once the direction is sufficiently supported, draw short element names and meaningful connections before visual polish or extended explanation. Use placement and containment to communicate the relationships. Keep necessary qualifications visible; distinguish different connection meanings, such as chronology and causality, with labels, line styles, or a small legend when direction alone is ambiguous.
 3. **Check and revise:** Inspect the candidate against the task and the [completion conditions](#resolving-design-conflicts). If meaning, required content, or structure fails, revise the structure and check again. For readability problems, adjust layout, grouping, or detail level; relax obstructive project defaults before sacrificing meaning. Resolve incorrect connections or edits as well. Proceed when the candidate communicates the required relationships and can be read at its intended viewing level; supporting notes must not hide essential meaning.
 4. **Refine and verify:** Improve navigation, consistency, appearance, and effort within those conditions. Add only explanation and detail that serve the purpose; move extended explanation into supporting notes. Perform the [quality check](#quality-check). If refinement breaks a completion condition, return to the affected structure or layout and recheck it.
 5. **Save and deliver:** Confirm persistence using the [operation contracts](../operations.md), then provide the editable note and a useful preview or link for the user's task. Report any unresolved limitation instead of calling an unchecked or unsaved result complete.
 
-Reuse what the conversation and available source material already establish. When uncertainty about the purpose, facts, audience, or representation could materially change the structure, gather evidence from those sources and ask the user focused questions where needed. Continue until the answers or evidence give reasonable confidence in the design direction; do not commit to a consequential assumption merely to produce a candidate quickly. Prefer one concise question at a time with two or three outcome-oriented choices and room for a free-form answer. When the available information sufficiently supports the direction, proceed without requiring confirmation. Show a structural draft early to refine direction, and ask follow-ups only for important ambiguities it reveals. Handle routine drawing decisions without questioning the user at every step.
+Reuse what the conversation and available source material already establish. When uncertainty about the purpose, facts, audience, or representation could materially change the structure, gather evidence from those sources and ask the user focused questions where needed. Continue until the answers or evidence give reasonable confidence in the design direction; do not commit to a consequential assumption merely to produce a candidate quickly. Prefer one concise question at a time with two or three outcome-oriented choices and room for a free-form answer. When the available information sufficiently supports the direction, proceed with the next agreed increment without requiring confirmation for routine drawing decisions. For new diagrams, use the early feedback points below to agree on the main concept and how to expand the diagram.
 
 Local corrections reuse the existing purpose and structure. Apply the check–revise loop to the affected content and connections, preserve unrelated content, and verify and deliver the saved result without restarting the whole design. Stop revising when the completion conditions are met; do not keep polishing without a task-relevant reason.
 
@@ -25,6 +25,30 @@ hard to understand," or an observed issue warrants a proactive suggestion, use
 be chosen or revisions stop yielding useful findings, use
 [design recovery](design-recovery.md). These are conditional aids, not extra
 steps for known corrections or routine choices between acceptable layouts.
+
+### Starting a new diagram
+
+Begin with a simple, readable initial sketch of the main concept and its essential
+relationships. Inspect and save it, then show it to the user to check whether it
+matches their intended concept before building the full diagram. Treat this as an
+initial draft, not completion of the full request. Reuse any direction already
+established by the user; an explicit request for a complete first pass takes
+precedence.
+
+Offer a few concrete extensions to the initial sketch, explaining what each would add
+or clarify. Incorporate the user's feedback and chosen extensions, inspect and
+save the updated diagram, then repeat at meaningful increments while the diagram
+is taking shape. Do not silently apply all proposed extensions before receiving
+feedback. Extend the same page by default; use another page when a distinct topic
+or detail view benefits from separation, keeping information that needs simultaneous
+comparison together and making the relationship between pages clear.
+
+If early feedback reveals a mismatch in the main concept, stop expanding and
+identify its cause with the user. Revisit the purpose, assumptions, or representation;
+consider restarting the initial draft when patching it would preserve the mismatch.
+Use [design recovery](design-recovery.md) when the next direction remains unclear.
+Once the main concept and scope are established, continue the production workflow to
+complete the agreed diagram.
 
 ### Local revision loop
 
