@@ -20,7 +20,9 @@ Keep meaningful arrows bound to their target shapes. Touching a box visually doe
 
 A geo shape's effective height can include `growY` after text wrapping, and a text shape's rendered width includes `props.scale`. Compare actual rendered bounds rather than raw `w`/`h` values when fitting labels or balancing padding. Equal `props.h` values and equal normalized anchors do not guarantee horizontal arrows. Give peer boxes sufficient room for their labels and align their actual centers or attachment points after layout settles. Preserve bindings when correcting slopes.
 
-Check incident-arrow labels after resizing or rebinding a node. In plugin 1.32.0 / SDK 5.4.0, native `sans` arrow labels have been observed vertically clipped in raster previews despite complete stored text. If this occurs, test a local label-layout or font adjustment and re-export; `mono` resolved the reproduced case. Preserve label text and bindings. Use a separate text label only when the edit scope permits adding shapes.
+Prefer a line or arrow's native label over a separate text shape placed on top, where native labels are supported. Keeping the label with its connector reduces misalignment and missed updates when moving or reconnecting it. Use separate overlaid text when the native label cannot provide the required placement or styling, and only when the edit scope permits adding shapes.
+
+Prefer `mono` for native connector labels when no explicit font choice or existing meaningful style takes precedence. Verify wrapping and clipping in exports at their intended display size, including incident-arrow labels after resizing or rebinding a node. Adjust the local label layout and re-export as needed. Preserve label text and bindings.
 
 ## Verification
 
