@@ -180,7 +180,7 @@ class Client:
                                     # exits promptly, and reap only this child if
                                     # a confirmed reply outlives its exit grace.
                                     try:
-                                        process.wait(timeout=min(.05, max(0, deadline - time.monotonic())))
+                                        process.wait(timeout=min(.1, max(0, deadline - time.monotonic())))
                                     except subprocess.TimeoutExpired:
                                         process.kill()
                                         process.wait()
