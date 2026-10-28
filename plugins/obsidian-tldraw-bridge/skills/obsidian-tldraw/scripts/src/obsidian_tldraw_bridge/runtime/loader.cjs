@@ -16,7 +16,7 @@ function context(app, filename) {
     const legacy = require.cache[require.resolve(filename)]?.exports
     contexts.set(filename, {
       active: legacy, digest: null, versions: legacy ? [legacy] : [],
-      jobs: new Map(), reopen: new Map(), reloadErrors: new Map(),
+      jobs: new Map(), pendingUpdate: null,
     })
   }
   return contexts.get(filename)
@@ -45,63 +45,45 @@ async function invoke(runtime, app, action, args) {
   }
 }
 
-async function capturePage(runtime, app, document) {
-  const state = await invoke(runtime, app, 'state', { path: document })
-  if (state.currentPageId) return state.currentPageId
-  // Runtimes from before page reporting still support synchronous scripts.
-  const key = `bridge-reload-page-${crypto.randomUUID()}`
-  const slot = Symbol.for(key)
-  try {
-    await invoke(runtime, app, 'script', {
-      path: document, revision: state.revision,
-      code: `app[Symbol.for(${JSON.stringify(key)})] = editor.getCurrentPageId();`,
-    })
-    if (!app[slot]) throw new Error('Cannot capture current page before runtime update')
-    return app[slot]
-  } finally {
-    delete app[slot]
-  }
-}
-
 async function refresh(ctx, app, filename) {
-  const source = fs.readFileSync(filename, 'utf8')
+  let source
+  try {
+    source = fs.readFileSync(filename, 'utf8')
+  } catch (error) {
+    if (!ctx.active) throw error
+    // An unavailable source must not prevent existing sessions from being used
+    // or explicitly closed. No replacement can be loaded until it is readable.
+    ctx.pendingUpdate = { reason: 'source_unavailable', error: error.message }
+    return
+  }
   const digest = crypto.createHash('sha256').update(source).digest('hex')
-  if (ctx.digest !== digest) {
-    // Compile and validate before closing anything or retaining the new runtime.
-    const fresh = new Module(filename, module)
-    fresh.filename = filename
-    fresh.paths = Module._nodeModulePaths(path.dirname(filename))
-    fresh._compile(source, filename)
-    const missing = ['dispatch', 'poll', 'forget'].filter(method => typeof fresh.exports?.[method] !== 'function')
-    if (missing.length) {
-      throw Object.assign(new Error(`Required runtime APIs are unavailable: ${missing.join(', ')}`),
-        { code: 'INVALID_RUNTIME', outcome: 'not_applied' })
-    }
-    if (ctx.active) {
-      const previous = await invoke(ctx.active, app, 'doctor', {})
-      for (const document of previous.documents) {
-        ctx.reopen.set(document, await capturePage(ctx.active, app, document))
-      }
-      // close checks persistence before disposing. A busy old runtime rejects
-      // doctor above, so a running edit is never interrupted by an update.
-      for (const document of previous.documents) {
-        await invoke(ctx.active, app, 'close', { path: document })
-      }
-    }
-    ctx.active = fresh.exports
-    ctx.versions.push(fresh.exports)
-    ctx.digest = digest
+  if (ctx.digest === digest) {
+    ctx.pendingUpdate = null
+    return
   }
-  for (const [document, currentPageId] of ctx.reopen) {
-    try {
-      await invoke(ctx.active, app, 'open', { path: document, currentPageId })
-      ctx.reloadErrors.delete(document)
-    } catch (error) {
-      ctx.reloadErrors.set(document, { path: document, currentPageId, error: error.message || String(error) })
+  if (ctx.active) {
+    const previous = await invoke(ctx.active, app, 'doctor', {})
+    if (previous.documents.length) {
+      // Keep a single session owner. Updating never captures, closes or reopens
+      // documents; explicit close retains the runtime's persistence checks.
+      ctx.pendingUpdate = { reason: 'open_sessions', documents: previous.documents }
+      return
     }
-    // One failed document must not block diagnostics or unrelated documents.
-    ctx.reopen.delete(document)
   }
+  const fresh = new Module(filename, module)
+  fresh.filename = filename
+  fresh.paths = Module._nodeModulePaths(path.dirname(filename))
+  fresh._compile(source, filename)
+  const missing = ['dispatch', 'poll', 'forget'].filter(method => typeof fresh.exports?.[method] !== 'function')
+  if (missing.length) {
+    throw Object.assign(new Error(`Required runtime APIs are unavailable: ${missing.join(', ')}`),
+      { code: 'INVALID_RUNTIME', outcome: 'not_applied' })
+  }
+  ctx.active = fresh.exports
+  // Old runtimes retain receipts only, with no open document sessions.
+  ctx.versions.push(fresh.exports)
+  ctx.digest = digest
+  ctx.pendingUpdate = null
 }
 
 module.exports = {
@@ -123,20 +105,8 @@ module.exports = {
     ctx.jobs.set(id, job)
     Promise.resolve().then(async () => {
       await refresh(ctx, app, filename)
-      const failed = ctx.reloadErrors.get(args.path)
-      if (failed && action === 'close') {
-        const status = await invoke(ctx.active, app, 'doctor', {})
-        if (status.documents.includes(args.path)) await invoke(ctx.active, app, 'close', args)
-        ctx.reloadErrors.delete(args.path)
-        return { closed: true }
-      }
-      if (failed && action !== 'open') {
-        throw new Error(`Session could not be reopened: ${args.path}: ${failed.error}. Use open to retry or close to dismiss.`)
-      }
-      const requestArgs = failed ? { currentPageId: failed.currentPageId, ...args } : args
-      const result = await invoke(ctx.active, app, action, requestArgs)
-      if (action === 'open') ctx.reloadErrors.delete(args.path)
-      return action === 'doctor' ? { ...result, reloadErrors: [...ctx.reloadErrors.values()] } : result
+      const result = await invoke(ctx.active, app, action, args)
+      return action === 'doctor' ? { ...result, pendingUpdate: ctx.pendingUpdate } : result
     }).then(
       result => { job.result = result; job.status = 'complete' },
       error => {

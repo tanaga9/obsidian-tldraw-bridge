@@ -234,12 +234,15 @@ bridge session. Showing a result in Obsidian is separate from creating or editin
 Bridge and GUI Editors have separate Undo histories. Reopen sessions after an
 Obsidian restart.
 
-Runtime source updates check persistence and recreate sessions, preserving selected
-pages and retained request IDs, but resetting bridge Undo history. Running work
-is not interrupted. Failed reopens appear in `doctor.reloadErrors`; retry with
-`open <path>` or dismiss with `close <path>`. If the previous page was deleted,
-dismiss before reopening. Other documents remain usable. Changes to `loader.cjs`
-itself require restarting Obsidian.
+Drawing runtime source updates wait until all bridge sessions are explicitly
+closed. While sessions remain, diagnostics and normal operations continue on the
+existing runtime; `doctor.pendingUpdate` reports `reason: "open_sessions"` and
+its document paths. Updating never saves, closes or reopens sessions automatically.
+Explicit `close` still verifies persistence. After the last session closes, the
+next new request loads the latest source; reopen documents explicitly when needed.
+Retained request IDs remain deduplicated across replacements. An unreadable source
+leaves the loaded runtime usable with `reason: "source_unavailable"` and an error
+message. Changes to `loader.cjs` itself require restarting Obsidian.
 
 Optional `python3 -m pip install .` exposes the `obsidian-tldraw` command.
 

@@ -47,11 +47,30 @@ Showing a diagram in a GUI tab is a separate action, not a prerequisite for edit
 or previews.
 
 `close` verifies persistence and disposes the bridge Editor without closing human
-GUI tabs. Obsidian restarts discard sessions; use `open` again. Runtime replacement
-can also recreate sessions after checking persistence, restoring their selected
-pages but resetting bridge Undo history. Failed reopens appear in
-`doctor.reloadErrors`; retry with `open` or dismiss the recovery entry with
-`close`. Other documents remain usable.
+GUI tabs. Obsidian restarts discard sessions; use `open` again.
+
+When drawing runtime source changes, replacement waits until every bridge session
+has been explicitly closed. While sessions remain, all requests continue using
+the existing runtime, including diagnostics, editing and new documents. Updates
+never capture, close or reopen sessions automatically, so selected pages and Undo
+history stay in their existing Editors. `doctor.pendingUpdate` is `null` when no
+update is waiting, or `{reason: "open_sessions", documents: [...]}` while open
+sessions defer replacement. Close each document after its work is saved; the next
+new request loads the latest source. Reopening is an explicit caller operation.
+Retained request IDs remain deduplicated across replacements.
+
+If the source cannot be read, an already loaded runtime remains usable and doctor
+reports `{reason: "source_unavailable", error: "..."}`. With no sessions left,
+invalid updated source fails validation before replacement; correct it and retry.
+
+A deleted or moved file may still have a session whose `saved` or `close` fails.
+That failure belongs to the explicit document request, rather than to an automatic
+update. Use `state` to retrieve records, revision and selected page when the
+existing runtime can still read its Editor. This is live memory, not a durable
+backup. Other documents and diagnostics continue on the existing runtime; the
+update remains pending until all sessions can be closed. There is no automatic
+file restoration, session transfer or forced disposal. Preserve any needed
+in-memory content before deciding how to resolve missing-file sessions or restart.
 
 Treat initialization interrupted by a closed tab or window, and app exits, as
 ordinary interruptions. Briefly explain what remains unfinished and any

@@ -44,7 +44,7 @@ These checks do not require a running Obsidian instance. They cover:
 | Preview | WebP defaults, explicit PNG export, format/quality validation, and encoder fallback checks. Part and ID selections export only current-page shapes at the requested scale. Bounds crop the whole page with surrounding shapes. Invalid selections, bounds, and revision conflicts leave output files unchanged. |
 | Apply with preview | One retained request edits, verifies persistence and exports the same revision. Invalid options and missing export APIs reject before editing. Stale revisions, page conflicts, save failures, post-edit selection/export/write failures, concurrent changes during export, and retained success/failure replay preserve applied-state reporting without duplicate edits. |
 | Receipt capacity | The limit rejects new work while preserving retained results and their deduplication protection. |
-| Runtime updates | Changed source replaces the cached runtime after persistence checks and reopens sessions with their selected pages restored. Failed reopens are isolated and reported by doctor; retry and dismissal remain available. Retained request IDs remain deduplicated. Busy runtimes, save failures and invalid updates do not interrupt editing. Missing or non-function runtime exports are rejected before closing sessions; corrected code can load without restarting. |
+| Runtime updates | Open sessions defer source replacement; all normal requests continue on the existing runtime. Updates do not capture, close or reopen documents. Explicit close still checks persistence; missing-file closure failures do not block diagnostics or unrelated work. Doctor reports pending updates. After every session has been explicitly closed, the next new request validates and loads the latest source. Source reversion clears deferral; unreadable source keeps the loaded runtime usable. Retained request IDs remain deduplicated, including legacy receipts. Busy runtimes and invalid initial/replacement exports cannot cause session disposal. |
 | Packaging | The bundled CLI runs outside the source checkout, references resolve, and generated plugin files match canonical sources. Builders preserve UTF-8 source bytes, generate the manifest with LF line endings, and exclude `.DS_Store` recursively; metadata differences are ignored during consistency checks while real source changes are still detected. |
 
 CLI response tests cover LF and CRLF framing while preserving U+0085, U+2028,
@@ -188,21 +188,68 @@ This check creates a uniquely named folder and Markdown note through `create`, v
 
 ## Runtime reload integration check
 
+To check update deferral with a deleted document, run:
+
+```sh
+python3 tests/live_pending_update.py --vault Documents
+```
+
+This uses isolated runtime/loader copies and UUID-named temporary notes. It creates
+and edits two documents, saves a recovery copy outside the vault, closes only its
+own GUI tabs and deletes one test note while its bridge session remains live.
+Changed runtime source must stay pending; doctor and state remain usable without
+capturing or closing sessions. An explicit close of the deleted document must
+fail persistence verification. The healthy document and a new document must remain
+editable and saved on the existing runtime; a WebP export checks rendering. The
+missing file must not be automatically recreated.
+
+Cleanup restores only the deleted test note, verifies normal session closure and
+removes all test notes/sessions. The next doctor must load the new runtime with
+no pending update. Runtime copies, a path manifest, recovery data, diagnostics and
+the WebP remain in the reported temporary directory as verification evidence.
+Each bridge request allows 120 seconds. Request identity and arguments are recorded
+in `pending-request.json` before dispatch. An interruption (including Ctrl-C) or
+unknown request/evaluation outcome stops cleanup and preserves the original error;
+inspect the recorded receipt or evaluation slot before continuing. Offline tests
+in `tests/test_live_pending_update.py` verify interruption and unknown outcomes
+without connecting to Obsidian.
+Production sessions and loader caches are not changed. This does not deploy the
+fix to the production loader or prove recovery of existing unsaved work.
+
 Against an existing dedicated test diagram, run:
 
 ```sh
 python3 tests/live_reload.py --vault Documents --path 'Bridge test diagram.md'
 ```
 
-The check loads a temporary runtime, changes its source at the same path, and verifies automatic session recreation, unchanged document records and revision, initialized text options, and replay of a retained request ID. It does not add or remove shapes in this mode. The loader is also copied to a fresh path so the check always exercises the code on disk.
+The check loads temporary runtime/loader copies and changes the runtime source.
+It verifies that the old runtime and its session remain in use, with unchanged
+records, revision and selected page. After explicitly closing the session, doctor
+loads the new runtime. The test explicitly reopens the document on the recorded
+page, verifies saved content and checks retained request replay across replacement.
+It does not add or remove shapes in this mode.
 
-To verify that an edit after reload targets the previously selected second page, use:
+If a bridge request or vault evaluation has an unknown outcome, the test stops
+without sending cleanup requests. On any failure it retains the temporary
+runtime/loader and `manifest.json` (vault, document and runtime paths). An
+uncertain operation is recorded in `pending.json` with its request ID or
+application evaluation slot. Inspect that operation before resuming cleanup;
+do not rerun the test as recovery. On success, sessions and completed receipts
+are released and the temporary runtime directory is removed. Offline regression
+tests in `tests/test_live_reload.py` cover unknown reopen, cleanup-close and vault
+evaluation outcomes, ordinary assertion failure and successful cleanup without
+connecting to Obsidian.
+
+To check editing on a selected second page while an update is pending, use:
 
 ```sh
 python3 tests/live_reload.py --vault Documents --path 'Bridge test diagram.md' --multi-page-copy
 ```
 
-This mode creates a temporary diagram copy, selects a new second page, reloads the runtime, and checks the parent page of a newly created shape. The copy is deleted after the check; the source diagram is not edited.
+This mode creates a temporary diagram copy, selects a new second page, changes the
+runtime source and verifies that a new shape still belongs to the selected page
+in the existing Editor. It then closes, reloads and explicitly reopens the copy to
+verify persistence. The copy is deleted; the source diagram is not edited.
 
 ## Single-document integration test
 
