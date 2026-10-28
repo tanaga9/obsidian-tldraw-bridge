@@ -231,6 +231,14 @@ its contents even if that cleanup fails. The sender also retries cleanup after a
 acknowledged response. Files are removed when the CLI process cannot be started. Runtime requests, revisions and request IDs keep their normal meaning;
 the temporary filename is not part of request identity.
 
+Each evaluation reply carries a fresh transport token. After the matching complete
+reply is received, the sender gives its CLI child a short exit grace, then reaps
+that child if it remains alive. Obsidian and any dispatched bridge job continue
+normally. A reply reporting a running job still requires polling; receipt status
+and persistence verification remain authoritative. Missing, partial or mismatched
+replies keep the normal timeout and unknown-outcome recovery behavior. Plain CLI
+commands without evaluation framing still wait for normal process exit.
+
 If delivery is unacknowledged, including a timeout or empty output, an unread file may remain.
 Errors include `details.evaluationFiles` when tracked files remain, including all
 unacknowledged dispatch/poll files at the final request timeout. Consumed files are

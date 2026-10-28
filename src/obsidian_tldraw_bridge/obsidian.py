@@ -43,6 +43,30 @@ def _capture_output():
             yield writer, reader
 
 
+def _evaluation_response(stdout, token, *, final=False):
+    """Decode only a complete response from this invocation, ignoring log lines."""
+    lines = stdout.split(b"\n")
+    if not final:
+        lines = lines[:-1]
+    for line in reversed(lines):
+        if not line.startswith(b"=> "):
+            continue
+        try:
+            envelope = json.loads(line[3:].decode("utf-8"))
+        except (UnicodeError, ValueError):
+            continue
+        if not isinstance(envelope, dict) or envelope.get("bridgeResponseToken") != token:
+            continue
+        if "value" not in envelope:
+            # JavaScript undefined has no JSON value; missing_ok retains its
+            # normal meaning without mistaking console output for a response.
+            return b""
+        value = envelope["value"]
+        text = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+        return b"=> " + text.encode("utf-8") + b"\n"
+    return None
+
+
 DEFAULT_CLI = Path("/Applications/Obsidian.app/Contents/MacOS/obsidian-cli")
 
 def validate_connection(vault, timeout):
@@ -128,26 +152,62 @@ class Client:
             pass  # Cleanup must not hide an evaluation result or its original error.
 
     @staticmethod
-    def _run_cli(argv, timeout):
+    def _run_cli(argv, timeout, *, response_token=None):
         process = None
         try:
-            # Regular files avoid pipe EOF waits; independent readers never move
-            # the positions of writers inherited by descendants.
+            # Independent readers never move the positions of writers inherited
+            # by descendants. A tagged eval reply, rather than CLI exit, confirms
+            # delivery; Obsidian may reply and then leave its CLI process alive.
             with _capture_output() as (stdout, stdout_reader), _capture_output() as (stderr, stderr_reader):
                 process = subprocess.Popen(argv, stdout=stdout, stderr=stderr)
+                response = None
+                response_reaped = False
                 with process:
                     try:
-                        process.wait(timeout=timeout)
+                        if response_token is None:
+                            process.wait(timeout=timeout)
+                        else:
+                            deadline = time.monotonic() + timeout
+                            last_size = -1
+                            while True:
+                                size = os.fstat(stdout.fileno()).st_size
+                                if size != last_size:
+                                    stdout_reader.seek(0)
+                                    response = _evaluation_response(stdout_reader.read(size), response_token)
+                                    last_size = size
+                                if response is not None:
+                                    # Preserve normal CLI exit failures when it
+                                    # exits promptly, and reap only this child if
+                                    # a confirmed reply outlives its exit grace.
+                                    try:
+                                        process.wait(timeout=min(.05, max(0, deadline - time.monotonic())))
+                                    except subprocess.TimeoutExpired:
+                                        process.kill()
+                                        process.wait()
+                                        response_reaped = True
+                                    break
+                                if process.poll() is not None:
+                                    break
+                                remaining = deadline - time.monotonic()
+                                if remaining <= 0:
+                                    raise subprocess.TimeoutExpired(argv, timeout)
+                                time.sleep(min(.01, remaining))
                     except BaseException:
                         process.kill()
                         process.wait()
                         raise
-                # Snapshot the direct child's completed output. Do not follow
-                # later writes from descendants or wait for their handles to close.
-                stdout_size = os.fstat(stdout.fileno()).st_size
-                stderr_size = os.fstat(stderr.fileno()).st_size
-                return subprocess.CompletedProcess(argv, process.returncode,
-                                                   stdout_reader.read(stdout_size), stderr_reader.read(stderr_size))
+                stdout_reader.seek(0)
+                raw_stdout = stdout_reader.read(os.fstat(stdout.fileno()).st_size)
+                raw_stderr = stderr_reader.read(os.fstat(stderr.fileno()).st_size)
+                if response_token is not None:
+                    response = _evaluation_response(raw_stdout, response_token, final=True)
+                    # Unmatched frames are logs, never an evaluation response.
+                    raw_stdout = response if response is not None else b"\n".join(
+                        line for line in raw_stdout.split(b"\n") if not line.startswith(b"=> "))
+                result = subprocess.CompletedProcess(argv, process.returncode, raw_stdout, raw_stderr)
+                result.response_received = response_token is not None and response is not None
+                result.response_reaped = response_reaped
+                return result
         except OSError as exc:
             if process is None:
                 raise _CliLaunchError(str(exc)) from exc
@@ -165,19 +225,21 @@ class Client:
                 source.write(code)
             encoded_path = base64.b64encode(str(payload).encode("utf-8")).decode("ascii")
             # Keep argv short and independent of quoting in the evaluation source.
+            response_token = uuid.uuid4().hex
             bootstrap = ("(()=>{const fs=require('node:fs');const p=Buffer.from('" + encoded_path +
                          "','base64').toString('utf8');const code=fs.readFileSync(p,'utf8');"
-                         "try{fs.unlinkSync(p)}catch{};return eval(code)})()")
+                         "try{fs.unlinkSync(p)}catch{};return JSON.stringify({bridgeResponseToken:" +
+                         json.dumps(response_token) + ",value:eval(code)})})()")
             delivery = "unacknowledged"
             proc = self._run_cli([self.executable, "vault=" + self.vault, "eval", "code=" + bootstrap],
-                                 timeout=self.timeout if timeout is None else timeout)
+                                 timeout=self.timeout if timeout is None else timeout, response_token=response_token)
             # Decode explicitly so response encoding never depends on the locale.
             stdout = proc.stdout.decode("utf-8")
             stderr = proc.stderr.decode("utf-8")
             # Split LF/CRLF output without treating Unicode characters inside
             # JSON strings (NEL, line separator, paragraph separator) as framing.
             values = [line[3:] for line in stdout.split("\n") if line.startswith("=> ")]
-            if values:
+            if values or getattr(proc, "response_received", False):
                 delivery = "acknowledged"
         except _CliLaunchError as exc:
             delivery = "prepared"
@@ -205,7 +267,7 @@ class Client:
         if not values and "Command line interface is not enabled" in stdout + stderr:
             raise BridgeError("Enable the official Obsidian CLI in Settings > General > Advanced.",
                               code="CLI_DISABLED", details={"stage": "connection", **self._evaluation_details()})
-        if proc.returncode or (not values and not missing_ok):
+        if (proc.returncode and not getattr(proc, "response_reaped", False)) or (not values and not missing_ok):
             diagnostic = (stdout + stderr).strip() or "No evaluation response; check that Obsidian is running, the vault name/id is correct, and local CLI communication is permitted."
             raise BridgeError("CLI evaluation failed: " + diagnostic,
                               details=self._evaluation_details())

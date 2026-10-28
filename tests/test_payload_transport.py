@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from obsidian_tldraw_bridge.obsidian import BridgeError, Client, _capture_output
+from obsidian_tldraw_bridge.obsidian import BridgeError, Client, _capture_output, _evaluation_response
 
 
 def evaluation_path(argv):
@@ -47,8 +47,13 @@ process.stdout.write('=> ' + eval(input.code) + '\n');
             path = evaluation_path(argv)
             if on_invoke:
                 on_invoke(argv, path)
-            return run(["node", "-e", harness],
+            token = kwargs.pop("response_token", None) or json.loads(re.search(r'bridgeResponseToken:("[^"\\]*")', argv[-1]).group(1))
+            result = run(["node", "-e", harness],
                        input=json.dumps({"code": argv[-1][5:], "path": str(path), "denyCleanup": deny_cleanup}).encode("utf-8"), capture_output=True, **kwargs)
+            response = _evaluation_response(result.stdout, token, final=True)
+            if response is not None:
+                result.stdout = response
+            return result
         return invoke
 
     def test_large_unicode_source_uses_short_argv_and_preserves_scope(self):

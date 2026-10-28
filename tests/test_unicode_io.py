@@ -115,7 +115,11 @@ class UnicodeTransportTest(unittest.TestCase):
                 "sys.stderr.buffer.write(bytes.fromhex(" + repr(stderr.hex()) + ")); "
                 "sys.exit(" + str(returncode) + ")")
         run = subprocess.run
-        return lambda argv, **kwargs: run([sys.executable, "-c", code], capture_output=True, **kwargs)
+        def invoke(argv, **kwargs):
+            # This fake returns the already-decoded transport output.
+            kwargs.pop("response_token", None)
+            return run([sys.executable, "-c", code], capture_output=True, **kwargs)
+        return invoke
 
     def test_utf8_stdout_and_stderr_decode_with_real_pipes(self):
         value = {"path": "図解/日本語 🌿.md"}
