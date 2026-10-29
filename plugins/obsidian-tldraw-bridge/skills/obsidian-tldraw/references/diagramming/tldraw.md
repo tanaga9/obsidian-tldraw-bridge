@@ -16,7 +16,7 @@ Apply the [one-frame-per-diagram convention](index.md#project-conventions) with 
 
 ## Connections and rendered dimensions
 
-Keep meaningful arrows bound to their target shapes. Touching a box visually does not establish a binding; inspect endpoint records. Decorative and annotation arrows may be unbound.
+For arrow creation, routing, or rebinding, read [Arrow selection and bindings](arrows.md) for routing and terminal choices, semantic connections, and provisional SDK recipes. Keep meaningful arrows bound to their actual target shapes; visual contact alone does not establish a binding. An annotation aimed at a node also needs that binding; genuinely open or decorative endpoints may be unbound.
 
 A geo shape's effective height can include `growY` after text wrapping, and a text shape's rendered width includes `props.scale`. Compare actual rendered bounds rather than raw `w`/`h` values when fitting labels or balancing padding. Equal `props.h` values and equal normalized anchors do not guarantee horizontal arrows. Give peer boxes sufficient room for their labels and align their actual centers or attachment points after layout settles. Preserve bindings when correcting slopes.
 

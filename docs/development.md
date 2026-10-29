@@ -65,7 +65,7 @@ repository documentation, outside the distributed Skill.
 
 - Assume the agent knows familiar diagram types; name them and their purpose rather than writing tutorials.
 - Add knowledge that changes decisions: project preferences, unfamiliar notation, or demonstrated implementation pitfalls. State when it applies and any useful exception; include evidence or a compact example when needed.
-- Keep drawing conventions in `diagramming/index.md`, SDK details in `diagramming/tldraw.md`, and operation contracts in `operations.md`. Split a reference only when its size or independent use justifies it.
+- Keep shared drawing conventions in `diagramming/index.md`, SDK details and conditional references in `diagramming/tldraw.md`, and operation contracts in `operations.md`. The canonical Arrow selection guide and provisional binding recipes live in `diagramming/arrows.md`, linked from the connection guidance. The [maintainer entry point](arrow-selection-guidelines.md) links to that single source; extended evidence stays in `docs/studies/arrow-binding/`. Split other references only when their size or independent use justifies it.
 - Update existing guidance before adding new rules. Keep history in Git rather than cumulative activity logs.
 - Preserve the normal completion path: task context → structural candidate → check/revise → refinement and verification → saved delivery. Keep completion conditions separate from adjustable defaults, and retain useful existing content when revising a diagram.
 

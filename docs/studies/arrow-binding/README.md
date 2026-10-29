@@ -6,8 +6,9 @@ recorded in the editable note metadata.
 
 Status: experimentally informed recommendations for continued investigation.
 The starting patterns and limitations have been reflected provisionally in the
-[Arrow selection guidelines](../../arrow-selection-guidelines.md).
-They are not adopted Skill guidance.
+[canonical Arrow selection guidelines](../../../integrations/codex/skills/obsidian-tldraw/references/diagramming/arrows.md),
+distributed with the Skill. Inclusion does not make the binding patterns settled
+rules; their provisional status and tested scope remain explicit.
 
 ## Artifacts and method
 
@@ -192,8 +193,9 @@ with the anchor and boolean settings; `none` does not mean unbound or unrestrict
   untested candidate, not a recommended recipe.
 
 This directory preserves the study separately from the guidelines so later
-evaluation can revisit its evidence. No shared Skill rules or generated plugin
-package were changed.
+evaluation can revisit its evidence. The distributed Skill carries the canonical
+[selection guide and provisional recipes](../../../integrations/codex/skills/obsidian-tldraw/references/diagramming/arrows.md);
+the study's diagrams, scripts, and verification records remain repository-only.
 
 ## Maintenance and reproduction
 
