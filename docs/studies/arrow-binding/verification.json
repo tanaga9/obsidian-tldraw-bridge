@@ -1,0 +1,172 @@
+{
+  "environment": {
+    "obsidianTldrawPlugin": "1.32.0",
+    "tldrawSdk": "5.4.0",
+    "date": "2026-10-29"
+  },
+  "document": {
+    "file": "diagram.md",
+    "sha256": "8f4f8aee11db8ae436f7c1fe459bc1049286940bafa6a165c67a82e660dae86e",
+    "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+    "saved": true
+  },
+  "checks": {
+    "arrowCount": 53,
+    "bindingCount": 106,
+    "pageCount": 8,
+    "issues": [],
+    "isolation": [
+      {
+        "snap": "center",
+        "relativeVertices": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 27.5,
+            "y": 0
+          },
+          {
+            "x": 27.5,
+            "y": 124
+          },
+          {
+            "x": 42.25,
+            "y": 124
+          }
+        ]
+      },
+      {
+        "snap": "edge-point",
+        "relativeVertices": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 27.5,
+            "y": 0
+          },
+          {
+            "x": 27.5,
+            "y": 124
+          },
+          {
+            "x": 42.25,
+            "y": 124
+          }
+        ]
+      },
+      {
+        "snap": "edge",
+        "relativeVertices": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 27.5,
+            "y": 0
+          },
+          {
+            "x": 27.5,
+            "y": 124
+          },
+          {
+            "x": 42.25,
+            "y": 124
+          }
+        ]
+      },
+      {
+        "snap": "none",
+        "relativeVertices": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 27.5,
+            "y": 0
+          },
+          {
+            "x": 27.5,
+            "y": 124
+          },
+          {
+            "x": 42.25,
+            "y": 124
+          }
+        ]
+      }
+    ],
+    "allIsolationPathsEqual": true
+  },
+  "previews": [
+    {
+      "file": "previews/arc-center-vs-side.webp",
+      "sha256": "2f676a8ed2c8da9982acc9a28dd510a6e8a2c2b65a0a3c18902022e139751ac9",
+      "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+      "saved": true,
+      "logicalWidth": 936,
+      "logicalHeight": 630
+    },
+    {
+      "file": "previews/arc-precise-exact.webp",
+      "sha256": "ca8273e61948cdd9cd99f4620ddd8f574575297a988bfd130053c1c7d3bb181d",
+      "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+      "saved": true,
+      "logicalWidth": 612,
+      "logicalHeight": 552
+    },
+    {
+      "file": "previews/elbow-patterns.webp",
+      "sha256": "1adf2f0288f69feabe257dbeb804f26bac242bfb2675d4288bb46f6838bee6f5",
+      "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+      "saved": true,
+      "logicalWidth": 936,
+      "logicalHeight": 972
+    },
+    {
+      "file": "previews/elbow-reversal.webp",
+      "sha256": "7114c2e2bce4edecf28ede71c2ae953688cc1d681c47ba55fe3b9502229c5327",
+      "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+      "saved": true,
+      "logicalWidth": 948,
+      "logicalHeight": 972
+    },
+    {
+      "file": "previews/exact-at-outline.webp",
+      "sha256": "ac95e13171f41cac0db31450706e0876f5c83a5af3c1b49fbfb5cb3343c99721",
+      "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+      "saved": true,
+      "logicalWidth": 660,
+      "logicalHeight": 570
+    },
+    {
+      "file": "previews/recommended-use-cases.webp",
+      "sha256": "b8e9a7610b77888ab40437d2eb488c4ac7d1847e44d3f71c1278492f7558c941",
+      "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+      "saved": true,
+      "logicalWidth": 660,
+      "logicalHeight": 822
+    },
+    {
+      "file": "previews/self-loop-patterns.webp",
+      "sha256": "d5834f228cee582bfc2e9ced28c026b671822acae795a53eab9d7b67584ed1ef",
+      "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+      "saved": true,
+      "logicalWidth": 612,
+      "logicalHeight": 750
+    },
+    {
+      "file": "previews/snap-isolation.webp",
+      "sha256": "d693dd2530adc7fb44994cd8e47249eeb4c1e894dc9ecbe336cc8a1e99183459",
+      "revision": "92170e16e90551bffe0d67d819be054b485e139041ed7592468dba23556f3868",
+      "saved": true,
+      "logicalWidth": 612,
+      "logicalHeight": 552
+    }
+  ]
+}
