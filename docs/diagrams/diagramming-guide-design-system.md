@@ -100,11 +100,11 @@ tags:
 				"fromId": "shape:ir-test-hypothesis-en",
 				"toId": "shape:ir-trial-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -154,11 +154,11 @@ tags:
 				"fromId": "shape:ir-branch-recover-en",
 				"toId": "shape:ir-recover-trigger-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -172,11 +172,11 @@ tags:
 				"fromId": "shape:ir-return-improvement-en",
 				"toId": "shape:ir-resume-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.22857142857142856,
-						"y": 0
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -478,10 +478,10 @@ tags:
 				"fromId": "shape:ja-pass",
 				"toId": "shape:ja-refine",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -621,11 +621,11 @@ tags:
 				"fromId": "shape:ir-inspect-trial-ja",
 				"toId": "shape:ir-trial-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -675,10 +675,10 @@ tags:
 				"fromId": "shape:ir-example-2-en",
 				"toId": "shape:ir-symptom-2-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -735,7 +735,7 @@ tags:
 						"x": 0.5,
 						"y": 1
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "end"
 				},
 				"typeName": "binding"
@@ -862,7 +862,7 @@ tags:
 				"id": "binding:ir-loop-up-end-ja",
 				"type": "arrow",
 				"fromId": "shape:ir-loop-up-ja",
-				"toId": "shape:ir-loop-label-ja",
+				"toId": "shape:ir-ongoing-ja",
 				"props": {
 					"isPrecise": true,
 					"isExact": false,
@@ -877,7 +877,7 @@ tags:
 			},
 			{
 				"x": 60,
-				"y": 265,
+				"y": 274.46466885292296,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -945,11 +945,11 @@ tags:
 				"fromId": "shape:fail",
 				"toId": "shape:revise",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1097,16 +1097,24 @@ tags:
 				"fromId": "shape:ir-example-1-en",
 				"toId": "shape:ir-symptom-1-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
 				},
 				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"meta": {},
+				"id": "camera:page:improvement-recovery-ja",
+				"typeName": "camera"
 			},
 			{
 				"meta": {
@@ -1298,11 +1306,11 @@ tags:
 				"fromId": "shape:ir-result-supported-ja",
 				"toId": "shape:ir-inspect-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1397,10 +1405,10 @@ tags:
 				"fromId": "shape:maint-case-diagnose",
 				"toId": "shape:maint-diagnose",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -1459,11 +1467,11 @@ tags:
 				"fromId": "shape:ja-finish",
 				"toId": "shape:ja-deliver",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1477,11 +1485,11 @@ tags:
 				"fromId": "shape:ja-apply",
 				"toId": "shape:ja-skill",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.23125,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1495,11 +1503,11 @@ tags:
 				"fromId": "shape:ir-ongoing-user-ja",
 				"toId": "shape:ir-ongoing-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1558,10 +1566,10 @@ tags:
 				"fromId": "shape:distill",
 				"toId": "shape:knowledge",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -1576,11 +1584,11 @@ tags:
 				"fromId": "shape:ja-maint-compare-verdicts",
 				"toId": "shape:ja-maint-verdicts",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.75
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1594,11 +1602,11 @@ tags:
 				"fromId": "shape:ir-start-improve-en",
 				"toId": "shape:ir-improve-trigger-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1612,10 +1620,10 @@ tags:
 				"fromId": "shape:ir-example-0-en",
 				"toId": "shape:ir-symptom-0-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -1630,11 +1638,11 @@ tags:
 				"fromId": "shape:ir-normal-candidate-ja",
 				"toId": "shape:ir-candidate-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1648,11 +1656,11 @@ tags:
 				"fromId": "shape:ir-normal-refine-en",
 				"toId": "shape:ir-check-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 0
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1750,11 +1758,11 @@ tags:
 				"fromId": "shape:maint-case-compare",
 				"toId": "shape:maint-case",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.75
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1813,11 +1821,11 @@ tags:
 				"fromId": "shape:ja-maint-diagnose-verdicts",
 				"toId": "shape:ja-maint-verdicts",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.25
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1831,11 +1839,11 @@ tags:
 				"fromId": "shape:ir-ongoing-agent-en",
 				"toId": "shape:ir-deliver-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1930,11 +1938,11 @@ tags:
 				"fromId": "shape:ir-return-recovery-en",
 				"toId": "shape:ir-resume-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.6621428571428571,
-						"y": 0
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -2064,11 +2072,11 @@ tags:
 				"fromId": "shape:ir-branch-improve-en",
 				"toId": "shape:ir-check-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2082,11 +2090,11 @@ tags:
 				"fromId": "shape:ir-start-recover-ja",
 				"toId": "shape:ir-recover-trigger-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2131,7 +2139,7 @@ tags:
 			},
 			{
 				"x": 60,
-				"y": 265,
+				"y": 274.46466885292296,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -2460,10 +2468,10 @@ tags:
 				"fromId": "shape:ja-pass",
 				"toId": "shape:ja-conditions",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -2532,11 +2540,11 @@ tags:
 				"fromId": "shape:ir-test-hypothesis-ja",
 				"toId": "shape:ir-hypothesis-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2550,11 +2558,11 @@ tags:
 				"fromId": "shape:ir-return-improvement-ja",
 				"toId": "shape:ir-apply-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2568,11 +2576,11 @@ tags:
 				"fromId": "shape:ir-branch-recover-ja",
 				"toId": "shape:ir-check-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2586,11 +2594,11 @@ tags:
 				"fromId": "shape:apply",
 				"toId": "shape:conditions",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -2721,11 +2729,11 @@ tags:
 				"fromId": "shape:fail",
 				"toId": "shape:conditions",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2784,11 +2792,11 @@ tags:
 				"fromId": "shape:ir-inspect-trial-ja",
 				"toId": "shape:ir-inspect-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -2808,7 +2816,7 @@ tags:
 						"x": 1,
 						"y": 0.5
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "end"
 				},
 				"typeName": "binding"
@@ -2820,10 +2828,10 @@ tags:
 				"fromId": "shape:ir-example-2-en",
 				"toId": "shape:ir-measure-2-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -2888,7 +2896,7 @@ tags:
 						"x": 0,
 						"y": 0.5
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "start"
 				},
 				"typeName": "binding"
@@ -2900,11 +2908,11 @@ tags:
 				"fromId": "shape:maint-case-diagnose",
 				"toId": "shape:maint-case",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.25
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2918,11 +2926,11 @@ tags:
 				"fromId": "shape:ir-result-ask-en",
 				"toId": "shape:ir-inspect-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2936,11 +2944,11 @@ tags:
 				"fromId": "shape:ja-finish",
 				"toId": "shape:ja-refine",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2954,10 +2962,10 @@ tags:
 				"fromId": "shape:ir-example-1-en",
 				"toId": "shape:ir-measure-1-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -3134,11 +3142,11 @@ tags:
 				"fromId": "shape:ir-result-supported-ja",
 				"toId": "shape:ir-supported-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -3188,10 +3196,10 @@ tags:
 				"fromId": "shape:ja-maint-case-compare",
 				"toId": "shape:ja-maint-compare",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -3349,10 +3357,10 @@ tags:
 				"fromId": "shape:ja-maint-compare-verdicts",
 				"toId": "shape:ja-maint-compare",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -3367,11 +3375,11 @@ tags:
 				"fromId": "shape:ir-normal-candidate-ja",
 				"toId": "shape:ir-check-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 0
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -3538,11 +3546,11 @@ tags:
 				"fromId": "shape:ja-maint-verdicts-decision",
 				"toId": "shape:ja-maint-decision",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -3556,11 +3564,11 @@ tags:
 				"fromId": "shape:ir-ongoing-user-ja",
 				"toId": "shape:ir-candidate-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -3637,10 +3645,10 @@ tags:
 				"fromId": "shape:ir-example-0-en",
 				"toId": "shape:ir-measure-0-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -3655,11 +3663,11 @@ tags:
 				"fromId": "shape:ir-start-improve-en",
 				"toId": "shape:ir-improve-region-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -3707,7 +3715,7 @@ tags:
 					"font": "draw",
 					"scale": 1
 				},
-				"index": "apT1I",
+				"index": "anunE5V",
 				"typeName": "shape"
 			},
 			{
@@ -3784,10 +3792,10 @@ tags:
 				"fromId": "shape:ja-maint-diagnose-verdicts",
 				"toId": "shape:ja-maint-diagnose",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -3802,11 +3810,11 @@ tags:
 				"fromId": "shape:ir-ongoing-agent-ja",
 				"toId": "shape:ir-ongoing-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -3820,11 +3828,11 @@ tags:
 				"fromId": "shape:ir-normal-refine-ja",
 				"toId": "shape:ir-deliver-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -3838,10 +3846,10 @@ tags:
 				"fromId": "shape:ja-candidate-check",
 				"toId": "shape:ja-conditions",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -3991,11 +3999,11 @@ tags:
 				"fromId": "shape:ir-branch-improve-en",
 				"toId": "shape:ir-improve-trigger-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -4054,11 +4062,11 @@ tags:
 				"fromId": "shape:ir-start-recover-ja",
 				"toId": "shape:ir-recover-region-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -4076,7 +4084,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:ja-guide-system",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "s",
@@ -4300,7 +4308,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 272.38484174786504,
+				"x": 50,
 				"y": 1660,
 				"rotation": 0,
 				"isLocked": false,
@@ -4310,7 +4318,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:improvement-recovery-ja",
 				"props": {
-					"w": 944.9706844022611,
+					"w": 1400,
 					"h": 130,
 					"geo": "rectangle",
 					"dash": "draw",
@@ -4460,12 +4468,12 @@ tags:
 				"toId": "shape:ir-resume-en",
 				"props": {
 					"isPrecise": true,
-					"isExact": true,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 1,
 						"y": 0.5
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "start"
 				},
 				"typeName": "binding"
@@ -4477,11 +4485,11 @@ tags:
 				"fromId": "shape:ir-return-recovery-ja",
 				"toId": "shape:ir-supported-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -4539,11 +4547,11 @@ tags:
 				"fromId": "shape:ja-fail",
 				"toId": "shape:ja-revise",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -4812,7 +4820,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:guide-system",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "s",
@@ -4952,11 +4960,11 @@ tags:
 				"fromId": "shape:ir-test-hypothesis-ja",
 				"toId": "shape:ir-trial-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -5006,11 +5014,11 @@ tags:
 				"fromId": "shape:ir-branch-recover-ja",
 				"toId": "shape:ir-recover-trigger-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -5024,11 +5032,11 @@ tags:
 				"fromId": "shape:ir-return-improvement-ja",
 				"toId": "shape:ir-resume-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.22857142857142856,
-						"y": 0
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -5312,16 +5320,29 @@ tags:
 				"fromId": "shape:apply",
 				"toId": "shape:skill",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.23125,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
 				},
 				"typeName": "binding"
+			},
+			{
+				"editingShapeId": null,
+				"croppingShapeId": null,
+				"selectedShapeIds": [],
+				"hoveredShapeId": null,
+				"erasingShapeIds": [],
+				"hintingShapeIds": [],
+				"focusedGroupId": null,
+				"meta": {},
+				"id": "instance_page_state:page:improvement-recovery-en",
+				"pageId": "page:improvement-recovery-en",
+				"typeName": "instance_page_state"
 			},
 			{
 				"x": 50,
@@ -5497,7 +5518,7 @@ tags:
 						"x": 1,
 						"y": 0.5
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "start"
 				},
 				"typeName": "binding"
@@ -5509,10 +5530,10 @@ tags:
 				"fromId": "shape:ir-example-2-ja",
 				"toId": "shape:ir-symptom-2-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -5617,11 +5638,11 @@ tags:
 				"fromId": "shape:maint-diagnose-verdicts",
 				"toId": "shape:maint-verdicts",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.25
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -5635,10 +5656,10 @@ tags:
 				"fromId": "shape:ir-example-1-ja",
 				"toId": "shape:ir-symptom-1-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -5786,7 +5807,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:guide-system",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "s",
@@ -5827,11 +5848,11 @@ tags:
 				"fromId": "shape:ja-distill",
 				"toId": "shape:ja-skill",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.4714285714285714
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -5845,11 +5866,11 @@ tags:
 				"fromId": "shape:ir-result-ask-en",
 				"toId": "shape:ir-ask-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -5863,11 +5884,11 @@ tags:
 				"fromId": "shape:ja-maint-case-compare",
 				"toId": "shape:ja-maint-case",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.75
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -6016,11 +6037,11 @@ tags:
 				"fromId": "shape:ja-maint-verdicts-decision",
 				"toId": "shape:ja-maint-verdicts",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -6038,7 +6059,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:ja-guide-system",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "s",
@@ -6242,11 +6263,11 @@ tags:
 				"fromId": "shape:ir-start-improve-ja",
 				"toId": "shape:ir-improve-trigger-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -6260,10 +6281,10 @@ tags:
 				"fromId": "shape:ir-example-0-ja",
 				"toId": "shape:ir-symptom-0-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -6314,11 +6335,11 @@ tags:
 				"fromId": "shape:ir-ongoing-agent-ja",
 				"toId": "shape:ir-deliver-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -6332,11 +6353,11 @@ tags:
 				"fromId": "shape:ir-normal-refine-ja",
 				"toId": "shape:ir-check-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 0
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -6440,10 +6461,10 @@ tags:
 				"fromId": "shape:ja-candidate-check",
 				"toId": "shape:ja-candidate",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -6670,11 +6691,11 @@ tags:
 				"fromId": "shape:ir-inspect-trial-en",
 				"toId": "shape:ir-trial-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -6839,7 +6860,7 @@ tags:
 				"id": "binding:ir-loop-up-end-en",
 				"type": "arrow",
 				"fromId": "shape:ir-loop-up-en",
-				"toId": "shape:ir-loop-label-en",
+				"toId": "shape:ir-ongoing-en",
 				"props": {
 					"isPrecise": true,
 					"isExact": false,
@@ -6872,11 +6893,11 @@ tags:
 				"fromId": "shape:ir-return-recovery-ja",
 				"toId": "shape:ir-resume-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.6621428571428571,
-						"y": 0
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -6948,7 +6969,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:guide-system",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "s",
@@ -7033,11 +7054,11 @@ tags:
 				"fromId": "shape:ir-branch-improve-ja",
 				"toId": "shape:ir-check-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -7137,7 +7158,7 @@ tags:
 						"x": 1,
 						"y": 0.5
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "end"
 				},
 				"typeName": "binding"
@@ -7149,11 +7170,11 @@ tags:
 				"fromId": "shape:ir-result-supported-en",
 				"toId": "shape:ir-inspect-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -7305,10 +7326,10 @@ tags:
 				"fromId": "shape:pass",
 				"toId": "shape:refine",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -7323,16 +7344,24 @@ tags:
 				"fromId": "shape:ja-fail",
 				"toId": "shape:ja-conditions",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
 				},
 				"typeName": "binding"
+			},
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"meta": {},
+				"id": "camera:page:improvement-recovery-en",
+				"typeName": "camera"
 			},
 			{
 				"x": 390,
@@ -7422,11 +7451,11 @@ tags:
 				"fromId": "shape:ir-ongoing-user-en",
 				"toId": "shape:ir-ongoing-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -7662,7 +7691,7 @@ tags:
 						"x": 0.5,
 						"y": 1
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "end"
 				},
 				"typeName": "binding"
@@ -7791,11 +7820,11 @@ tags:
 				"fromId": "shape:ir-normal-candidate-en",
 				"toId": "shape:ir-candidate-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -7885,11 +7914,11 @@ tags:
 				"fromId": "shape:finish",
 				"toId": "shape:deliver",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -8002,10 +8031,10 @@ tags:
 				"fromId": "shape:ir-example-2-ja",
 				"toId": "shape:ir-measure-2-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -8074,11 +8103,11 @@ tags:
 				"fromId": "shape:maint-verdicts-decision",
 				"toId": "shape:maint-decision",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -8190,10 +8219,10 @@ tags:
 				"fromId": "shape:ja-maint-case-diagnose",
 				"toId": "shape:ja-maint-diagnose",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -8298,10 +8327,10 @@ tags:
 				"fromId": "shape:ja-distill",
 				"toId": "shape:ja-knowledge",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -8316,11 +8345,11 @@ tags:
 				"fromId": "shape:ir-result-ask-ja",
 				"toId": "shape:ir-inspect-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -8334,11 +8363,11 @@ tags:
 				"fromId": "shape:maint-compare-verdicts",
 				"toId": "shape:maint-verdicts",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.75
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -8352,10 +8381,10 @@ tags:
 				"fromId": "shape:ir-example-1-ja",
 				"toId": "shape:ir-measure-1-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -8370,10 +8399,10 @@ tags:
 				"fromId": "shape:maint-diagnose-verdicts",
 				"toId": "shape:maint-diagnose",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -8388,10 +8417,10 @@ tags:
 				"fromId": "shape:candidate-check",
 				"toId": "shape:conditions",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -8442,11 +8471,11 @@ tags:
 				"fromId": "shape:ir-start-recover-en",
 				"toId": "shape:ir-recover-trigger-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -8464,7 +8493,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:ja-guide-system",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "s",
@@ -8550,11 +8579,11 @@ tags:
 				"fromId": "shape:ir-start-improve-ja",
 				"toId": "shape:ir-improve-region-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -8568,10 +8597,10 @@ tags:
 				"fromId": "shape:ir-example-0-ja",
 				"toId": "shape:ir-measure-0-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -8664,8 +8693,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 732.1914714825828,
-				"y": 618.0762237421297,
+				"x": 820,
+				"y": 618,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -8869,11 +8898,11 @@ tags:
 				"fromId": "shape:ir-test-hypothesis-en",
 				"toId": "shape:ir-hypothesis-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -8887,11 +8916,11 @@ tags:
 				"fromId": "shape:ir-return-improvement-en",
 				"toId": "shape:ir-apply-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -8905,11 +8934,11 @@ tags:
 				"fromId": "shape:ir-branch-recover-en",
 				"toId": "shape:ir-check-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -8969,11 +8998,11 @@ tags:
 				"fromId": "shape:ir-branch-improve-ja",
 				"toId": "shape:ir-improve-trigger-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -9027,20 +9056,20 @@ tags:
 									"algorithm": "page-content-v2",
 									"sourcePageId": "page:page",
 									"source": {
-										"full": "45aaa5844a9c0aceb6a0e4d7f40006c855e9f66b299127ee5817a39f03f675d4",
-										"content": "57695ad5815ce05171a84d4ddd8169b4012fa5125fe1e24cc117c0c96e6bec50",
-										"legacy": "a7290dbe6558a188960a92a9f6d404b9def0150fdbf44fa23e22863fe986028a",
+										"full": "4362ca3d32a0e8a3952e3ddf2e754b8b5001a09f4e6b8cf04a5c1c49557c40f2",
+										"content": "04ab82d0b0f5ece68dcbd82bef56d01d0e41fed42973920212437185dc8cc39d",
+										"legacy": "026197fe89e72f10e27490b17d1d065392129f125c4beceed895da9ec7622a6c",
 										"hasAssets": false
 									},
 									"target": {
-										"full": "c1147a08e15e740bca3894f5aa9ac9190f06cde8b997a1f11f0c744d9b1b0e3c",
-										"content": "72f89b4b5d11a99e5032706ac9e86da899c79def2db77fcc959ed8ccd881cc67",
-										"legacy": "8f4980d95b54cb5838240f1266a565cfaec29309ce9348fa807da7568dfe3ca3",
+										"full": "d5f56f468b134ad60abb12399d48b8782cda74d9cc68aa95e2482ecc2f10fe8d",
+										"content": "5286f3582f8158877cfd40718dc17db4d3ba49eab071fe88af803600a6048875",
+										"legacy": "a75f5c8570a7dbf0b409e9fa100440b0eb742c9c2fa65717b59260a201b1ab99",
 										"hasAssets": false
 									},
-									"kind": "translation",
-									"reason": "Reviewed both English and Japanese renderings after the authorized updates: local fixes inspect affected context and widen review when effects spread; refinement rechecks completion conditions. Existing translations and language-specific geometry were preserved.",
-									"reviewedAt": "2026-10-25T13:32:51.423Z"
+									"kind": "layout",
+									"reason": "Reviewed English and Japanese at their intended display size after user reported arrowhead merging. Restored clearance on small arrowheads; resulting renderings match the inspected pre-contact versions. Labels, targets, directions, and node layout are unchanged.",
+									"reviewedAt": "2026-10-29T13:45:57.345Z"
 								}
 							}
 						},
@@ -9056,20 +9085,20 @@ tags:
 									"algorithm": "page-content-v2",
 									"sourcePageId": "page:improvement-recovery-en",
 									"source": {
-										"full": "4db251b2aee2a95ab68bc5246bfc0c5afd2bf3af18f71e9dc8fc6953aa2e15f3",
-										"content": "21a8427812943e75a754534486aec43482211b11abc9c37283635ee7fabc7fd3",
-										"legacy": "08aff6d5a9f004ee4a390fc2432d75f02f829ff56a7aba46afd4cc5c8fd2390e",
+										"full": "d347262897b47704678c5520b708ea698a4c2b66a7edb0b60d67d7d44ce71641",
+										"content": "dac1c2e16552e99b43c57e489597b633e2f52a83894e56f7f683e6e55205e925",
+										"legacy": "9db40a3a52180ba81ac9b4e7e1c3b5083bcf7ce3a0e2e464005b81241dd875d2",
 										"hasAssets": false
 									},
 									"target": {
-										"full": "706079fbbc0b9a98dd3fb8a0a53cf6854f44391dd9e796e9dfbdcf449c07c6c7",
-										"content": "c8c465cc7e72c94985bc020456fe16c67814b5f39891fa6e4de08000d720cd93",
-										"legacy": "f900ab121c1271f159f99ce52789da6c77af6899d3e76fdb5b102dff02313659",
+										"full": "2947eec7a2dae6924022d349be094ef85d555e507c72c580dc825f702f3b377c",
+										"content": "139d367156c51a8a73f033c63cf647b794688ad03dd236e15aeec9655c27a5a8",
+										"legacy": "b5f420e88772c5a1d03b5a7ced40eb6813433098a893b125279dc1b7f27abb05",
 										"hasAssets": false
 									},
-									"kind": "layout",
-									"reason": "Applied the user-requested shared layout adjustment: both question boxes are now at local y=1392, 18 units above the prior position. Reviewed both language previews; labels, meaning, bindings, and surrounding clearance are preserved.",
-									"reviewedAt": "2026-10-25T14:02:15.802Z"
+									"kind": "adopt",
+									"reason": "Reviewed English and Japanese pages after the authorized semantic binding correction: both return arrows now bind to the ongoing diagram-work node instead of its explanatory label. Widened the result node to preserve an unobstructed external elbow route. Existing wording, branch meanings, and other connections are preserved; both rendered pages and persistence were inspected.",
+									"reviewedAt": "2026-10-29T16:31:03.791Z"
 								}
 							}
 						}
@@ -9085,11 +9114,11 @@ tags:
 				"fromId": "shape:ir-inspect-trial-en",
 				"toId": "shape:ir-inspect-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -9193,7 +9222,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:ja-guide-system",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "s",
@@ -9343,12 +9372,12 @@ tags:
 				"toId": "shape:ir-resume-ja",
 				"props": {
 					"isPrecise": true,
-					"isExact": true,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 1,
 						"y": 0.5
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "start"
 				},
 				"typeName": "binding"
@@ -9465,7 +9494,7 @@ tags:
 						"x": 1,
 						"y": 0.5
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "start"
 				},
 				"typeName": "binding"
@@ -9549,11 +9578,11 @@ tags:
 				"fromId": "shape:ir-result-supported-en",
 				"toId": "shape:ir-supported-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -9818,10 +9847,10 @@ tags:
 				"fromId": "shape:pass",
 				"toId": "shape:conditions",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -9836,11 +9865,11 @@ tags:
 				"fromId": "shape:ja-apply",
 				"toId": "shape:ja-conditions",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -9886,6 +9915,19 @@ tags:
 				},
 				"index": "aUeKf",
 				"typeName": "shape"
+			},
+			{
+				"editingShapeId": null,
+				"croppingShapeId": null,
+				"selectedShapeIds": [],
+				"hoveredShapeId": null,
+				"erasingShapeIds": [],
+				"hintingShapeIds": [],
+				"focusedGroupId": null,
+				"meta": {},
+				"id": "instance_page_state:page:improvement-recovery-ja",
+				"pageId": "page:improvement-recovery-ja",
+				"typeName": "instance_page_state"
 			},
 			{
 				"x": 810,
@@ -9942,8 +9984,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 732.1914714825828,
-				"y": 618.0762237421297,
+				"x": 820,
+				"y": 618,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -9984,11 +10026,11 @@ tags:
 				"fromId": "shape:ir-ongoing-user-en",
 				"toId": "shape:ir-candidate-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -10178,11 +10220,11 @@ tags:
 				"fromId": "shape:distill",
 				"toId": "shape:skill",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.4714285714285714
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -10202,7 +10244,7 @@ tags:
 						"x": 0,
 						"y": 0.5
 					},
-					"snap": "none",
+					"snap": "edge-point",
 					"terminal": "start"
 				},
 				"typeName": "binding"
@@ -10268,11 +10310,11 @@ tags:
 				"fromId": "shape:ir-normal-candidate-en",
 				"toId": "shape:ir-check-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 0
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -10340,11 +10382,11 @@ tags:
 				"fromId": "shape:ja-maint-case-diagnose",
 				"toId": "shape:ja-maint-case",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.25
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -10358,11 +10400,11 @@ tags:
 				"fromId": "shape:ir-ongoing-agent-en",
 				"toId": "shape:ir-ongoing-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -10376,11 +10418,11 @@ tags:
 				"fromId": "shape:ir-normal-refine-en",
 				"toId": "shape:ir-deliver-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -10457,11 +10499,11 @@ tags:
 				"fromId": "shape:finish",
 				"toId": "shape:refine",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -10511,10 +10553,10 @@ tags:
 				"fromId": "shape:maint-case-compare",
 				"toId": "shape:maint-compare",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -10529,11 +10571,11 @@ tags:
 				"fromId": "shape:maint-verdicts-decision",
 				"toId": "shape:maint-verdicts",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -10581,7 +10623,7 @@ tags:
 					"font": "draw",
 					"scale": 1
 				},
-				"index": "apFl6",
+				"index": "anLVJ8",
 				"typeName": "shape"
 			},
 			{
@@ -10591,11 +10633,11 @@ tags:
 				"fromId": "shape:ir-start-recover-en",
 				"toId": "shape:ir-recover-region-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -10613,7 +10655,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:guide-system",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "s",
@@ -10744,10 +10786,10 @@ tags:
 				"fromId": "shape:maint-compare-verdicts",
 				"toId": "shape:maint-compare",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -10792,7 +10834,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 272.38484174786504,
+				"x": 50,
 				"y": 1660,
 				"rotation": 0,
 				"isLocked": false,
@@ -10802,7 +10844,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:improvement-recovery-en",
 				"props": {
-					"w": 944.9706844022611,
+					"w": 1400,
 					"h": 130,
 					"geo": "rectangle",
 					"dash": "draw",
@@ -10906,11 +10948,11 @@ tags:
 				"fromId": "shape:ir-return-recovery-en",
 				"toId": "shape:ir-supported-en",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -10968,10 +11010,10 @@ tags:
 				"fromId": "shape:candidate-check",
 				"toId": "shape:candidate",
 				"props": {
-					"isPrecise": true,
+					"isPrecise": false,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -10986,11 +11028,11 @@ tags:
 				"fromId": "shape:ir-result-ask-ja",
 				"toId": "shape:ir-ask-ja",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"

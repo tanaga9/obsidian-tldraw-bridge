@@ -71,11 +71,11 @@ tags:
 				"fromId": "shape:nested-edit",
 				"toId": "shape:nested-agent",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.25,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -134,10 +134,10 @@ tags:
 				"fromId": "shape:nested-load-project",
 				"toId": "shape:nested-agent",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -296,10 +296,10 @@ tags:
 				"fromId": "shape:combined-read-external",
 				"toId": "shape:combined-external-policy",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -496,13 +496,13 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:nested-agent-instruction-scope",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "m",
 					"fill": "none",
 					"color": "green",
-					"labelColor": "black",
+					"labelColor": "green",
 					"bend": 0,
 					"start": {
 						"x": 0,
@@ -518,7 +518,13 @@ tags:
 						"type": "doc",
 						"content": [
 							{
-								"type": "paragraph"
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Bridge"
+									}
+								]
 							}
 						]
 					},
@@ -590,10 +596,10 @@ tags:
 				"fromId": "shape:nested-load-project",
 				"toId": "shape:nested-project-policy",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -608,10 +614,10 @@ tags:
 				"fromId": "shape:combined-edit-external",
 				"toId": "shape:combined-external-drawing",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -687,42 +693,6 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 480,
-				"y": 475,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:nested-bridge-label",
-				"type": "text",
-				"parentId": "shape:nested-agent-instruction-scope",
-				"props": {
-					"color": "green",
-					"size": "m",
-					"w": 120,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 1,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Bridge"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aHsIv",
-				"typeName": "shape"
-			},
-			{
 				"x": 335,
 				"y": 335,
 				"rotation": 0,
@@ -773,11 +743,11 @@ tags:
 				"fromId": "shape:combined-edit-external",
 				"toId": "shape:nested-agent",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.75,
-						"y": 1
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1070,11 +1040,11 @@ tags:
 				"fromId": "shape:nested-load-other",
 				"toId": "shape:nested-agent",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1127,10 +1097,10 @@ tags:
 				"fromId": "shape:nested-edit",
 				"toId": "shape:nested-drawing",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -1316,42 +1286,6 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 720,
-				"y": 475,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:combined-external-bridge",
-				"type": "text",
-				"parentId": "shape:nested-agent-instruction-scope",
-				"props": {
-					"color": "green",
-					"size": "m",
-					"w": 120,
-					"font": "sans",
-					"textAlign": "start",
-					"autoSize": false,
-					"scale": 1,
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Bridge"
-									}
-								]
-							}
-						]
-					}
-				},
-				"index": "aPeFj",
-				"typeName": "shape"
-			},
-			{
 				"x": 35,
 				"y": 75,
 				"rotation": 0,
@@ -1394,10 +1328,10 @@ tags:
 				"fromId": "shape:combined-read-external",
 				"toId": "shape:nested-agent",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -1451,11 +1385,11 @@ tags:
 				"fromId": "shape:nested-load-other",
 				"toId": "shape:nested-request-skill",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1473,13 +1407,13 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:nested-agent-instruction-scope",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "m",
 					"fill": "none",
 					"color": "green",
-					"labelColor": "black",
+					"labelColor": "green",
 					"bend": 0,
 					"start": {
 						"x": 0,
@@ -1495,7 +1429,13 @@ tags:
 						"type": "doc",
 						"content": [
 							{
-								"type": "paragraph"
+								"type": "paragraph",
+								"content": [
+									{
+										"type": "text",
+										"text": "Bridge"
+									}
+								]
 							}
 						]
 					},

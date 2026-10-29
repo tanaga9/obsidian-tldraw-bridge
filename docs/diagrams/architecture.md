@@ -260,7 +260,7 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "sans",
+					"font": "mono",
 					"scale": 1
 				},
 				"index": "b0fzAtV",
@@ -432,7 +432,7 @@ tags:
 				"toId": "shape:readme-plugin",
 				"props": {
 					"isPrecise": true,
-					"isExact": true,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.75,
 						"y": 0
@@ -605,7 +605,7 @@ tags:
 				"toId": "shape:readme-plugin",
 				"props": {
 					"isPrecise": true,
-					"isExact": true,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.25,
 						"y": 0
@@ -652,8 +652,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 344,
-				"y": 552,
+				"x": 335,
+				"y": 486,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -737,7 +737,7 @@ tags:
 				"type": "arrow",
 				"parentId": "shape:readme-architecture",
 				"props": {
-					"kind": "elbow",
+					"kind": "arc",
 					"elbowMidPoint": 0.5,
 					"dash": "solid",
 					"size": "m",
@@ -764,7 +764,7 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "sans",
+					"font": "mono",
 					"scale": 1
 				},
 				"index": "b0fekAl",
@@ -844,7 +844,7 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "sans",
+					"font": "mono",
 					"scale": 1
 				},
 				"index": "b0vuBk",
@@ -938,8 +938,8 @@ tags:
 				}
 			},
 			{
-				"x": 340,
-				"y": 551,
+				"x": 331,
+				"y": 485,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 0.88,
@@ -983,11 +983,11 @@ tags:
 				"fromId": "shape:readme-link-launch",
 				"toId": "shape:readme-cli",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1079,11 +1079,11 @@ tags:
 				"fromId": "shape:readme-link-gui-sync",
 				"toId": "shape:readme-gui",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1243,11 +1243,11 @@ tags:
 				"fromId": "shape:readme-link-runtime-sync",
 				"toId": "shape:readme-editor",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1357,11 +1357,11 @@ tags:
 				"fromId": "shape:readme-link-launch",
 				"toId": "shape:readme-python",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1438,11 +1438,11 @@ tags:
 				"fromId": "shape:readme-link-request",
 				"toId": "shape:readme-python",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1495,11 +1495,11 @@ tags:
 				"fromId": "shape:readme-link-eval",
 				"toId": "shape:readme-runtime",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.5663716814159292
+						"x": 0.5,
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1624,11 +1624,11 @@ tags:
 				"fromId": "shape:readme-link-save",
 				"toId": "shape:readme-vault",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1809,7 +1809,7 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "sans",
+					"font": "mono",
 					"scale": 1
 				},
 				"index": "b0rOqaG",
@@ -1943,11 +1943,11 @@ tags:
 				"fromId": "shape:readme-link-request",
 				"toId": "shape:readme-codex",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2035,10 +2035,10 @@ tags:
 				"fromId": "shape:readme-link-eval",
 				"toId": "shape:readme-cli",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
-						"x": 1,
+						"x": 0.5,
 						"y": 0.5
 					},
 					"snap": "none",
@@ -2128,11 +2128,11 @@ tags:
 				"fromId": "shape:readme-link-save",
 				"toId": "shape:readme-plugin",
 				"props": {
-					"isPrecise": true,
-					"isExact": true,
+					"isPrecise": false,
+					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 1
+						"y": 0.5
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -2215,7 +2215,7 @@ tags:
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "sans",
+					"font": "mono",
 					"scale": 1
 				},
 				"index": "b0ri8y",
