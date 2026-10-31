@@ -373,6 +373,13 @@ GUI edits or a page switch cannot redirect a pending insertion.
 
 ## Image preview
 
+For overview/detail images from one editable source, use `--bounds X Y W H`
+to crop the rendered whole current page in page coordinates. This retains
+occlusion and existing parent clipping. Selecting a frame with `--ids` instead
+exports that frame and its descendants, not all shapes overlapping its bounds.
+Choose nesting, deliberate overlap, or cropping using
+[frame behavior and focused views](diagramming/tldraw.md#frames).
+
 `preview <path> --output <absolute-image-path>` exports WebP by default, without an
 intermediate PNG or external converter. Use `--format png` for lossless PNG output. `quality` is a finite number from 0 to 1, defaults to 0.9
 for WebP, and is rejected for PNG. The output filename does not select the format.

@@ -4,6 +4,20 @@ Last checked: **2026-10-31T08:22:07Z** (UTC).
 Scope: stable-release research, tagged-source comparison and read-only diagnostics.
 This record was shortened without rerunning checks; confirmation dates are unchanged.
 
+Latest scoped live check: **2026-10-31T16:56:00Z** (UTC),
+[frame nesting/overlap export study](../studies/frame-export.md). This did not
+refresh latest-release research above. Installed Desktop 1.14.5 / installer
+1.14.4, plugin 1.32.0 / SDK 5.4.0 and Electron 43.7.7 / Node 24.21.0 were
+reconfirmed. Checkout: `92635a8700e1853ed3143b0b2e6ff60c3e718246`.
+The checkout runtime reported no pending update before testing. The frame study
+covered membership, sibling order, clipping, and whole-frame/detail crops.
+Its ancestor-clipping crop was corrected in a fresh dedicated note: the bounds
+were taken from the moved frame, all three output paths were inspected, and
+save/reopen preserved the revision and identical bounds-export bytes. A 240 × 200
+bounds output still clips content at the ancestor boundary, while the frame-only
+output shrinks to 120 × 200. This establishes only those behaviors on the installed combination;
+target plugin 1.35.1 compatibility and manual GUI/embed exports remain untested.
+
 ## Versions and evidence
 
 | Component | Local observation | Latest stable / review target | Evidence |
@@ -28,10 +42,11 @@ Installed plugin build provenance beyond manifest/SDK identifiers is unknown.
   `pendingUpdate: null` for the checkout runtime. Package consistency check passed.
 - Checkout and installed Codex-cache loaders were present; their on-disk runtime
   files matched. Other loader contexts' pending state was not established.
-- Last live editing/persistence verification: **date and complete combination
-  unknown**. Existing declarations list plugins 1.31.0 and 1.32.0 as tested.
-  No editing, save/reopen, migration or visual tests were run in this review;
-  plugin 1.35.1 / SDK 5.6.0 compatibility remains unverified.
+- Last live editing/persistence verification: **2026-10-31 (UTC)** on the
+  installed combination above, limited to the scoped frame study. Existing
+  declarations list plugins 1.31.0 and 1.32.0 as tested. No migration tests or
+  live tests of plugin 1.35.1 / SDK 5.6.0 were performed; target compatibility
+  remains unverified.
 
 ## Unresolved actions
 
