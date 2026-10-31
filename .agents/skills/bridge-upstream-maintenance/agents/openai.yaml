@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bridge Upstream Maintenance"
+  short_description: "Review and adapt to Obsidian and tldraw upgrades"
+  default_prompt: "Use $bridge-upstream-maintenance to review upstream Obsidian and tldraw changes and propose or implement the scoped repository updates."

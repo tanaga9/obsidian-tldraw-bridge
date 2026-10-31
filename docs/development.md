@@ -56,6 +56,21 @@ when needed for reuse, and update the note and rendered WebP together when repla
 
 ## Maintaining diagramming guidance
 
+### Repository-only upstream maintenance Skill
+
+Use [bridge-upstream-maintenance](../.agents/skills/bridge-upstream-maintenance/SKILL.md)
+for Obsidian Desktop/CLI, Obsidian tldraw plugin, and embedded tldraw SDK release
+reviews, compatibility fixes, or version-sensitive knowledge updates. Invoke it
+as `$bridge-upstream-maintenance` with the desired scope, for example a proposal
+for a target release or implementation of a reproduced upgrade regression.
+
+This development Skill lives under `.agents/skills/`, separately from the
+distributed drawing Skill. Neither package builder includes it. Keep upstream
+research procedures here and actionable drawing guidance in the canonical
+distributed Skill; do not copy maintainer procedures into the plugin bundle.
+
+### Distributed drawing guidance
+
 Keep agent-facing diagramming guidance inside the canonical Skill's [references](../integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md) so both builds remain self-contained. General foundations, design principles, and extended authoring rationale belong primarily in maintainer documentation under `docs/`, outside the distributed Skill. Distill that knowledge into decisions, applicable conditions, exceptions, and actions. Include a short rationale within a rule or workflow step only when it helps the agent choose; do not bundle a separate theory layer for completeness.
 
 The [diagramming guide design system](diagramming-guide-design-system.md)

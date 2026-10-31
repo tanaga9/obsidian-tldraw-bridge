@@ -15,10 +15,15 @@ For tldraw diagrams used in this repository's documentation:
 - Export previews as WebP and inspect readability at the intended display size.
 - Keep intermediate previews in a temporary directory, outside tracked documentation.
 
-Maintain canonical Skill sources under `integrations/codex/skills/obsidian-tldraw/`;
+Maintain canonical distributed Skill sources under `integrations/codex/skills/obsidian-tldraw/`;
 `plugins/obsidian-tldraw-bridge/` is generated. Follow the
 [development guide](docs/development.md) when extending the guidance or rebuilding
 packages, and the [testing guide](docs/testing.md) for appropriate checks.
+
+For upstream tldraw SDK, Obsidian tldraw plugin, or Obsidian Desktop/CLI version
+reviews and related implementation or knowledge updates, use the repository-only
+[maintenance Skill](.agents/skills/bridge-upstream-maintenance/SKILL.md).
+Repository maintenance Skills under `.agents/skills/` are not distributed.
 
 Before committing changed tldraw Notes, use the read-only
 [multilingual review](docs/multilingual.md#commit-review). The review itself must
