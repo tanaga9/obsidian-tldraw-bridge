@@ -9,8 +9,8 @@ tags:
 {
 	"meta": {
 		"uuid": "2d868094-b170-4980-907d-84c09049db63",
-		"plugin-version": "1.32.0",
-		"tldraw-version": "5.4.0"
+		"plugin-version": "1.35.1",
+		"tldraw-version": "5.6.0"
 	},
 	"raw": {
 		"tldrawFileFormatVersion": 1,
@@ -74,7 +74,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Obsidian GUI"
+										"text": "Obsidian GUI",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -204,7 +209,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Markdown diagram (.md)"
+										"text": "Markdown diagram (.md)",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -292,7 +302,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Vault on disk"
+										"text": "Vault on disk",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -468,7 +483,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Obsidian CLI"
+										"text": "Obsidian CLI",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -551,7 +571,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Shared document Store"
+										"text": "Shared document Store",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -641,7 +666,25 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "loader.cjs + bridge.cjs"
+										"text": "loader.cjs",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
+									},
+									{
+										"type": "text",
+										"text": " + "
+									},
+									{
+										"type": "text",
+										"text": "bridge.cjs",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -1115,7 +1158,7 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 144,
+				"x": 140,
 				"y": 361,
 				"rotation": 0,
 				"isLocked": false,
@@ -1127,7 +1170,7 @@ tags:
 				"props": {
 					"color": "blue",
 					"size": "m",
-					"w": 175,
+					"w": 195,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -1140,7 +1183,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Python bridge"
+										"text": "Python bridge",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -1280,7 +1328,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Codex + Skill"
+										"text": "Codex + Skill",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -1316,7 +1369,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Where the bridge runs"
+										"text": "Where the bridge runs",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -1532,7 +1590,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Agent environment"
+										"text": "Agent environment",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -2111,7 +2174,16 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Continues after GUI tab closes"
+										"text": "Continues after "
+									},
+									{
+										"type": "text",
+										"text": "GUI tab closes",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -2307,7 +2379,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Dedicated Editor"
+										"text": "Dedicated Editor",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -2343,7 +2420,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Running Obsidian Desktop"
+										"text": "Running Obsidian Desktop",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}

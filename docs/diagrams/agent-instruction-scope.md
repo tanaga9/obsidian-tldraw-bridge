@@ -9,8 +9,8 @@ tags:
 {
 	"meta": {
 		"uuid": "04f8f0a0-47bd-48cb-80c2-169b42731125",
-		"plugin-version": "1.32.0",
-		"tldraw-version": "5.4.0"
+		"plugin-version": "1.35.1",
+		"tldraw-version": "5.6.0"
 	},
 	"raw": {
 		"tldrawFileFormatVersion": 1,
@@ -225,7 +225,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Primary folder / vault"
+										"text": "Primary folder / vault",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -270,7 +275,15 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "AGENTS.md"
+										"text": "AGENTS.md",
+										"marks": [
+											{
+												"type": "bold"
+											},
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							},
@@ -342,7 +355,15 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "AGENTS.md"
+										"text": "AGENTS.md",
+										"marks": [
+											{
+												"type": "bold"
+											},
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							},
@@ -387,7 +408,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Other vault"
+										"text": "Other vault",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -570,7 +596,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Agent"
+										"text": "Agent",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -844,7 +875,20 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Selecting a vault through Bridge does not load AGENTS.md."
+										"text": "Selecting a vault through Bridge "
+									},
+									{
+										"type": "text",
+										"text": "does not load AGENTS.md",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
+									},
+									{
+										"type": "text",
+										"text": "."
 									}
 								]
 							},
@@ -978,7 +1022,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Request + Skill"
+										"text": "Request + Skill",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -1023,7 +1072,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "/notes/team"
+										"text": "/notes/team",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -1218,13 +1272,13 @@ tags:
 				"y": 237,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.75,
 				"meta": {},
 				"id": "shape:nested-workspace-path",
 				"type": "text",
 				"parentId": "shape:nested-agent-instruction-scope",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
 					"w": 300,
 					"font": "sans",
@@ -1239,7 +1293,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "/work/project"
+										"text": "/work/project",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -1275,7 +1334,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Instruction sources and target vaults"
+										"text": "Instruction sources and target vaults",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}

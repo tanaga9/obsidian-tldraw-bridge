@@ -9,8 +9,8 @@ tags:
 {
 	"meta": {
 		"uuid": "6ad27496-7b5d-45ac-9a07-5520c784efb7",
-		"plugin-version": "1.32.0",
-		"tldraw-version": "5.4.0"
+		"plugin-version": "1.35.1",
+		"tldraw-version": "5.6.0"
 	},
 	"raw": {
 		"tldrawFileFormatVersion": 1,
@@ -64,6 +64,24 @@ tags:
 				"typeName": "pointer"
 			},
 			{
+				"meta": {},
+				"id": "binding:k-basic-tldraw-end",
+				"type": "arrow",
+				"fromId": "shape:k-basic-tldraw",
+				"toId": "shape:k-tldraw",
+				"props": {
+					"isPrecise": true,
+					"isExact": false,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
 				"name": "",
 				"color": "#7B66DC",
 				"imageUrl": "",
@@ -72,166 +90,8 @@ tags:
 				"typeName": "user"
 			},
 			{
-				"x": 0,
-				"y": 0,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:k-to-improve",
-				"type": "arrow",
-				"parentId": "shape:distribution-knowledge",
-				"props": {
-					"kind": "arc",
-					"elbowMidPoint": 0.5,
-					"dash": "draw",
-					"size": "s",
-					"fill": "none",
-					"color": "grey",
-					"labelColor": "black",
-					"bend": 0,
-					"start": {
-						"x": 740,
-						"y": 305
-					},
-					"end": {
-						"x": 1330,
-						"y": 655
-					},
-					"arrowheadStart": "none",
-					"arrowheadEnd": "arrow",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": []
-							}
-						]
-					},
-					"labelPosition": 0.5,
-					"font": "mono",
-					"scale": 1
-				},
-				"index": "a7yp0G",
-				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-multilingual-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-multilingual",
-				"toId": "shape:k-special",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 0,
-				"y": 0,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:k-to-arrows",
-				"type": "arrow",
-				"parentId": "shape:distribution-knowledge",
-				"props": {
-					"kind": "arc",
-					"elbowMidPoint": 0.5,
-					"dash": "draw",
-					"size": "s",
-					"fill": "none",
-					"color": "grey",
-					"labelColor": "black",
-					"bend": 0,
-					"start": {
-						"x": 1330,
-						"y": 222.5
-					},
-					"end": {
-						"x": 1330,
-						"y": 430
-					},
-					"arrowheadStart": "none",
-					"arrowheadEnd": "arrow",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": []
-							}
-						]
-					},
-					"labelPosition": 0.5,
-					"font": "mono",
-					"scale": 1
-				},
-				"index": "a6xHVV",
-				"typeName": "shape"
-			},
-			{
-				"x": 0,
-				"y": 0,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:k-to-special",
-				"type": "arrow",
-				"parentId": "shape:distribution-knowledge",
-				"props": {
-					"kind": "arc",
-					"elbowMidPoint": 0.5,
-					"dash": "draw",
-					"size": "s",
-					"fill": "none",
-					"color": "grey",
-					"labelColor": "black",
-					"bend": 0,
-					"start": {
-						"x": 210,
-						"y": 722.5
-					},
-					"end": {
-						"x": 740,
-						"y": 1160
-					},
-					"arrowheadStart": "none",
-					"arrowheadEnd": "arrow",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "as needed"
-									}
-								]
-							}
-						]
-					},
-					"labelPosition": 0.5,
-					"font": "mono",
-					"scale": 1
-				},
-				"index": "aAtz38",
-				"typeName": "shape"
-			},
-			{
-				"x": 545,
-				"y": 230,
+				"x": 45,
+				"y": 360,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -240,8 +100,8 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
-					"h": 150,
+					"w": 460,
+					"h": 190,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -251,7 +111,7 @@ tags:
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -264,7 +124,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Drawing guidance"
+										"text": "Drawing decisions",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -282,7 +147,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "diagramming/index.md"
+										"text": "diagramming/index.md",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -299,25 +169,25 @@ tags:
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:k-to-operations",
+				"id": "shape:k-basic-drawing",
 				"type": "arrow",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "draw",
+					"dash": "solid",
 					"size": "s",
 					"fill": "none",
 					"color": "grey",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
-						"x": 210,
-						"y": 722.5
+						"x": 0,
+						"y": 0
 					},
 					"end": {
-						"x": 740,
-						"y": 735
+						"x": 0,
+						"y": 80
 					},
 					"arrowheadStart": "none",
 					"arrowheadEnd": "arrow",
@@ -325,44 +195,20 @@ tags:
 						"type": "doc",
 						"content": [
 							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "edit"
-									}
-								]
+								"type": "paragraph"
 							}
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "mono",
+					"font": "draw",
 					"scale": 1
 				},
-				"index": "a9fj3",
+				"index": "a4tJbl",
 				"typeName": "shape"
 			},
 			{
-				"meta": {},
-				"id": "binding:k-to-freehand-end",
-				"type": "arrow",
-				"fromId": "shape:k-to-freehand",
-				"toId": "shape:k-freehand",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 1135,
-				"y": 365,
+				"x": 45,
+				"y": 680,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -371,8 +217,8 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
-					"h": 130,
+					"w": 700,
+					"h": 150,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -382,7 +228,7 @@ tags:
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -395,7 +241,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "When changing connections"
+										"text": "When changing connections",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -404,7 +255,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Routing · terminals · bindings"
+										"text": "Routing · terminals · semantic bindings"
 									}
 								]
 							},
@@ -413,7 +264,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "diagramming/arrows.md"
+										"text": "diagramming/arrows.md",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -424,49 +280,31 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"meta": {},
-				"id": "binding:k-to-tldraw-end",
-				"type": "arrow",
-				"fromId": "shape:k-to-tldraw",
-				"toId": "shape:k-tldraw",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
 				"x": 0,
 				"y": 0,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:k-to-drawing",
+				"id": "shape:k-basic-operations",
 				"type": "arrow",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "draw",
+					"dash": "solid",
 					"size": "s",
 					"fill": "none",
 					"color": "grey",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
-						"x": 210,
-						"y": 722.5
+						"x": 0,
+						"y": 0
 					},
 					"end": {
-						"x": 740,
-						"y": 305
+						"x": 0,
+						"y": 80
 					},
 					"arrowheadStart": "none",
 					"arrowheadEnd": "arrow",
@@ -474,26 +312,38 @@ tags:
 						"type": "doc",
 						"content": [
 							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "draw"
-									}
-								]
+								"type": "paragraph"
 							}
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "mono",
+					"font": "draw",
 					"scale": 1
 				},
-				"index": "a4uqzG",
+				"index": "a9tTvV",
 				"typeName": "shape"
 			},
 			{
-				"x": 545,
-				"y": 637.5,
+				"meta": {},
+				"id": "binding:k-basic-tldraw-start",
+				"type": "arrow",
+				"fromId": "shape:k-basic-tldraw",
+				"toId": "shape:k-entry",
+				"props": {
+					"isPrecise": true,
+					"isExact": false,
+					"normalizedAnchor": {
+						"x": 0.8456375838926175,
+						"y": 1
+					},
+					"snap": "none",
+					"terminal": "start"
+				},
+				"typeName": "binding"
+			},
+			{
+				"x": 560,
+				"y": 360,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -502,8 +352,8 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
-					"h": 170,
+					"w": 460,
+					"h": 190,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -513,7 +363,7 @@ tags:
 					"flipY": false,
 					"color": "green",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -526,7 +376,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Editing and recovery"
+										"text": "Editing and saving",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -535,7 +390,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Observe · revision-checked edits"
+										"text": "Observe · partial text edits · preview"
 									}
 								]
 							},
@@ -544,7 +399,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Preview · verify saving · recover"
+										"text": "Revision checks · verify persistence"
 									}
 								]
 							},
@@ -553,7 +408,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "operations.md"
+										"text": "operations.md",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -564,62 +424,17 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 0,
-				"y": 0,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:k-to-multilingual",
-				"type": "arrow",
-				"parentId": "shape:distribution-knowledge",
-				"props": {
-					"kind": "arc",
-					"elbowMidPoint": 0.5,
-					"dash": "draw",
-					"size": "s",
-					"fill": "none",
-					"color": "grey",
-					"labelColor": "black",
-					"bend": 0,
-					"start": {
-						"x": 740,
-						"y": 1160
-					},
-					"end": {
-						"x": 1330,
-						"y": 1102.5
-					},
-					"arrowheadStart": "none",
-					"arrowheadEnd": "arrow",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": []
-							}
-						]
-					},
-					"labelPosition": 0.5,
-					"font": "mono",
-					"scale": 1
-				},
-				"index": "aBycB",
-				"typeName": "shape"
-			},
-			{
 				"x": 45,
-				"y": 1380,
+				"y": 1270,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.75,
 				"meta": {},
 				"id": "shape:k-legend",
 				"type": "text",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
 					"w": 1490,
 					"font": "sans",
@@ -634,7 +449,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Arrows = consult the related guidance    •    Special drawing tasks is a topic group, not an extra file."
+										"text": "Use the three basic guides together; load extra references only when the task calls for them."
 									}
 								]
 							}
@@ -645,8 +460,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 1135,
-				"y": 795,
+				"x": 45,
+				"y": 870,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -655,7 +470,7 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
+					"w": 700,
 					"h": 150,
 					"geo": "rectangle",
 					"dash": "draw",
@@ -666,7 +481,7 @@ tags:
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -679,7 +494,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "When unclear or stalled"
+										"text": "When unclear or stalled",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -688,7 +508,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Small trial → inspect evidence"
+										"text": "Small trial → inspect decision evidence"
 									}
 								]
 							},
@@ -697,7 +517,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "diagramming/design-recovery.md"
+										"text": "diagramming/design-recovery.md",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -708,42 +533,6 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"meta": {},
-				"id": "binding:k-to-freehand-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-freehand",
-				"toId": "shape:k-special",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-improve-end",
-				"type": "arrow",
-				"fromId": "shape:k-to-improve",
-				"toId": "shape:k-improve",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
 				"x": 0,
 				"y": 0,
 				"z": 1,
@@ -752,44 +541,8 @@ tags:
 				"typeName": "camera"
 			},
 			{
-				"meta": {},
-				"id": "binding:k-to-tldraw-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-tldraw",
-				"toId": "shape:k-drawing",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-special-end",
-				"type": "arrow",
-				"fromId": "shape:k-to-special",
-				"toId": "shape:k-special",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 1135,
-				"y": 1030,
+				"x": 835,
+				"y": 870,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -798,18 +551,18 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
-					"h": 145,
+					"w": 700,
+					"h": 150,
 					"geo": "rectangle",
 					"dash": "draw",
-					"growY": 7,
+					"growY": 0,
 					"url": "",
 					"scale": 1,
 					"flipX": false,
 					"flipY": false,
 					"color": "violet",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -822,7 +575,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Language variants"
+										"text": "For language variants",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -831,7 +589,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Inspect existing pages; reflect on request"
+										"text": "Inspect both pages · reflect authorized changes"
 									}
 								]
 							},
@@ -840,7 +598,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "multilingual.md"
+										"text": "multilingual.md",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -857,56 +620,11 @@ tags:
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:k-to-recover",
-				"type": "arrow",
-				"parentId": "shape:distribution-knowledge",
-				"props": {
-					"kind": "elbow",
-					"elbowMidPoint": 0.5,
-					"dash": "draw",
-					"size": "s",
-					"fill": "none",
-					"color": "grey",
-					"labelColor": "black",
-					"bend": 0,
-					"start": {
-						"x": 740,
-						"y": 305
-					},
-					"end": {
-						"x": 1330,
-						"y": 870
-					},
-					"arrowheadStart": "none",
-					"arrowheadEnd": "arrow",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": []
-							}
-						]
-					},
-					"labelPosition": 0.5,
-					"font": "mono",
-					"scale": 1
-				},
-				"index": "a8VOm",
-				"typeName": "shape"
-			},
-			{
-				"x": 0,
-				"y": 0,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
 				"id": "shape:distribution-knowledge",
 				"type": "frame",
 				"props": {
 					"w": 1580,
-					"h": 1430,
+					"h": 1340,
 					"name": "skill-knowledge-map",
 					"color": "black"
 				},
@@ -915,8 +633,8 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 45,
-				"y": 1285,
+				"x": 835,
+				"y": 1085,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -925,9 +643,9 @@ tags:
 				"type": "text",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
-					"w": 455,
+					"w": 700,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -940,7 +658,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "All file labels here are relative to"
+										"text": "Reference paths are relative to"
 									}
 								]
 							},
@@ -949,7 +667,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "skills/obsidian-tldraw/references/"
+										"text": "skills/obsidian-tldraw/references/",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							},
@@ -970,16 +693,16 @@ tags:
 			},
 			{
 				"meta": {},
-				"id": "binding:k-to-drawing-end",
+				"id": "binding:k-basic-operations-end",
 				"type": "arrow",
-				"fromId": "shape:k-to-drawing",
-				"toId": "shape:k-drawing",
+				"fromId": "shape:k-basic-operations",
+				"toId": "shape:k-operations",
 				"props": {
-					"isPrecise": false,
+					"isPrecise": true,
 					"isExact": false,
 					"normalizedAnchor": {
 						"x": 0.5,
-						"y": 0.5
+						"y": 0
 					},
 					"snap": "none",
 					"terminal": "end"
@@ -1000,80 +723,17 @@ tags:
 				"typeName": "instance_page_state"
 			},
 			{
-				"x": 0,
-				"y": 0,
-				"rotation": 0,
-				"isLocked": false,
-				"opacity": 1,
-				"meta": {},
-				"id": "shape:k-to-freehand",
-				"type": "arrow",
-				"parentId": "shape:distribution-knowledge",
-				"props": {
-					"kind": "arc",
-					"elbowMidPoint": 0.5,
-					"dash": "draw",
-					"size": "s",
-					"fill": "none",
-					"color": "grey",
-					"labelColor": "black",
-					"bend": 0,
-					"start": {
-						"x": 740,
-						"y": 1160
-					},
-					"end": {
-						"x": 1330,
-						"y": 1295
-					},
-					"arrowheadStart": "none",
-					"arrowheadEnd": "arrow",
-					"richText": {
-						"type": "doc",
-						"content": [
-							{
-								"type": "paragraph",
-								"content": []
-							}
-						]
-					},
-					"labelPosition": 0.5,
-					"font": "mono",
-					"scale": 1
-				},
-				"index": "aLOoU",
-				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-improve-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-improve",
-				"toId": "shape:k-drawing",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
 				"x": 45,
-				"y": 85,
+				"y": 90,
 				"rotation": 0,
 				"isLocked": false,
-				"opacity": 1,
+				"opacity": 0.75,
 				"meta": {},
 				"id": "shape:k-subtitle",
 				"type": "text",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"color": "grey",
+					"color": "black",
 					"size": "s",
 					"w": 1490,
 					"font": "sans",
@@ -1088,7 +748,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Start at SKILL.md. Use both basic guides before diagram editing; follow extra references for the task."
+										"text": "Start at SKILL.md, use the basic guides, then choose extra references by task."
 									}
 								]
 							}
@@ -1105,25 +765,25 @@ tags:
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
-				"id": "shape:k-to-tldraw",
+				"id": "shape:k-basic-tldraw",
 				"type": "arrow",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
 					"kind": "arc",
 					"elbowMidPoint": 0.5,
-					"dash": "draw",
+					"dash": "solid",
 					"size": "s",
 					"fill": "none",
 					"color": "grey",
 					"labelColor": "black",
 					"bend": 0,
 					"start": {
-						"x": 740,
-						"y": 305
+						"x": 0,
+						"y": 0
 					},
 					"end": {
-						"x": 1330,
-						"y": 222.5
+						"x": 0,
+						"y": 80
 					},
 					"arrowheadStart": "none",
 					"arrowheadEnd": "arrow",
@@ -1131,75 +791,20 @@ tags:
 						"type": "doc",
 						"content": [
 							{
-								"type": "paragraph",
-								"content": []
+								"type": "paragraph"
 							}
 						]
 					},
 					"labelPosition": 0.5,
-					"font": "mono",
+					"font": "draw",
 					"scale": 1
 				},
-				"index": "a5rcdV",
+				"index": "a5zuIG",
 				"typeName": "shape"
 			},
 			{
-				"meta": {},
-				"id": "binding:k-to-special-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-special",
-				"toId": "shape:k-entry",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-arrows-end",
-				"type": "arrow",
-				"fromId": "shape:k-to-arrows",
-				"toId": "shape:k-arrows",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-operations-end",
-				"type": "arrow",
-				"fromId": "shape:k-to-operations",
-				"toId": "shape:k-operations",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"x": 1135,
-				"y": 1230,
+				"x": 45,
+				"y": 1060,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1208,8 +813,8 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
-					"h": 130,
+					"w": 700,
+					"h": 150,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -1219,7 +824,7 @@ tags:
 					"flipY": false,
 					"color": "violet",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -1232,7 +837,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Authored line art"
+										"text": "For authored line art",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -1241,7 +851,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Curves · pressure · stroke encoding"
+										"text": "Curves · pressure · editable strokes"
 									}
 								]
 							},
@@ -1250,7 +860,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "freehand.md"
+										"text": "freehand.md",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -1261,8 +876,26 @@ tags:
 				"typeName": "shape"
 			},
 			{
+				"meta": {},
+				"id": "binding:k-basic-drawing-end",
+				"type": "arrow",
+				"fromId": "shape:k-basic-drawing",
+				"toId": "shape:k-drawing",
+				"props": {
+					"isPrecise": true,
+					"isExact": false,
+					"normalizedAnchor": {
+						"x": 0.5,
+						"y": 0
+					},
+					"snap": "none",
+					"terminal": "end"
+				},
+				"typeName": "binding"
+			},
+			{
 				"x": 45,
-				"y": 650,
+				"y": 155,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1271,8 +904,8 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 330,
-					"h": 145,
+					"w": 1490,
+					"h": 110,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -1282,7 +915,7 @@ tags:
 					"flipY": false,
 					"color": "violet",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -1295,7 +928,15 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "SKILL.md"
+										"text": "SKILL.md",
+										"marks": [
+											{
+												"type": "bold"
+											},
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							},
@@ -1304,16 +945,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Task + vault selection"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "Which guidance to load"
+										"text": "Task + vault selection · which guidance to load"
 									}
 								]
 							}
@@ -1325,25 +957,25 @@ tags:
 			},
 			{
 				"meta": {},
-				"id": "binding:k-to-recover-end",
+				"id": "binding:k-basic-operations-start",
 				"type": "arrow",
-				"fromId": "shape:k-to-recover",
-				"toId": "shape:k-recover",
+				"fromId": "shape:k-basic-operations",
+				"toId": "shape:k-entry",
 				"props": {
 					"isPrecise": true,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0,
-						"y": 0.5
+						"x": 0.5,
+						"y": 1
 					},
-					"snap": "edge-point",
-					"terminal": "end"
+					"snap": "none",
+					"terminal": "start"
 				},
 				"typeName": "binding"
 			},
 			{
-				"x": 1135,
-				"y": 150,
+				"x": 1075,
+				"y": 360,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1352,8 +984,8 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
-					"h": 145,
+					"w": 460,
+					"h": 190,
 					"geo": "rectangle",
 					"dash": "draw",
 					"growY": 0,
@@ -1363,7 +995,7 @@ tags:
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -1376,7 +1008,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "When editing visuals"
+										"text": "SDK drawing details",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -1385,7 +1022,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Styles · frames · bounds"
+										"text": "Rich text · styles · frames · bounds"
 									}
 								]
 							},
@@ -1394,7 +1031,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "diagramming/tldraw.md"
+										"text": "diagramming/tldraw.md",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -1405,47 +1047,11 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"meta": {},
-				"id": "binding:k-to-drawing-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-drawing",
-				"toId": "shape:k-entry",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
-			},
-			{
 				"gridSize": 10,
 				"name": "",
 				"meta": {},
 				"id": "document:document",
 				"typeName": "document"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-arrows-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-arrows",
-				"toId": "shape:k-tldraw",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "start"
-				},
-				"typeName": "binding"
 			},
 			{
 				"followingUserId": null,
@@ -1495,34 +1101,16 @@ tags:
 			},
 			{
 				"meta": {},
-				"id": "binding:k-to-multilingual-end",
+				"id": "binding:k-basic-drawing-start",
 				"type": "arrow",
-				"fromId": "shape:k-to-multilingual",
-				"toId": "shape:k-multilingual",
-				"props": {
-					"isPrecise": false,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
-					},
-					"snap": "none",
-					"terminal": "end"
-				},
-				"typeName": "binding"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-operations-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-operations",
+				"fromId": "shape:k-basic-drawing",
 				"toId": "shape:k-entry",
 				"props": {
-					"isPrecise": false,
+					"isPrecise": true,
 					"isExact": false,
 					"normalizedAnchor": {
-						"x": 0.5,
-						"y": 0.5
+						"x": 0.15436241610738255,
+						"y": 1
 					},
 					"snap": "none",
 					"terminal": "start"
@@ -1530,8 +1118,8 @@ tags:
 				"typeName": "binding"
 			},
 			{
-				"x": 1135,
-				"y": 580,
+				"x": 835,
+				"y": 680,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
@@ -1540,18 +1128,18 @@ tags:
 				"type": "geo",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
+					"w": 700,
 					"h": 150,
 					"geo": "rectangle",
 					"dash": "draw",
-					"growY": 2,
+					"growY": 0,
 					"url": "",
 					"scale": 1,
 					"flipX": false,
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",
@@ -1564,7 +1152,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "On feedback or improvement"
+										"text": "On feedback or improvement",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -1573,7 +1166,7 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Diagnose · propose · scope"
+										"text": "Diagnose · propose · respect scope"
 									}
 								]
 							},
@@ -1582,7 +1175,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "diagramming/improvement-patterns.md"
+										"text": "diagramming/improvement-patterns.md",
+										"marks": [
+											{
+												"type": "code"
+											}
+										]
 									}
 								]
 							}
@@ -1618,7 +1216,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Knowledge map / what Codex consults"
+										"text": "Find the guidance for your drawing task",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -1629,32 +1232,23 @@ tags:
 				"typeName": "shape"
 			},
 			{
-				"x": 545,
-				"y": 1095,
+				"x": 45,
+				"y": 600,
 				"rotation": 0,
 				"isLocked": false,
 				"opacity": 1,
 				"meta": {},
 				"id": "shape:k-special",
-				"type": "geo",
+				"type": "text",
 				"parentId": "shape:distribution-knowledge",
 				"props": {
-					"w": 390,
-					"h": 130,
-					"geo": "rectangle",
-					"dash": "draw",
-					"growY": 0,
-					"url": "",
-					"scale": 1,
-					"flipX": false,
-					"flipY": false,
-					"color": "violet",
-					"labelColor": "black",
-					"fill": "solid",
+					"color": "black",
 					"size": "m",
+					"w": 1490,
 					"font": "sans",
-					"align": "start",
-					"verticalAlign": "middle",
+					"textAlign": "start",
+					"autoSize": false,
+					"scale": 1,
 					"richText": {
 						"type": "doc",
 						"content": [
@@ -1663,51 +1257,20 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Special drawing tasks"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "SKILL.md selects these"
-									}
-								]
-							},
-							{
-								"type": "paragraph",
-								"content": [
-									{
-										"type": "text",
-										"text": "when the request calls for them"
+										"text": "Extra references — choose by task",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
 						]
 					}
 				},
-				"index": "aAiUw",
+				"index": "aO8Qv",
 				"typeName": "shape"
-			},
-			{
-				"meta": {},
-				"id": "binding:k-to-recover-start",
-				"type": "arrow",
-				"fromId": "shape:k-to-recover",
-				"toId": "shape:k-drawing",
-				"props": {
-					"isPrecise": true,
-					"isExact": false,
-					"normalizedAnchor": {
-						"x": 1,
-						"y": 0.85
-					},
-					"snap": "edge-point",
-					"terminal": "start"
-				},
-				"typeName": "binding"
 			}
 		]
 	}

@@ -9,8 +9,8 @@ tags:
 {
 	"meta": {
 		"uuid": "bcbe4f79-22a3-409b-8b48-60b0a39b2666",
-		"plugin-version": "1.32.0",
-		"tldraw-version": "5.4.0"
+		"plugin-version": "1.35.1",
+		"tldraw-version": "5.6.0"
 	},
 	"raw": {
 		"tldrawFileFormatVersion": 1,
@@ -263,7 +263,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "回復：小さな試行で判断材料を得る"
+										"text": "回復：小さな試行で判断材料を得る",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -604,7 +609,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "MAINTENANCE"
+										"text": "MAINTENANCE",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -712,7 +722,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "問題に具体策を当てる。次の判断に根拠がないときは、小さく試して方向を探る。"
+										"text": "問題に具体策を当てる。次の判断に根拠がないときは、小さく試して方向を探る。",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -991,7 +1006,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "根拠が得られた"
+										"text": "根拠が得られた",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -1984,7 +2004,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Three verdicts"
+										"text": "Three verdicts",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -2235,7 +2260,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Refine & verify"
+										"text": "Refine & verify",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -2343,7 +2373,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Diagram work in progress"
+										"text": "Diagram work in progress",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -2388,7 +2423,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "エージェントが構造案を作る"
+										"text": "エージェントが構造案を作る",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -2442,7 +2482,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Keep / simplify / revise"
+										"text": "Keep / simplify / revise",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -2514,7 +2559,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "目的と現状を確認する"
+										"text": "目的と現状を確認する",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -2640,7 +2690,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "役立つ図"
+										"text": "役立つ図",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -3008,7 +3063,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "3つの判定"
+										"text": "3つの判定",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -3071,7 +3131,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Improvement and recovery in diagram work"
+										"text": "Improvement and recovery in diagram work",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -3116,7 +3181,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Diagnose a failure"
+										"text": "Diagnose a failure",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -3421,7 +3491,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Agent: design candidate"
+										"text": "Agent: design candidate",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -3610,7 +3685,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "仕上げ・検証"
+										"text": "仕上げ・検証",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -3753,7 +3833,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Draw one small trial"
+										"text": "Draw one small trial",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -3937,7 +4022,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "維持・簡素化・改訂"
+										"text": "維持・簡素化・改訂",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -3969,7 +4059,7 @@ tags:
 				"props": {
 					"color": "violet",
 					"size": "l",
-					"w": 380,
+					"w": 430,
 					"font": "sans",
 					"textAlign": "start",
 					"autoSize": false,
@@ -3982,7 +4072,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Authoring knowledge"
+										"text": "Authoring knowledge",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -4198,7 +4293,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "改善：問題に合う具体策を選ぶ"
+										"text": "改善：問題に合う具体策を選ぶ",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -4288,7 +4388,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Useful diagram"
+										"text": "Useful diagram",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -4342,7 +4447,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "根拠ある次の一手を得る"
+										"text": "根拠ある次の一手を得る",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -4603,7 +4713,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "不具合を診断"
+										"text": "不具合を診断",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -4701,7 +4816,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Inspect: supported / rejected / inconclusive"
+										"text": "Inspect: supported / rejected / inconclusive",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -5567,7 +5687,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "ガイド設計の知識"
+										"text": "ガイド設計の知識",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -5612,7 +5737,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Name one unknown and one hypothesis"
+										"text": "Name one unknown and one hypothesis",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -5930,7 +6060,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Required conditions"
+										"text": "Required conditions",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -6020,7 +6155,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "通常の作図"
+										"text": "通常の作図",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -6147,7 +6287,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Revise structure"
+										"text": "Revise structure",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -6498,7 +6643,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "RECOVERY: learn through a small trial"
+										"text": "RECOVERY: learn through a small trial",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -6728,7 +6878,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Improve a known problem. Recover when the next design decision has no support."
+										"text": "Improve a known problem. Recover when the next design decision has no support.",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -6939,7 +7094,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Evidence supports"
+										"text": "Evidence supports",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -7398,7 +7558,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "通常の作図・改善"
+										"text": "通常の作図・改善",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -7551,7 +7716,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "必須条件"
+										"text": "必須条件",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -7650,7 +7820,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "構造を修正"
+										"text": "構造を修正",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -7767,7 +7942,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "NORMAL USE"
+										"text": "NORMAL USE",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -8193,7 +8373,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "ガイドを比較"
+										"text": "ガイドを比較",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -8454,7 +8639,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "図の改善と、行き詰まりからの回復"
+										"text": "図の改善と、行き詰まりからの回復",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -8763,7 +8953,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "実際に小さく描く"
+										"text": "実際に小さく描く",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -8817,7 +9012,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Assess purpose and the current diagram"
+										"text": "Assess purpose and the current diagram",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -9056,20 +9256,20 @@ tags:
 									"algorithm": "page-content-v2",
 									"sourcePageId": "page:page",
 									"source": {
-										"full": "4362ca3d32a0e8a3952e3ddf2e754b8b5001a09f4e6b8cf04a5c1c49557c40f2",
-										"content": "04ab82d0b0f5ece68dcbd82bef56d01d0e41fed42973920212437185dc8cc39d",
-										"legacy": "026197fe89e72f10e27490b17d1d065392129f125c4beceed895da9ec7622a6c",
+										"full": "7185a70c5e160f18691ffdc9fc459f3099f7e983e2f15fa09c0760c0b4f85451",
+										"content": "d5154751e38e2a27366374b49e8ea001070e87b3e293928391de81d0baca0497",
+										"legacy": "e9f96a6146f2245052db90ffe538ec9c8fdd8865e585013f7663f9b9b891bf01",
 										"hasAssets": false
 									},
 									"target": {
-										"full": "d5f56f468b134ad60abb12399d48b8782cda74d9cc68aa95e2482ecc2f10fe8d",
-										"content": "5286f3582f8158877cfd40718dc17db4d3ba49eab071fe88af803600a6048875",
-										"legacy": "a75f5c8570a7dbf0b409e9fa100440b0eb742c9c2fa65717b59260a201b1ab99",
+										"full": "648829b4c6088574679759beaba6141cf40f1a0e49e31bcc4686aa6f53187c61",
+										"content": "fbd06ab2f6edaee8bf268481df6ec39474321d06c2518d0133fc8c9b854afa7e",
+										"legacy": "cbaaf411aa5c12f53b9861efc0dbaec20ec102e2dfde5922d5f664edf907f8ab",
 										"hasAssets": false
 									},
-									"kind": "layout",
-									"reason": "Reviewed English and Japanese at their intended display size after user reported arrowhead merging. Restored clearance on small arrowheads; resulting renderings match the inspected pre-contact versions. Labels, targets, directions, and node layout are unchanged.",
-									"reviewedAt": "2026-10-29T13:45:57.345Z"
+									"kind": "adopt",
+									"reason": "Inspected both language pages at 1200px after matching heading emphasis; verified all original wording, shape IDs and bindings are preserved. English author heading widened to avoid wrapping.",
+									"reviewedAt": "2026-11-01T06:28:41.526Z"
 								}
 							}
 						},
@@ -9085,20 +9285,20 @@ tags:
 									"algorithm": "page-content-v2",
 									"sourcePageId": "page:improvement-recovery-en",
 									"source": {
-										"full": "d347262897b47704678c5520b708ea698a4c2b66a7edb0b60d67d7d44ce71641",
-										"content": "dac1c2e16552e99b43c57e489597b633e2f52a83894e56f7f683e6e55205e925",
-										"legacy": "9db40a3a52180ba81ac9b4e7e1c3b5083bcf7ce3a0e2e464005b81241dd875d2",
+										"full": "ea8150116ad03880a71b60cb0165aded6df7b7fcfd79ad819f7620a7411db5d9",
+										"content": "b22f6952fcb43d3c74d938c8eda21b720816ecf5faa1b50fb4ee87f20455918e",
+										"legacy": "341384bf7c4ee05cc9e2e774c71693a68d8b46f1c1fc78035600d75791940f83",
 										"hasAssets": false
 									},
 									"target": {
-										"full": "2947eec7a2dae6924022d349be094ef85d555e507c72c580dc825f702f3b377c",
-										"content": "139d367156c51a8a73f033c63cf647b794688ad03dd236e15aeec9655c27a5a8",
-										"legacy": "b5f420e88772c5a1d03b5a7ced40eb6813433098a893b125279dc1b7f27abb05",
+										"full": "4f66d166d71ba2f15b585ef5b9f96a8f108a9907e88f5c8896f2d0ace9061711",
+										"content": "0113c4cee21435bf14ddb817132d983a95d2498e43ae9d525a0fa1a9d0573b45",
+										"legacy": "45b87a3b621b0d8534782bf4ff56a00fb995da60868f76321e6bb21e8225c98a",
 										"hasAssets": false
 									},
 									"kind": "adopt",
-									"reason": "Reviewed English and Japanese pages after the authorized semantic binding correction: both return arrows now bind to the ongoing diagram-work node instead of its explanatory label. Widened the result node to preserve an unobstructed external elbow route. Existing wording, branch meanings, and other connections are preserved; both rendered pages and persistence were inspected.",
-									"reviewedAt": "2026-10-29T16:31:03.791Z"
+									"reason": "Inspected both language pages at 1200px after matching heading emphasis; verified all original wording, shape IDs and bindings are preserved. English author heading widened to avoid wrapping.",
+									"reviewedAt": "2026-11-01T06:28:42.261Z"
 								}
 							}
 						}
@@ -9291,7 +9491,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Compare guides"
+										"text": "Compare guides",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -9462,7 +9667,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Selected case"
+										"text": "Selected case",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -9525,7 +9735,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "配布するSkill"
+										"text": "配布するSkill",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -9561,7 +9776,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "設計知識から、役立つ図へ"
+										"text": "設計知識から、役立つ図へ",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -9624,7 +9844,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "描画結果を確認：支持・否定・判断できない"
+										"text": "描画結果を確認：支持・否定・判断できない",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -10356,7 +10581,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "不明点と仮説を一つに絞る"
+										"text": "不明点と仮説を一つに絞る",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -10536,7 +10766,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "ガイドの保守"
+										"text": "ガイドの保守",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -10823,7 +11058,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "IMPROVEMENT: choose a concrete measure"
+										"text": "IMPROVEMENT: choose a concrete measure",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -10868,7 +11108,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "GAIN A SUPPORTED NEXT STEP"
+										"text": "GAIN A SUPPORTED NEXT STEP",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -11227,7 +11472,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "From design knowledge to useful diagrams"
+										"text": "From design knowledge to useful diagrams",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
@@ -11272,7 +11522,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "事例の選定"
+										"text": "事例の選定",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							},
@@ -11317,7 +11572,12 @@ tags:
 								"content": [
 									{
 										"type": "text",
-										"text": "Distributed Skill"
+										"text": "Distributed Skill",
+										"marks": [
+											{
+												"type": "bold"
+											}
+										]
 									}
 								]
 							}
