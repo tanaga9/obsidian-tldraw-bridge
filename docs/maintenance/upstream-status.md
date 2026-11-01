@@ -1,6 +1,7 @@
 # Upstream maintenance status
 
-Last upstream check and completed live verification: **2026-11-01T02:02:38Z** (UTC).
+Last upstream research: **2026-11-01T02:02:38Z** (UTC).
+Latest live verification after application restart: **2026-11-01T02:08:23Z** (UTC).
 Scope: verify the user's installed plugin update from 1.32.0 to 1.35.1,
 exercise bridge integration, and update tested-version declarations.
 
@@ -16,8 +17,7 @@ exercise bridge integration, and update tested-version declarations.
 The target's [release manifest](https://github.com/tldraw/obsidian-plugin/releases/download/1.35.1/manifest.json)
 requires Obsidian **1.10.0**, satisfied locally. The source-tag manifest still
 says 1.35.0; the release asset and installed manifest identify 1.35.1.
-Checkout base: `001219193ccb6ea9319aaf08ce6b3d59d188ea43`, with the scoped
-changes described below.
+Latest live-tested checkout: `478c5ce8cb2c345ef27ec8effb1940a2bfcc9a41`.
 
 ## Completed verification
 
@@ -25,7 +25,12 @@ Explicit vault: `obsidian-tldraw-bridge`. Official CLI:
 `/Applications/Obsidian.app/Contents/MacOS/obsidian-cli`.
 All checks below ran on **2026-11-01 (UTC)** against the installed combination.
 
-- Eleven live scripts passed: `live_create.py`, `live_styles.py`,
+- After application restart, seven live scripts passed again: `live_create.py`,
+  `live_styles.py`, `live_apply_preview.py`, `live_images.py`, `live.py`,
+  `live_sessions.py`, and `live_reload.py --multi-page-copy`. Runtime versions
+  were reconfirmed; the library registry contained only SDK **5.6.0**, with no
+  5.4.0 registrations. PNG/WebP previews were visually inspected.
+- Before restart, eleven live scripts passed: `live_create.py`, `live_styles.py`,
   `live_apply_preview.py`, `live_images.py`, `live_transport.py`,
   `live_languages.py`, `live_pending_update.py`, `live.py`, `live_sessions.py`,
   `live_freehand.py`, and `live_reload.py --multi-page-copy`.
@@ -58,10 +63,10 @@ plugin package. Existing Store reconciliation remains in place: the
 [SDK 5.6 notification/rollback fixes](https://tldraw.dev/releases/v5.6.0) do not
 by themselves establish that it is safe to remove the bridge's protections.
 
-Tests ran after the user's plugin update in the existing Obsidian process.
-Its global library registry retains both 5.4.0 and 5.6.0 registrations; the
-installed bundle, saved metadata and newer non-finite camera validation confirm
-5.6.0 availability/behavior. A clean application restart was not performed.
+The latest seven-script live check ran after application restart with only SDK
+5.6.0 registered. The legacy-fixture migration check, freehand, transport,
+multilingual and deleted-note update-deferral checks were not repeated after
+restart; their successful results above remain from the earlier check.
 Manual GUI gestures and GUI/embed export paths were not separately tested.
 Only the checkout runtime was confirmed current; the rebuilt package was not
 installed into other Codex-cache contexts.
