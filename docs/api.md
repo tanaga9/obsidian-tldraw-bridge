@@ -48,7 +48,11 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
   `pluginUpdate` in its error details for the same advisory use.
 - `call(action, args, request_id=None)` returns a JSON-compatible result. Actions
   include `capabilities`, `style-spec`, `doctor`, `create`, `open`, `observe`, `state`, `apply`,
-  `batch`, `script`, `language-status`, `language-checkpoint`, `freehand`, `image-info`, `insert-image`, `saved`, `preview`, and `close`.
+  `batch`, `script`, `language-status`, `language-checkpoint`, `freehand`, `image-info`, `insert-image`, `saved`, `preview`, `preview-many`, and `close`.
+- `state` accepts optional `recordType` to filter `records` by a registered document
+  `typeName`, such as `shape`, `binding`, or `page`. Its revision still covers the
+  whole document. A shape and binding can share `type: "arrow"`; use `typeName`
+  to distinguish them. Unknown record types fail rather than silently returning none.
 - `style-spec` takes `path` and `shapeType` for an already-open document. It
   reports installed style enums, separate SDK/shape defaults and current creation
   styles with per-field availability/source; it does not edit or save the note.
@@ -84,8 +88,17 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
 - `status(id)` reads a retained receipt; `forget(id)` releases it and its deduplication protection.
 - `preview` accepts `format` (`webp` by default, or explicit `png`) and optional WebP
   `quality` (0–1, default 0.9), alongside its selection, scale, revision and output
-  options. Format is explicit, not inferred from the output filename. The result
-  includes `format`, `path`, logical `width`/`height`, and the captured `revision`.
+  options. Optional `pageId` selects the export page without changing the selected
+  page; IDs and bounds refer to that page. Format is explicit, not inferred from the output filename. The result
+  includes `format`, `path`, logical `width`/`height`, the exported `pageId`, and the captured `revision`.
+- `preview-many` takes `path`, optional `revision`, and `outputs`: 1–32 preview
+  option objects (`output` required, optional `pageId`, selectors, scale, format,
+  and quality). It renders all images and verifies the saved document before
+  writing files. Returns `revision`, `persistence`, and ordered `previews` for
+  that revision. The selected page is restored even on failure. Render, save,
+  and revision failures preserve output files. Sequential file writes can fail
+  partially: `PREVIEW_WRITE_FAILED` reports completed `details.previews` and
+  `details.failedPath` with outcome `unknown`. See [multiple views](../integrations/codex/skills/obsidian-tldraw/references/operations.md#page-selection-and-multiple-views).
 - Failures raise `BridgeError`; `as_dict()` exposes the same fields as CLI `error` objects.
 
 Paths, revisions, image file types/layout, observation/preview options, and freehand input are validated

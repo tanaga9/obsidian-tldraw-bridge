@@ -211,3 +211,49 @@ class LanguageActionsTest(unittest.TestCase):
             with self.subTest(change=change), self.assertRaises(BridgeError):
                 bridge.call('language-checkpoint', {'path': 'a.md', 'revision': 'r', 'checkpoint': {**self.checkpoint(), **change}})
         factory.assert_not_called()
+
+
+class PreviewViewsTest(unittest.TestCase):
+    def test_cli_and_api_share_page_and_many_preview_options(self):
+        output = str(Path.cwd() / 'page.webp')
+        outputs = [{'pageId': 'page:b', 'output': output, 'ids': ['shape:b'], 'scale': 2}]
+        cases = [
+            ('preview', {'path': 'a.md', 'pageId': 'page:b', 'output': output},
+             ['preview', 'a.md', '--page-id', 'page:b', '--output', output]),
+            ('preview-many', {'path': 'a.md', 'revision': 'r', 'outputs': outputs},
+             ['preview-many', 'a.md', '--revision', 'r', '--input', '-']),
+            ('state', {'path': 'a.md', 'recordType': 'shape'}, ['state', 'a.md', '--record-type', 'shape']),
+        ]
+        for action, args, argv in cases:
+            with self.subTest(action=action):
+                factory = Mock()
+                Bridge('V', client_factory=factory).call(action, args, 'view')
+                factory.return_value.call.assert_called_once_with(action, args, 'view')
+                with patch('obsidian_tldraw_bridge.cli.Client') as client, \
+                        patch('sys.stdin', io.StringIO(json.dumps(outputs))), contextlib.redirect_stdout(io.StringIO()):
+                    client.return_value.call.return_value = {}
+                    self.assertEqual(main(['--vault', 'V', '--request-id', 'view', *argv]), 0)
+                    client.return_value.call.assert_called_once_with(action, args, 'view')
+
+    def test_invalid_many_options_fail_before_connecting(self):
+        factory = Mock()
+        bridge = Bridge('V', client_factory=factory)
+        good = {'pageId': 'page:b', 'output': str(Path.cwd() / 'page.webp')}
+        for outputs in (None, {}, [], [good] * 33, [good, good], [None],
+                        [{**good, 'path': 'other.md'}], [{**good, 'revision': 'override'}],
+                        [{**good, 'pageId': 'shape:a'}], [{**good, 'scale': 0}],
+                        [{**good, 'format': 'png', 'quality': .9}],
+                        [{**good, 'ids': ['shape:a'], 'bounds': {}}]):
+            with self.subTest(outputs=outputs), self.assertRaises(BridgeError):
+                bridge.call('preview-many', {'path': 'a.md', 'outputs': outputs})
+        factory.assert_not_called()
+
+    def test_empty_record_type_and_invalid_page_fail_before_connecting(self):
+        factory = Mock()
+        bridge = Bridge('V', client_factory=factory)
+        for value in (None, '', ' ', True, []):
+            with self.subTest(value=value), self.assertRaises(BridgeError):
+                bridge.call('state', {'path': 'a.md', 'recordType': value})
+            with self.subTest(value=value), self.assertRaises(BridgeError):
+                bridge.call('preview', {'path': 'a.md', 'output': str(Path.cwd() / 'page.webp'), 'pageId': value})
+        factory.assert_not_called()

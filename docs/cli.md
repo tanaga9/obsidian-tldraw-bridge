@@ -44,7 +44,7 @@ working directory; their parent directory must exist. They are separate from
 vault-relative diagram paths.
 
 Specify the vault for every command except `vaults`; diagram paths are vault-relative `.md` paths. `apply`,
-`batch`, `freehand`, and `script` accept `--input -` for standard input. Results
+`batch`, `freehand`, `preview-many`, and `script` accept `--input -` for standard input. Results
 are JSON; handled errors are JSON on standard error with exit code 1.
 
 ## Choosing a vault
@@ -113,12 +113,13 @@ SDK access, result fields, errors, persistence, and request-ID recovery.
 | Exact selected text formatting | `observe <path> --ids <id> ... --rich-text` |
 | Partial text formatting | `format-text <path> --revision <revision> --shape-id <id> --text <phrase> --bold --highlight`; use `--italic`, `--code`, or `--no-<mark>` as needed; repeated phrases require `--occurrence N` |
 | Bullet lists | `format-text <path> --revision <revision> --shape-id <id> --list bullet` (or `none`) |
-| Full records | `state <path>`; add `--full` to `apply`, `batch`, `script`, or `freehand` for full edit results |
+| Full records | `state <path> [--record-type shape\|binding\|page\|asset]`; add `--full` to `apply`, `batch`, `script`, or `freehand` for full edit results |
 | Edit, save and export | `apply <path> --revision <revision> --page-id <page> --input <file> --preview-output <absolute-image-path>`; optional `--preview-ids`, `--preview-bounds`, `--preview-scale`, `--preview-format`, `--preview-quality` |
 | Freehand drawing | `freehand <path> --revision <revision> --input <file>`; see [drawing input](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) |
 | Inspect an image | `image-info --file <image> [--max-dimension N --format webp --quality Q]` |
 | Insert PNG/WebP/JPEG | `insert-image <path> --revision <revision> --file <image> [--x X --y Y --width W --height H]` |
-| PNG/WebP preview | `preview <path> --output <image> [--format png\|webp] [--quality <0–1>] [--part <part> \| --ids <id> ...] [--scale <number>]`; WebP and scale 1 are defaults, maximum scale 4 |
+| PNG/WebP preview | `preview <path> --output <image> [--page-id <page>] [--format png\|webp] [--quality <0–1>] [--part <part> \| --ids <id> ...] [--scale <number>]`; WebP and scale 1 are defaults, maximum scale 4 |
+| Multiple previews | `preview-many <path> --input <outputs.json> [--revision <revision>]`; exports 1–32 views of one saved revision |
 | Check persistence | `saved <path>` |
 | Inspect/release a receipt | `status <request-id>` / `forget <request-id>` |
 
@@ -281,6 +282,33 @@ Format is not inferred from the filename. `--quality` accepts 0–1 for WebP
 Selection, bounds, scale, and revision checks work with both formats. The result
 includes `format`, the captured `revision`, and `sha256` of the exported image
 bytes. Output remains unchanged on render or revision failures.
+
+Use `--page-id <page:ID>` to export a particular page while preserving the
+selected page. Selectors and bounds apply to the exported page; the receipt
+includes `pageId`. For exact record inspection, `state <path> --record-type shape`
+excludes bindings, even when both records have `type: "arrow"`.
+
+For multiple pages or views of the same saved document, save a JSON array as
+`outputs.json`:
+
+```json
+[
+  {"pageId":"page:en","ids":["shape:overview-en"],"output":"/absolute/path/overview.webp"},
+  {"pageId":"page:ja","ids":["shape:overview-ja"],"output":"/absolute/path/overview.ja.webp"}
+]
+```
+
+```sh
+python3 bridge.py --vault Documents preview-many 'Drawings/example.md' --revision '<revision>' --input outputs.json
+```
+
+Use existing page/shape IDs and output directories. The array accepts 1–32
+standalone preview specifications; omit `pageId` to use the original selected
+page. Success returns `revision`, matching `persistence`, and ordered `previews`.
+All rendering and save checks finish before writing any file. Rendering, save,
+and revision failures preserve outputs. A filesystem write failure can leave
+partial output; `PREVIEW_WRITE_FAILED` reports completed images and the failed
+path. See [the output and recovery contract](../integrations/codex/skills/obsidian-tldraw/references/operations.md#page-selection-and-multiple-views).
 
 ## Repeated local edits
 

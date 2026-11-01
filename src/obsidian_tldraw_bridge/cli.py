@@ -67,7 +67,10 @@ def parser():
     sub.add_parser("forget", help="Release a completed receipt; its id must not be retried afterwards").add_argument("id")
     sub.add_parser("create", help="Create a new tldraw Markdown note and open its editor session").add_argument("path", help="New vault-relative .md path")
     for command in ("open", "state", "saved", "close"):
-        sub.add_parser(command).add_argument("path", help="Vault-relative .md path")
+        command_parser = sub.add_parser(command)
+        command_parser.add_argument("path", help="Vault-relative .md path")
+        if command == "state":
+            command_parser.add_argument("--record-type", help="Filter exact records by typeName, e.g. shape or binding")
     batch = sub.add_parser("batch")
     batch.add_argument("path")
     batch.add_argument("--revision", required=True)
@@ -97,15 +100,20 @@ def parser():
     image.add_argument('--shape-id', help="Optional new shape: ID (existing shapes are never replaced)")
     for edit_parser in (apply, text, batch, script, freehand, image, checkpoint):
         edit_parser.add_argument("--full", action="store_true", help="Include full document records and editor diagnostics in the result")
+    previews = sub.add_parser("preview-many", help="Export multiple views of one saved document revision")
+    previews.add_argument("path")
+    previews.add_argument("--revision")
+    previews.add_argument("--input", required=True, help="JSON array of preview options, or - for stdin")
     preview = sub.add_parser("preview")
     preview.add_argument("path")
     preview.add_argument("--output", required=True)
     preview.add_argument("--revision")
+    preview.add_argument("--page-id", help="Export this page without changing the selected page")
     region = preview.add_mutually_exclusive_group()
-    region.add_argument("--ids", nargs="+", help="Preview only these current-page shape IDs")
+    region.add_argument("--ids", nargs="+", help="Preview only these shape IDs on the exported page")
     region.add_argument("--part", help="Preview only freehand strokes tagged with this part")
     region.add_argument("--bounds", nargs=4, type=float, metavar=("X", "Y", "W", "H"),
-                        help="Crop the full current page to this page-coordinate rectangle, including surrounding shapes")
+                        help="Crop the exported page to this page-coordinate rectangle, including surrounding shapes")
     preview.add_argument("--scale", type=float, default=1, help="Export scale, greater than 0 and at most 4")
     preview.add_argument("--format", choices=('png', 'webp'), help="Output format (default: webp; not inferred from the filename)")
     preview.add_argument("--quality", type=float, help="WebP encoding quality 0–1 (default 0.9); not supported with --format png")
@@ -159,6 +167,10 @@ def _execute(options):
         args["path"] = options.path
     if getattr(options, "revision", None):
         args["revision"] = options.revision
+    if options.command == 'state' and options.record_type is not None:
+        args['recordType'] = options.record_type
+    if options.command == 'preview-many':
+        args['outputs'] = json.loads(_read_input(options.input))
     if options.command == 'format-text':
         marks = {key: getattr(options, key) for key in ('bold', 'italic', 'code', 'highlight')
                  if getattr(options, key) is not None}
@@ -229,6 +241,8 @@ def _execute(options):
         if options.page_id is not None:
             args["pageId"] = options.page_id
     if options.command == "preview":
+        if options.page_id is not None:
+            args["pageId"] = options.page_id
         args["output"] = options.output
         if options.format is not None:
             args['format'] = options.format
@@ -263,7 +277,7 @@ def _output(options, result):
             except (OSError, ValueError):
                 pass
         mutating = options.command in {'create', 'open', 'close', 'apply', 'batch', 'script',
-                                       'freehand', 'insert-image', 'preview', 'forget', 'language-checkpoint', 'format-text'}
+                                       'freehand', 'insert-image', 'preview', 'preview-many', 'forget', 'language-checkpoint', 'format-text'}
         outcome = 'applied' if mutating else 'unknown' if options.command == 'status' else 'not_applied'
         request_id = options.id if options.command in {'status', 'forget'} else options.request_id
         error = BridgeError('Could not output completed command result: ' + str(exc),

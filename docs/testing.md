@@ -370,3 +370,18 @@ three-language editing/retirement sequence; keep this scope explicit.
 The Git-review regression also checks repair of a malformed historical Note:
 valid current data receives full diagram inspection with a baseline warning,
 while malformed current data still fails in either index or working-tree mode.
+
+## Multi-page preview integration check
+
+```sh
+python3 tests/live_previews.py --vault obsidian-tldraw-bridge
+```
+
+Uses the real CLI adapter and an isolated runtime with a disposable two-page
+note. Checks typed exact records, page-targeted WebP export, selected-page and
+document preservation, matching saved revisions and image hashes, retained
+replay, and unchanged outputs after a wrong-page selection fails. Inspect the
+reported images for correct page content. Success removes its note/session and
+receipts; failures retain a request/runtime manifest for recovery. Runtime unit
+tests additionally exercise rendering, save verification, revision conflicts,
+invalid options, duplicate paths, and partial filesystem write failures.

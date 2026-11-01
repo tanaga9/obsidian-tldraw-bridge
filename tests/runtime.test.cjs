@@ -804,7 +804,7 @@ test('batch checks every requested SDK method before applying any edits',()=>{
 
 test('preview reports a missing export API without changing records',async()=>{
   const h=setup(), before=h.access.revision(h.editor)
-  await assert.rejects(h.invoke('preview',{path:'a.md',format:'png',output:'unused.png'}),/editor.toImage/)
+  await assert.rejects(h.invoke('preview',{path:'a.md',format:'png',output:path.join(os.tmpdir(),'unused.png')}),/editor.toImage/)
   assert.equal(h.access.revision(h.editor),before)
 })
 
@@ -1441,4 +1441,142 @@ test('text operations share revision checks and roll back earlier operations on 
   assert.deepEqual(copy(h.values()),before)
   edit([operation],rev)
   assert.equal(h.editor.getShape('shape:a').props.richText.content[0].content[0].marks[0].type,'bold')
+})
+
+function withPreviewPages(h) {
+  let page = 'page:a'
+  h.values().push({id:'page:b',typeName:'page',name:'Second'},
+    {id:'shape:b',typeName:'shape',type:'arrow',parentId:'page:b',props:{}},
+    {id:'binding:b',typeName:'binding',type:'arrow',fromId:'shape:b',toId:'shape:a',props:{}})
+  h.setDisk(h.values())
+  h.editor.getCurrentPageId=()=>page
+  h.editor.setCurrentPage=id=>{page=id}
+  h.editor.getCurrentPageShapeIds=()=>[page==='page:a'?'shape:a':'shape:b']
+  h.editor.toImage=async ids=>({blob:{arrayBuffer:async()=>Buffer.from(ids.join(','))},width:100,height:50})
+}
+
+test('state filters by typeName while retaining the full document revision',async()=>{
+  const h=setup();withPreviewPages(h)
+  const all=await h.invoke('state',{path:'a.md'},'all')
+  for(const type of ['shape','binding','asset','custom']) {
+    const result=await h.invoke('state',{path:'a.md',recordType:type},type)
+    assert.equal(result.revision,all.revision)
+    assert.deepEqual(result.records,all.records.filter(r=>r.typeName===type))
+    assert.equal(result.recordType,type)
+  }
+  await assert.rejects(h.invoke('state',{path:'a.md',recordType:'arrow'},'invalid'),/typeName/)
+})
+
+for (const failure of [false,true]) test(`page-targeted preview restores page on render failure=${failure}`,async()=>{
+  const h=setup();withPreviewPages(h)
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-pages-')),output=path.join(dir,'b.png')
+  fs.writeFileSync(output,'old')
+  const before=copy(h.values()), rev=h.access.revision(h.editor)
+  h.editor.toImage=async ids=>{
+    assert.equal(h.editor.getCurrentPageId(),'page:b');assert.deepEqual([...ids],['shape:b'])
+    if(failure) throw new Error('Render failed')
+    return {blob:{arrayBuffer:async()=>Buffer.from('second page')},width:100,height:50}
+  }
+  try {
+    const request=h.invoke('preview',{path:'a.md',pageId:'page:b',format:'png',output})
+    if(failure) await assert.rejects(request,/Render failed/)
+    else {
+      const result=await request
+      assert.equal(result.pageId,'page:b');assert.equal(result.revision,rev)
+      assert.equal(fs.readFileSync(output,'utf8'),'second page')
+    }
+    assert.equal(h.editor.getCurrentPageId(),'page:a')
+    assert.deepEqual(h.values(),before)
+    if(failure) assert.equal(fs.readFileSync(output,'utf8'),'old')
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+for(const kind of ['success','render','revision','save','save-conflict','invalid-page','invalid-selection','duplicate','invalid-options']) {
+  test(`multiple previews preserve document and selection: ${kind}`,async()=>{
+    const h=setup();withPreviewPages(h)
+    const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-many-'))
+    const outputs=['a','b'].map((name,i)=>({output:path.join(dir,name+'.png'),pageId:i?'page:b':'page:a',format:'png'}))
+    for(const item of outputs)fs.writeFileSync(item.output,'old')
+    let calls=0
+    h.editor.toImage=async ids=>{
+      calls++
+      if(calls===2 && kind==='render')throw new Error('Render failed')
+      if(calls===2 && kind==='revision')h.editor.updateDocumentSettings({name:'Concurrent'})
+      return {blob:{arrayBuffer:async()=>Buffer.from(ids.join(','))},width:100,height:50}
+    }
+    if(kind==='save')h.app.vault.read=async()=>{throw new Error('Disk unavailable')}
+    if(kind==='save-conflict')h.app.vault.read=async()=>{
+      h.editor.updateDocumentSettings({name:'Changed during read'})
+      return h.markdown(copy(h.values()))
+    }
+    if(kind==='invalid-page')outputs[1].pageId='page:missing'
+    if(kind==='invalid-selection')outputs[1].ids=['shape:a']
+    if(kind==='duplicate')outputs[1].output=outputs[0].output
+    if(kind==='invalid-options')outputs[1].revision='override'
+    try {
+      const args={path:'a.md',revision:h.access.revision(h.editor),outputs}
+      if(kind==='success') {
+        const result=await h.invoke('preview-many',args)
+        assert.equal(result.persistence.saved,true)
+        assert.equal(result.persistence.revision,result.revision)
+        assert.deepEqual(result.previews.map(p=>p.pageId),['page:a','page:b'])
+        for(const [i,item] of result.previews.entries()) {
+          assert.equal(item.revision,result.revision)
+          assert.equal(fs.readFileSync(item.path,'utf8'),i?'shape:b':'shape:a')
+        }
+        assert.deepEqual(await h.invoke('preview-many',args),result)
+        assert.equal(calls,2) // retained replay does not render again
+      } else {
+        await assert.rejects(h.invoke('preview-many',args))
+        for(const item of outputs)assert.equal(fs.readFileSync(item.output,'utf8'),'old')
+        if(kind==='save-conflict') {
+          const job=JSON.parse(h.api.poll(h.app,'job'))
+          assert.equal(job.failure.code,'REVISION_CONFLICT')
+          assert.equal(job.failure.outcome,'not_applied')
+        }
+      }
+      assert.equal(h.editor.getCurrentPageId(),'page:a')
+      if(['duplicate','invalid-options'].includes(kind))assert.equal(calls,0)
+    } finally {fs.rmSync(dir,{recursive:true,force:true})}
+  })
+}
+
+test('multiple preview write failure reports completed outputs for recovery',async()=>{
+  const h=setup();withPreviewPages(h)
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-write-'))
+  const outputs=['a','b'].map(name=>({output:path.join(dir,name+'.png'),format:'png'}))
+  const original=h.editor.toImage
+  h.editor.toImage=async ids=>{
+    fs.mkdirSync(outputs[1].output,{recursive:true}) // failure after validation
+    return original(ids)
+  }
+  try {
+    h.api.dispatch(h.app,'preview-many',{path:'a.md',outputs},'write-fail')
+    for(let i=0;i<30;i++) {
+      await new Promise(resolve=>setImmediate(resolve))
+      const job=JSON.parse(h.api.poll(h.app,'write-fail'))
+      if(job.status==='running')continue
+      assert.equal(job.status,'failed')
+      assert.equal(job.failure.code,'PREVIEW_WRITE_FAILED')
+      assert.equal(job.failure.outcome,'unknown')
+      assert.equal(job.failure.details.previews[0].path,outputs[0].output)
+      assert.equal(job.failure.details.failedPath,outputs[1].output)
+      return
+    }
+    assert.fail('Request never finished')
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test('omitted export page uses the original selection and stale revisions never render',async()=>{
+  const h=setup();withPreviewPages(h)
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bridge-default-page-'))
+  const outputs=[{pageId:'page:b',output:path.join(dir,'b.png'),format:'png'},
+    {output:path.join(dir,'default.png'),format:'png'}]
+  try {
+    const result=await h.invoke('preview-many',{path:'a.md',outputs},'default')
+    assert.deepEqual(result.previews.map(p=>p.pageId),['page:b','page:a'])
+    h.editor.toImage=async()=>{assert.fail('Stale preview must not render')}
+    await assert.rejects(h.invoke('preview-many',{path:'a.md',outputs,revision:'stale'},'stale'),/Revision conflict/)
+    assert.equal(h.editor.getCurrentPageId(),'page:a')
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })

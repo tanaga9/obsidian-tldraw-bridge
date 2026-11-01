@@ -429,10 +429,20 @@ request receipt; replay unchanged bytes and arguments under the same request ID.
 Revision and current page are checked again after asynchronous decoding, so
 GUI edits or a page switch cannot redirect a pending insertion.
 
+## Exact records by type
+
+`state <path> --record-type shape` returns only shape records; use
+`--record-type binding` for bindings, or another registered document record
+`typeName` such as `page` or `asset`. Python callers pass `recordType`.
+The response keeps `records`, adds `recordType`, and retains the revision of the
+**whole document**. Without a filter, all document records are returned.
+Discriminate records with `typeName`: both an arrow shape and its binding have
+`type: "arrow"`, so filtering only by `type` does not identify shapes safely.
+
 ## Image preview
 
 For overview/detail images from one editable source, use `--bounds X Y W H`
-to crop the rendered whole current page in page coordinates. This retains
+to crop the rendered whole exported page in page coordinates. This retains
 occlusion and existing parent clipping. Selecting a frame with `--ids` instead
 exports that frame and its descendants, not all shapes overlapping its bounds.
 Choose nesting, deliberate overlap, or cropping using
@@ -446,11 +456,41 @@ The Python API accepts the same `format` and `quality` fields.
 Existing `ids`, `part`, `bounds`, `scale` and `revision` options apply to both
 formats. Preview includes a light background. The result reports `path`,
 `format`, logical `width`/`height`, the captured `revision`, and `sha256` of the
-exported image bytes. Use this hash to detect an overwritten image when retaining
+exported image bytes. It also reports the exported `pageId`. Use this hash to detect an overwritten image when retaining
 export evidence. The SDK's default
 raster pixel ratio is 2, so actual image pixel dimensions are twice the reported
 logical dimensions. Rendering failures, encoder fallback to a different format, and
 revision conflicts leave existing output files unchanged.
+
+### Page selection and multiple views
+
+Add `--page-id <page:ID>` to `preview` to export another page. Without it,
+export the dedicated Editor's selected page. Selectors and bounds refer to the
+exported page. The selected page is restored on success and failure; document
+records and the GUI camera are not edited. If a concurrent edit deletes the
+original page, it cannot be restored; observe again after resolving the conflict.
+
+For several language pages, frames, or crops of one note, use
+`preview-many <path> --revision <revision> --input <outputs.json>` (`-` for stdin).
+The input is a JSON array of 1–32 objects with `output` and optional `pageId`,
+`ids`, `part`, `bounds`, `scale`, `format`, and `quality`. Each follows standalone
+preview semantics. Omitted `pageId` uses the original selected page. Output
+paths must be distinct and their directories must exist. Python callers use
+`Bridge.call("preview-many", {"path": path, "revision": revision, "outputs": [...]})`.
+
+All views are rendered before writing files, and the document must remain at
+one revision through rendering and saved-state verification. Success returns
+`revision`, matching `persistence`, and ordered `previews` with each image's
+path, page ID, dimensions, format, revision, and hash. Inspect the images;
+successful export does not establish readability. Retained replay returns the
+original receipt without rewriting images.
+
+Validation, rendering, save-check, and revision failures leave outputs unchanged.
+Filesystem writes are sequential, not a transaction across files. A write error
+raises `PREVIEW_WRITE_FAILED` with outcome `unknown`, completed receipts in
+`details.previews`, and `details.failedPath`; that file may be partially written.
+Inspect the files and export again with a new request ID. This action never edits
+the document.
 
 ## Advanced SDK access
 

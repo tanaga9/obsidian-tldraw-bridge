@@ -461,14 +461,15 @@ function requireEditing(editor) {
 function capabilities(app) {
   const plugin = app.plugins.getPlugin('tldraw')
   return { apiVersion: 1, ...pluginSupport(plugin),
-    actions: ['doctor','capabilities','style-spec','language-status','language-checkpoint','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','close'],
+    actions: ['doctor','capabilities','style-spec','language-status','language-checkpoint','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','preview-many','close'],
     imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
       optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
-    preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9, afterApply: true },
+    preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9, afterApply: true, pageSelection: true, multiple: true },
+    state: { filter: 'recordType', discriminator: 'typeName' },
     textFormatting: { marks: ['bold', 'italic', 'code', 'highlight'], match: 'exact-unique-or-1-based-occurrence',
       lists: ['bullet', 'none'], observationOption: 'includeRichText', separateArrowLabel: true },
     operations: operationFields, coordinates: { observeBounds: 'page', shapePosition: 'parent-local' }, observation: 'dedicated-editor-current-page',
-    limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4,
+    limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4, previewOutputs: 32,
       scriptResultBytes: SCRIPT_RESULT_BYTES, scriptResultDepth: SCRIPT_RESULT_DEPTH },
     guarantees: { revisionRequiredForEdits: true, persistenceChecked: true, synchronousStoreRollback: true,
       humanEditLock: false, arbitraryScriptCancellation: false, receiptsSurviveRestart: false },
@@ -1031,13 +1032,71 @@ function validateEditPreview(app, args) {
   if (!preview || typeof preview !== 'object' || Array.isArray(preview) || Object.keys(preview).some(key => !allowed.includes(key))) {
     throw fault('INVALID_INPUT', 'Invalid edit preview options')
   }
-  validatePreview(preview)
-  const fs = require('node:fs'), path = require('node:path')
-  if (typeof preview.output !== 'string' || !path.isAbsolute(preview.output)) throw fault('INVALID_INPUT', 'Edit preview requires an absolute output path')
-  try {
-    if (!fs.statSync(path.dirname(preview.output)).isDirectory() || (fs.existsSync(preview.output) && fs.statSync(preview.output).isDirectory())) throw new Error('Invalid output path')
-  } catch (error) { throw fault('INVALID_INPUT', `Invalid preview output: ${errorMessage(error)}`) }
+  validatePreviewOutput(preview)
   requireFunctions(sessionFor(app, args.path).editor, ['toImage'], 'editor')
+}
+
+function validatePreviewOutput(args) {
+  validatePreview(args)
+  if (args.pageId !== undefined && (typeof args.pageId !== 'string' || !args.pageId.startsWith('page:'))) {
+    throw fault('INVALID_INPUT', 'pageId must be a page: ID')
+  }
+  const fs = require('node:fs'), path = require('node:path')
+  if (typeof args.output !== 'string' || !path.isAbsolute(args.output)) throw fault('INVALID_INPUT', 'Preview requires an absolute output path')
+  try {
+    if (!fs.statSync(path.dirname(args.output)).isDirectory() || (fs.existsSync(args.output) && fs.statSync(args.output).isDirectory())) {
+      throw new Error('Preview output must be a file in an existing directory')
+    }
+  } catch (error) { throw fault('INVALID_INPUT', `Invalid preview output: ${errorMessage(error)}`) }
+}
+
+// Page selection is Editor session state, outside the document revision. Always
+// restore it, including SDK/encoder failures and concurrent document changes.
+async function renderPreview(app, session, args, capturedRevision) {
+  const editor = session.editor, originalPageId = editor.getCurrentPageId()
+  const pageId = args.pageId ?? originalPageId
+  const { format, scale } = validatePreview(args)
+  if (!records(editor).some(record => record.typeName === 'page' && record.id === pageId)) {
+    throw fault('INVALID_INPUT', 'Preview page does not exist')
+  }
+  try {
+    if (pageId !== originalPageId) {
+      requireFunctions(editor, ['setCurrentPage'], 'editor')
+      editor.setCurrentPage(pageId)
+    }
+    const pageIds = [...editor.getCurrentPageShapeIds()]
+    const ids = args.part !== undefined
+      ? pageIds.filter(id => editor.getShape(id)?.meta?.bridgeFreehand?.part === args.part)
+      : args.ids ?? pageIds
+    if (!Array.isArray(ids) || !ids.length || ids.some(id => !pageIds.includes(id))) throw new Error('Preview selection must contain existing current-page shapes')
+    let bounds
+    if (args.bounds !== undefined) {
+      const b = args.bounds
+      // Keep the SDK Box prototype required by toImage; never mutate cached geometry.
+      const sample = ids.map(id => editor.getShapePageBounds(id)).find(Boolean)
+      if (!sample) throw new Error('No shape bounds available for preview')
+      bounds = Object.assign(sample.clone(), { x: b.x, y: b.y, w: b.w, h: b.h })
+    }
+    const { blob, width, height } = await editor.toImage(ids, {
+      format, scale, background: true,
+      ...(format === 'webp' ? { quality: args.quality ?? 0.9 } : {}),
+      ...(bounds ? { bounds, padding: 0 } : {}),
+    })
+    const bytes = Buffer.from(await blob.arrayBuffer())
+    if (format === 'webp' && (blob.type !== 'image/webp' || bytes.toString('ascii', 0, 4) !== 'RIFF'
+      || bytes.toString('ascii', 8, 12) !== 'WEBP')) {
+      throw new Error('WebP export failed: the image encoder did not return WebP data')
+    }
+    flushPendingChanges(app, session)
+    if (revision(editor) !== capturedRevision) throw fault('REVISION_CONFLICT', 'Revision conflict during preview: read state and export again')
+    return { bytes, receipt: { path: args.output, pageId, width, height, format, revision: capturedRevision,
+      sha256: crypto.createHash('sha256').update(bytes).digest('hex') } }
+  } finally {
+    // A concurrent deletion of the old page cannot be undone by an export.
+    if (editor.getCurrentPageId() !== originalPageId && records(editor).some(record => record.typeName === 'page' && record.id === originalPageId)) {
+      editor.setCurrentPage(originalPageId)
+    }
+  }
 }
 
 async function execute(app, action, args) {
@@ -1055,7 +1114,17 @@ async function execute(app, action, args) {
   if (action === 'observe') return observe(app, args)
   if (action === 'create') return create(app, args.path)
   if (action === 'open') return open(app, args.path, args.currentPageId)
-  if (action === 'state') return state(app, args.path)
+  if (action === 'state') {
+    const result = state(app, args.path)
+    if (args.recordType !== undefined) {
+      if (typeof args.recordType !== 'string' || !sessionFor(app,args.path).editor.store.scopedTypes.document.has(args.recordType)) {
+        throw fault('INVALID_INPUT', 'recordType must be a registered document record typeName')
+      }
+      result.records = result.records.filter(record => record.typeName === args.recordType)
+      result.recordType = args.recordType
+    }
+    return result
+  }
   if (action === 'language-status') {
     const snapshot = state(app, args.path)
     return {path:args.path,revision:snapshot.revision,...reviewLanguages(snapshot.records,args.diagramId)}
@@ -1111,41 +1180,48 @@ async function execute(app, action, args) {
     await saved(app, args.path)
     return close(app, args.path)
   }
-  if (action === 'preview') {
-    const { format, scale } = validatePreview(args)
+  if (action === 'preview' || action === 'preview-many') {
+    const multiple = action === 'preview-many'
+    const outputs = multiple ? args.outputs : [args]
+    if (!Array.isArray(outputs) || !outputs.length || outputs.length > 32) throw fault('INVALID_INPUT', 'outputs must contain 1-32 preview specifications')
+    const allowed = ['output','pageId','ids','part','bounds','scale','format','quality']
+    for (const output of outputs) {
+      if (!output || typeof output !== 'object' || Array.isArray(output) ||
+        (multiple && Object.keys(output).some(key => !allowed.includes(key)))) throw fault('INVALID_INPUT', 'Invalid preview specification')
+      validatePreviewOutput(output)
+    }
+    const fs = require('node:fs'), path = require('node:path')
+    if (new Set(outputs.map(output => path.resolve(output.output))).size !== outputs.length) throw fault('INVALID_INPUT', 'Preview output paths must be distinct')
     const session = sessionFor(app, args.path)
     flushPendingChanges(app, session)
     if (args.revision) assertRevision(app, session,args.revision)
-    const editor = session.editor
-    requireFunctions(editor, ['toImage'], 'editor')
-    const capturedRevision = revision(editor)
-    const pageIds = [...editor.getCurrentPageShapeIds()]
-    const ids = args.part !== undefined
-      ? pageIds.filter(id => editor.getShape(id)?.meta?.bridgeFreehand?.part === args.part)
-      : args.ids ?? pageIds
-    if (!Array.isArray(ids) || !ids.length || ids.some(id => !pageIds.includes(id))) throw new Error('Preview selection must contain existing current-page shapes')
-    let bounds
-    if (args.bounds !== undefined) {
-      const b = args.bounds
-      // Keep the SDK Box prototype required by toImage; never mutate cached geometry.
-      const sample = ids.map(id => editor.getShapePageBounds(id)).find(Boolean)
-      if (!sample) throw new Error('No shape bounds available for preview')
-      bounds = Object.assign(sample.clone(), { x: b.x, y: b.y, w: b.w, h: b.h })
-    }
-    const { blob, width, height } = await editor.toImage(ids, {
-      format, scale, background: true,
-      ...(format === 'webp' ? { quality: args.quality ?? 0.9 } : {}),
-      ...(bounds ? { bounds, padding: 0 } : {}),
-    })
-    const bytes = Buffer.from(await blob.arrayBuffer())
-    if (format === 'webp' && (blob.type !== 'image/webp' || bytes.toString('ascii', 0, 4) !== 'RIFF'
-      || bytes.toString('ascii', 8, 12) !== 'WEBP')) {
-      throw new Error('WebP export failed: the image encoder did not return WebP data')
+    requireFunctions(session.editor, ['toImage'], 'editor')
+    const capturedRevision = revision(session.editor), rendered = []
+    for (const output of outputs) rendered.push(await renderPreview(app, session, output, capturedRevision))
+    // Render everything before touching outputs. A batch also confirms that all
+    // artifacts describe the same persisted document, rather than just memory.
+    let persistence
+    if (multiple) {
+      try { persistence = await saved(app,args.path,capturedRevision) } catch (error) {
+        if (error?.code === 'SAVE_CONFLICT') {
+          throw fault('REVISION_CONFLICT', 'Document changed during preview save verification; read state and export again', 'not_applied',
+            { revision: capturedRevision, actualRevision: revision(session.editor) })
+        }
+        throw error
+      }
     }
     flushPendingChanges(app, session)
-    if (revision(editor) !== capturedRevision) throw fault('REVISION_CONFLICT', 'Revision conflict during preview: read state and export again')
-    require('node:fs').writeFileSync(args.output, bytes)
-    return { path: args.output, width, height, format, revision: capturedRevision, sha256: crypto.createHash('sha256').update(bytes).digest('hex') }
+    if (revision(session.editor) !== capturedRevision) throw fault('REVISION_CONFLICT', 'Revision conflict during preview: read state and export again')
+    const completed = []
+    for (const {bytes, receipt} of rendered) {
+      try { fs.writeFileSync(receipt.path, bytes) } catch (error) {
+        throw fault('PREVIEW_WRITE_FAILED', errorMessage(error), 'unknown', {
+          previews: completed, failedPath: receipt.path,
+          recovery: 'Output files may be partially written. Inspect files and export again; the document was not edited.' })
+      }
+      completed.push(receipt)
+    }
+    return multiple ? { revision: capturedRevision, persistence, previews: completed } : completed[0]
   }
   throw new Error('Unknown action')
 }

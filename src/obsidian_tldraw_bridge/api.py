@@ -40,14 +40,15 @@ class Bridge:
             "style-spec": {"path", "shapeType"},
             "language-status": {"path", "diagramId"},
             "language-checkpoint": {"path", "revision", "checkpoint", "full"},
-            "open": {"path", "currentPageId"}, "state": {"path"}, "saved": {"path"}, "close": {"path"},
+            "open": {"path", "currentPageId"}, "state": {"path", "recordType"}, "saved": {"path"}, "close": {"path"},
             "observe": {"path", "revision", "pageId", "limit", "offset", "ids", "bounds", "includeRichText"},
             "apply": {"path", "revision", "pageId", "operations", "full", "preview"}, "batch": {"path", "revision", "operations", "full"},
             "script": {"path", "revision", "code", "full"}, "freehand": {"path", "revision", "drawing", "full"},
             "image-info": {"file", "maxDimension", "format", "quality", "maxBytes"},
             "insert-image": {"path", "revision", "file", "x", "y", "width", "height", "parentId", "pageId", "shapeId", "full",
                              "maxDimension", "format", "quality", "maxBytes"},
-            "preview": {"path", "revision", "output", "ids", "bounds", "part", "scale", "format", "quality"},
+            "preview-many": {"path", "revision", "outputs"},
+            "preview": {"path", "revision", "pageId", "output", "ids", "bounds", "part", "scale", "format", "quality"},
         }
         if not isinstance(action, str) or action not in fields:
             invalid("Unknown action")
@@ -62,6 +63,24 @@ class Bridge:
             prepared = Bridge.prepare("preview", {"path": args.get("path"), **preview})
             prepared.pop("path")
             args["preview"] = prepared
+        if action == "state" and "recordType" in args:
+            if not isinstance(args["recordType"], str) or not args["recordType"].strip():
+                invalid("recordType must be a nonempty record typeName")
+        if action == "preview-many":
+            outputs = args.get("outputs")
+            allowed = fields["preview"] - {"path", "revision"}
+            if not isinstance(outputs, list) or not 1 <= len(outputs) <= 32:
+                invalid("outputs must contain 1-32 preview specifications")
+            prepared = []
+            for output in outputs:
+                if not isinstance(output, dict) or set(output) - allowed:
+                    invalid("Each output must contain only preview options")
+                item = Bridge.prepare("preview", {"path": args.get("path"), **output})
+                item.pop("path")
+                prepared.append(item)
+            if len({item["output"] for item in prepared}) != len(prepared):
+                invalid("Preview output paths must be distinct")
+            args["outputs"] = prepared
         if action == "style-spec":
             if not isinstance(args.get("shapeType"), str) or not args["shapeType"].strip():
                 invalid("Specify a nonempty shapeType")
@@ -150,6 +169,10 @@ class Bridge:
             if offset and (not args.get("revision") or not args.get("pageId")):
                 invalid("Observe pagination requires revision and pageId")
         if action == "preview":
+            if "pageId" in args and (not isinstance(args["pageId"], str) or not args["pageId"].startswith("page:")):
+                invalid("pageId must be a page: ID")
+            if "part" in args and (not isinstance(args["part"], str) or not args["part"].strip()):
+                invalid("Part must be a nonempty string")
             if args.get('format', 'webp') not in ('png', 'webp'):
                 invalid("Preview format must be png or webp")
             if 'quality' in args and (isinstance(args['quality'], bool) or not isinstance(args['quality'], (int, float))

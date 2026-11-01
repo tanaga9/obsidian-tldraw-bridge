@@ -111,7 +111,8 @@ Do not dismiss `legacy-baseline-excludes-assets` by updating hashes blindly.
    switch the editing source or authorize unrelated text rewrites.
 5. Check both before/after meaning and unintended rewording/movement. Preview
    **every affected language page**, including a source page whose layout changed.
-   Select the dedicated Editor's page explicitly before preview. Verify bindings,
+   Use `preview --page-id` or `preview-many` for explicit page exports without
+   changing the dedicated Editor's selected page. Verify bindings,
    rendered `growY`, text fit and frame bounds; refresh corresponding previews.
 6. Resolve any merge-policy question with the user before applying uncertain
    changes. After the result is inspected and saved, record a checkpoint. Do not acknowledge
