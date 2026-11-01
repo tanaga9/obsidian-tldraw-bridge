@@ -315,6 +315,17 @@ function failureInfo(error, fallback = 'not_applied') {
   } catch (_) { return { code: 'OPERATION_FAILED', message: errorMessage(error), outcome: 'unknown' } }
 }
 const testedPluginVersions = ['1.31.0', '1.32.0', '1.35.1']
+// Maintainer-confirmed stable release, independent of live-tested versions.
+const latestKnownPluginVersion = '1.35.1'
+function pluginUpdate(pluginVersion) {
+  const parts = typeof pluginVersion === 'string' && /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(pluginVersion)
+    ? pluginVersion.split('.').map(Number) : null
+  const latest = latestKnownPluginVersion.split('.').map(Number)
+  const difference = parts?.every(Number.isSafeInteger)
+    ? parts.findIndex((value, index) => value !== latest[index]) : null
+  return { latestKnownVersion: latestKnownPluginVersion,
+    available: difference === null ? null : difference !== -1 && parts[difference] < latest[difference] }
+}
 const pluginFunctions = ['getFontOverrides', 'tlDataDocumentStoreManager.register',
   'tlDataDocumentStoreManager.storesManager.storeGroupMap.get']
 function missingFunctions(object, paths, prefix) {
@@ -330,7 +341,8 @@ function pluginSupport(plugin) {
   const pluginVersion = plugin?.manifest?.version ?? null
   const missingCapabilities = missingFunctions(plugin, pluginFunctions, 'plugin')
   return { pluginVersion, supported: !!plugin && missingCapabilities.length === 0,
-    testedPluginVersions, versionTested: testedPluginVersions.includes(pluginVersion), missingCapabilities }
+    testedPluginVersions, versionTested: testedPluginVersions.includes(pluginVersion),
+    pluginUpdate: pluginUpdate(pluginVersion), missingCapabilities }
 }
 function requirePlugin(app) {
   const plugin = app.plugins.getPlugin('tldraw')

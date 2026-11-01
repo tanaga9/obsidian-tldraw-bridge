@@ -80,6 +80,12 @@ hook or remove a workaround. A new upstream feature does not need bridge support
 unless useful within the requested scope. Avoid unrelated rewrites and copying
 upstream manuals into the drawing Skill.
 
+When a newer stable Obsidian tldraw plugin release is confirmed, update
+`latestKnownPluginVersion` in the canonical bridge runtime and its diagnostic
+tests, then rebuild the package. Keep it independent of `testedPluginVersions`:
+the distributed Skill uses `pluginUpdate` to recommend updates, while live
+compatibility claims still require the tests below.
+
 ## Apply scoped updates
 
 Follow the compatibility policy in `docs/development.md`. Update affected callers

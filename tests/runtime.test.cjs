@@ -585,6 +585,28 @@ test('doctor and capabilities distinguish API availability from tested versions'
   assert.deepEqual(result.missingCapabilities,['plugin.tlDataDocumentStoreManager.register'])
 })
 
+test('plugin update advice compares stable versions numerically without gating support',async()=>{
+  for(const [version,available] of [
+    ['1.32.0',true],['1.35.0',true],['1.9.99',true],['0.99.99',true],
+    ['1.35.1',false],['1.35.2',false],['1.36.0',false],['2.0.0',false],
+    [null,null],['unknown',null],['1.35',null],['1.35.1-beta.1',null],
+    ['01.35.0',null],['9007199254740992.0.0',null],
+  ]) {
+    const h=setup()
+    h.plugin.manifest.version=version
+    for(const action of ['doctor','capabilities']) {
+      const result=await h.invoke(action,{},action)
+      assert.deepEqual(result.pluginUpdate,{latestKnownVersion:'1.35.1',available})
+      assert.equal(result.supported,true)
+      assert.deepEqual(result.missingCapabilities,[])
+    }
+  }
+  const h=setup()
+  h.app.plugins.getPlugin=()=>null
+  assert.deepEqual((await h.invoke('capabilities')).pluginUpdate,
+    {latestKnownVersion:'1.35.1',available:null})
+})
+
 function openFixture() {
   const h=setup(), cleanup=[]
   const file={path:'new.md',extension:'md'}

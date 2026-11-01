@@ -40,6 +40,17 @@ when needed. A “cannot find Obsidian” error can result from sandbox restrict
 check [CLI connection failures](references/operations.md#cli-connection-failures-in-codex)
 before recommending a restart or reconfiguration.
 
+When `doctor` or `capabilities` reports `pluginUpdate.available: true` (also check
+`error.details.pluginUpdate` if `doctor` fails with `TLDRAW_UNSUPPORTED`), add one
+short sentence in the user's language to a normal progress message, once per
+vault/version pair in the current chat. For example: "tldraw is at <pluginVersion>;
+a newer known release is <pluginUpdate.latestKnownVersion>, so consider updating
+in Obsidian when convenient." Use a casual aside, without a warning heading,
+separate alert, confirmation question or repeated reminder. Do not claim a fresh
+online check. Continue authorized work when the required APIs are available;
+do not wait for an update or install/restart without the user's request.
+For `false` or `null`, omit the update aside.
+
 When advising on vault-focused local Codex projects, recommend making the main
 target vault the primary folder. Secondary folders and vaults outside the
 project's folders also work; prefer one usual target and an explicitly declared

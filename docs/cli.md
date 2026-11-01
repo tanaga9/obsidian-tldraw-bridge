@@ -221,6 +221,17 @@ stage in `error.details.stage`. A connection error can also reflect restricted
 local IPC permissions; it does not by itself prove the app is stopped. For
 OS-specific commands and live checks, see [live test setup](testing.md#live-test-setup).
 
+`doctor` and `capabilities` also report `pluginUpdate.latestKnownVersion` and
+`pluginUpdate.available` for the installed Obsidian tldraw plugin. The latter is
+true for an older stable version, false for an equal/newer stable version, or
+null when comparison is unavailable (including prereleases). This uses the
+release known to the bundled bridge, not an online check, and does not block
+supported versions. The marketplace Skill uses it to mention an update in one
+short sentence within a normal progress message, once per vault/version pair in
+the chat, without waiting for confirmation.
+If `doctor` fails with `TLDRAW_UNSUPPORTED`, `error.details` retains
+`pluginVersion` and `pluginUpdate`, so the same aside can accompany the API error.
+
 `--timeout` is a shared client wait budget, not cancellation in Obsidian. A
 retained request may still run after the CLI process times out. Recover using
 `status` and the same request ID before repeating an uncertain edit.

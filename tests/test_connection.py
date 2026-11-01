@@ -97,14 +97,16 @@ class ConnectionTest(unittest.TestCase):
 
     def test_doctor_reports_missing_apis_even_for_tested_version(self):
         missing = ['plugin.tlDataDocumentStoreManager.register']
+        update = {'latestKnownVersion': '1.35.1', 'available': True}
         with patch.object(self.client, 'evaluate', side_effect=[self.connected, None,
                           {'status': 'complete', 'result': {'supported': False, 'pluginVersion': '1.32.0',
-                                                         'missingCapabilities': missing}}]):
+                                                         'missingCapabilities': missing, 'pluginUpdate': update}}]):
             with self.assertRaises(BridgeError) as raised:
                 self.client.call('doctor', request_id='check')
         self.assertEqual(raised.exception.code, 'TLDRAW_UNSUPPORTED')
         self.assertEqual(raised.exception.details['pluginVersion'], '1.32.0')
         self.assertEqual(raised.exception.details['missingCapabilities'], missing)
+        self.assertEqual(raised.exception.as_dict()['details']['pluginUpdate'], update)
         self.assertIn(missing[0], str(raised.exception))
 
     def test_disabled_cli_is_reported_without_polling_or_losing_identity(self):

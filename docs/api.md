@@ -39,6 +39,13 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
   Alternative config folder names are explicit. See [vault discovery](cli.md#choosing-a-vault).
   This is a module function, separate from vault-scoped `Bridge.call` actions.
 - `Bridge(vault)` selects the vault; transport initialization is lazy.
+- `doctor` and `capabilities` include `pluginUpdate: {latestKnownVersion, available}`.
+  This compares the installed plugin with the package's known stable release,
+  independently of tested versions or API support. `available` is true for older
+  stable versions, false for equal/newer versions, and null for missing or
+  unrecognized versions (including prereleases). No online lookup is performed.
+  A `doctor` failure with `TLDRAW_UNSUPPORTED` retains `pluginVersion` and
+  `pluginUpdate` in its error details for the same advisory use.
 - `call(action, args, request_id=None)` returns a JSON-compatible result. Actions
   include `capabilities`, `style-spec`, `doctor`, `create`, `open`, `observe`, `state`, `apply`,
   `batch`, `script`, `language-status`, `language-checkpoint`, `freehand`, `image-info`, `insert-image`, `saved`, `preview`, and `close`.

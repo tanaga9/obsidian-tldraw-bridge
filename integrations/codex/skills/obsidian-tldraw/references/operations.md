@@ -152,6 +152,17 @@ discovery failure; `CLI_EXECUTABLE_REQUIRED` identifies an explicit Windows GUI;
 reports missing required APIs in `details.missingCapabilities`, not an unrecognized version.
 `doctor` and `capabilities` report `supported` from the core plugin API checks,
 plus `testedPluginVersions` and `versionTested` as testing information only.
+Both also return `pluginUpdate: {latestKnownVersion, available}`. The version is
+the stable Obsidian tldraw plugin release known when this bridge package was
+maintained, independent of its tested-version list. `available` is true for an
+older installed stable version, false for the same or a newer stable version,
+and null for a missing or unrecognized version (including prereleases).
+Comparison uses numeric major/minor/patch components. This is advisory, does not
+change `supported`, and performs no network lookup. Follow the entry Skill's
+update-notice guidance; do not interpret false as proof of being current online.
+If `doctor` rejects missing plugin APIs with `TLDRAW_UNSUPPORTED`, its error
+details retain `pluginVersion` and `pluginUpdate`. Use those for the same short
+update aside; the error still prevents work that requires the missing APIs.
 Opening checks basic reading and persistence APIs; editing and image export check
 their additional APIs when used. An existing live Editor can be reused without
 the view-opening API. API presence does not guarantee behavioral compatibility.

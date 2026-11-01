@@ -1,9 +1,11 @@
 # Upstream maintenance status
 
-Last upstream research: **2026-11-01T02:02:38Z** (UTC).
-Latest live verification after application restart: **2026-11-01T02:08:23Z** (UTC).
-Scope: verify the user's installed plugin update from 1.32.0 to 1.35.1,
-exercise bridge integration, and update tested-version declarations.
+Last upstream research: **2026-11-01T02:13:24Z** (UTC); official plugin/SDK release APIs
+reconfirmed 1.35.1 / 5.6.0.
+Latest live editing verification after application restart: **2026-11-01T02:08:23Z** (UTC).
+Scope: plugin 1.35.1 compatibility and package-known update advice.
+Latest read-only diagnostic check: **2026-11-01T02:13:24Z** (UTC), checkout base
+`b018cfac365d7c8c91115c70773e0d4aa511cf69` with the update-advice changes.
 
 ## Versions and evidence
 
@@ -48,8 +50,14 @@ All checks below ran on **2026-11-01 (UTC)** against the installed combination.
 - Visually inspected the legacy frame WebP, bound-node export, inline-image
   export, rich-text PNG, and freehand context crop; text, icons, connections,
   fills and cropping rendered correctly. Previews remain outside tracked docs.
-- Automated checks passed: **175 Python tests**, **134 Node tests**, runtime and
+- Automated checks passed: **175 Python tests**, **135 Node tests**, runtime and
   loader syntax, generated package consistency, and `git diff --check`.
+- Current checkout and rebuilt package `doctor` return
+  `pluginUpdate: {latestKnownVersion: "1.35.1", available: false}` on the installed
+  1.35.1. Checkout `capabilities` agrees. Older/equal/newer and unknown-version
+  cases are covered by runtime tests; no plugin was downgraded for this check.
+  The unsupported-plugin error path also retains update advice; a Python
+  regression test reproduced its loss before the fix and passes with the fix.
 - Final checkout-runtime `doctor`: plugin **1.35.1**, supported, version tested,
   no missing capabilities, no document sessions, and `pendingUpdate: null`.
   All temporary test notes were removed; unrelated sessions were not closed.
@@ -57,9 +65,12 @@ All checks below ran on **2026-11-01 (UTC)** against the installed combination.
 ## Outcome and limits
 
 No functional bridge regression was reproduced and no compatibility workaround
-was needed. Added **1.35.1** to `testedPluginVersions`, updated compatibility
-statements, added the literal-text persistence regression, and rebuilt the
-plugin package. Existing Store reconciliation remains in place: the
+was needed. **1.35.1** remains live-tested. Diagnostics now compare the installed
+stable plugin version with the package-known latest release. The rebuilt Skill
+mentions an update as a short aside in a normal progress message, once per
+vault/version pair when older, without blocking supported APIs or updating
+automatically. Release knowledge is maintained
+separately from live-tested versions. Existing Store reconciliation remains in place: the
 [SDK 5.6 notification/rollback fixes](https://tldraw.dev/releases/v5.6.0) do not
 by themselves establish that it is safe to remove the bridge's protections.
 
@@ -68,9 +79,10 @@ The latest seven-script live check ran after application restart with only SDK
 multilingual and deleted-note update-deferral checks were not repeated after
 restart; their successful results above remain from the earlier check.
 Manual GUI gestures and GUI/embed export paths were not separately tested.
-Only the checkout runtime was confirmed current; the rebuilt package was not
-installed into other Codex-cache contexts.
+Checkout and rebuilt package diagnostics were exercised directly; the package
+was not installed into other Codex-cache contexts. The end-to-end conversational
+notice on an older installed plugin was not live-tested.
 
 The previously identified installer/Electron update remains separate scope and
 was not an observed blocker. No application, plugin, personal configuration,
-production diagram or distributed drawing guidance was changed by this check.
+production diagram or drawing-design guidance was changed by this check.

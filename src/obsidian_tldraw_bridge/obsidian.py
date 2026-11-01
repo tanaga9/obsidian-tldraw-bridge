@@ -370,7 +370,7 @@ class Client:
                 raise BridgeError("Required tldraw APIs are unavailable: " + ", ".join(missing),
                                   code="TLDRAW_UNSUPPORTED", outcome="not_applied",
                                   details={"stage": "plugin", "checks": checks, "pluginVersion": result.get("pluginVersion"),
-                                           "missingCapabilities": missing})
+                                           "missingCapabilities": missing, "pluginUpdate": result.get("pluginUpdate")})
             result = {**result, "checks": checks + [
                 {"stage": "plugin", "ok": True, "version": result["pluginVersion"]},
                 {"stage": "runtime", "ok": True}]}
