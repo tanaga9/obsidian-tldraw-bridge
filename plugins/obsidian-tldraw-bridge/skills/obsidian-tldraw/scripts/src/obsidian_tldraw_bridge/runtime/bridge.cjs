@@ -314,7 +314,7 @@ function failureInfo(error, fallback = 'not_applied') {
       ...(error?.details ? { details: error.details } : {}) }
   } catch (_) { return { code: 'OPERATION_FAILED', message: errorMessage(error), outcome: 'unknown' } }
 }
-const testedPluginVersions = ['1.31.0', '1.32.0']
+const testedPluginVersions = ['1.31.0', '1.32.0', '1.35.1']
 const pluginFunctions = ['getFontOverrides', 'tlDataDocumentStoreManager.register',
   'tlDataDocumentStoreManager.storesManager.storeGroupMap.get']
 function missingFunctions(object, paths, prefix) {

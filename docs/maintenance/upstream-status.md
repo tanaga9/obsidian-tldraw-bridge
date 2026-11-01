@@ -1,72 +1,71 @@
 # Upstream maintenance status
 
-Last checked: **2026-10-31T08:22:07Z** (UTC).
-Scope: stable-release research, tagged-source comparison and read-only diagnostics.
-This record was shortened without rerunning checks; confirmation dates are unchanged.
-
-Latest scoped live check: **2026-10-31T16:56:00Z** (UTC),
-[frame nesting/overlap export study](../studies/frame-export.md). This did not
-refresh latest-release research above. Installed Desktop 1.14.5 / installer
-1.14.4, plugin 1.32.0 / SDK 5.4.0 and Electron 43.7.7 / Node 24.21.0 were
-reconfirmed. Checkout: `92635a8700e1853ed3143b0b2e6ff60c3e718246`.
-The checkout runtime reported no pending update before testing. The frame study
-covered membership, sibling order, clipping, and whole-frame/detail crops.
-Its ancestor-clipping crop was corrected in a fresh dedicated note: the bounds
-were taken from the moved frame, all three output paths were inspected, and
-save/reopen preserved the revision and identical bounds-export bytes. A 240 × 200
-bounds output still clips content at the ancestor boundary, while the frame-only
-output shrinks to 120 × 200. This establishes only those behaviors on the installed combination;
-target plugin 1.35.1 compatibility and manual GUI/embed exports remain untested.
+Last upstream check and completed live verification: **2026-11-01T02:02:38Z** (UTC).
+Scope: verify the user's installed plugin update from 1.32.0 to 1.35.1,
+exercise bridge integration, and update tested-version declarations.
 
 ## Versions and evidence
 
-| Component | Local observation | Latest stable / review target | Evidence |
+| Component | Installed / tested observation | Latest stable | Evidence |
 | --- | --- | --- | --- |
-| Obsidian Desktop | App **1.14.5**, installer **1.14.4** | **1.14.5**, published 2026-10-22 | CLI `version`; [public release](https://obsidian.md/changelog/2026-10-22-desktop-v1.14.5/) |
-| Obsidian tldraw plugin | **1.32.0**, enabled in the repository vault | **1.35.1**, published 2026-10-29T06:40:40Z | Local/runtime manifests and `doctor`; [release API](https://api.github.com/repos/tldraw/obsidian-plugin/releases/latest), [target release](https://github.com/tldraw/obsidian-plugin/releases/tag/1.35.1) |
-| Embedded tldraw SDK | **5.4.0** | **5.6.0**, also latest SDK stable; published 2026-10-28T15:01:24Z | Installed bundle registrations; target [lockfile](https://github.com/tldraw/obsidian-plugin/blob/1.35.1/package-lock.json); [SDK release](https://github.com/tldraw/tldraw/releases/tag/v5.6.0), [release API](https://api.github.com/repos/tldraw/tldraw/releases/latest) |
-| Electron / Node inside Obsidian | **43.7.7 / 24.21.0** | Public 1.14.5 release describes Electron **43.8.3**; target Node unverified | Read-only `process.versions`; official Desktop release above |
+| Obsidian Desktop | **1.14.5**, installer **1.14.4** | Last confirmed **1.14.5** on 2026-10-31; changelog refresh on 2026-11-01 returned HTTP 403 | Official macOS CLI `version`; [public release](https://obsidian.md/changelog/2026-10-22-desktop-v1.14.5/) |
+| Obsidian tldraw plugin | **1.35.1**, local and running manifests | **1.35.1**, fresh API confirmation 2026-11-01, non-draft and non-prerelease | [release API](https://api.github.com/repos/tldraw/obsidian-plugin/releases/latest), [release](https://github.com/tldraw/obsidian-plugin/releases/tag/1.35.1) |
+| Embedded tldraw SDK | **5.6.0**, installed bundle registrations, running library registry and saved test-note metadata | **5.6.0**, fresh API confirmation 2026-11-01 | Target [lockfile](https://github.com/tldraw/obsidian-plugin/blob/1.35.1/package-lock.json), [SDK release API](https://api.github.com/repos/tldraw/tldraw/releases/latest), [SDK release](https://github.com/tldraw/tldraw/releases/tag/v5.6.0) |
+| Electron / Node inside Obsidian | **43.7.7 / 24.21.0** | Previously reviewed Desktop release describes Electron **43.8.3**; target Node unknown | Read-only `process.versions`; Desktop release above |
 
-Target combination: latest stable Desktop/installer and plugin above, with its
-embedded SDK. Obsidian 1.15.0 was Catalyst and excluded. The fetched GitHub
-release-list page showed plugin 1.35.0; direct API metadata confirmed 1.35.1.
-Installed plugin build provenance beyond manifest/SDK identifiers is unknown.
+The target's [release manifest](https://github.com/tldraw/obsidian-plugin/releases/download/1.35.1/manifest.json)
+requires Obsidian **1.10.0**, satisfied locally. The source-tag manifest still
+says 1.35.0; the release asset and installed manifest identify 1.35.1.
+Checkout base: `001219193ccb6ea9319aaf08ce6b3d59d188ea43`, with the scoped
+changes described below.
 
-## Verification scope
+## Completed verification
 
-- Bridge checkout: `afa78eaf8a953c053c5f2ea29ec49ee5aee62c8e`; target plugin
-  source: `56955a499277186e93d4e7a7738377edd057e195` (tag 1.35.1).
-- Read-only diagnostics: **2026-10-31 (UTC)**, vault
-  `obsidian-tldraw-bridge`, official CLI `obsidian-cli` in the installed macOS app.
-  `doctor` passed with no missing capabilities, no document sessions and
-  `pendingUpdate: null` for the checkout runtime. Package consistency check passed.
-- Checkout and installed Codex-cache loaders were present; their on-disk runtime
-  files matched. Other loader contexts' pending state was not established.
-- Last live editing/persistence verification: **2026-10-31 (UTC)** on the
-  installed combination above, limited to the scoped frame study. Existing
-  declarations list plugins 1.31.0 and 1.32.0 as tested. No migration tests or
-  live tests of plugin 1.35.1 / SDK 5.6.0 were performed; target compatibility
-  remains unverified.
+Explicit vault: `obsidian-tldraw-bridge`. Official CLI:
+`/Applications/Obsidian.app/Contents/MacOS/obsidian-cli`.
+All checks below ran on **2026-11-01 (UTC)** against the installed combination.
 
-## Unresolved actions
+- Eleven live scripts passed: `live_create.py`, `live_styles.py`,
+  `live_apply_preview.py`, `live_images.py`, `live_transport.py`,
+  `live_languages.py`, `live_pending_update.py`, `live.py`, `live_sessions.py`,
+  `live_freehand.py`, and `live_reload.py --multi-page-copy`.
+  Scope includes creation, CRUD, saved records, conflicts with injected GUI
+  changes, shared-Store rollback, Undo/Redo, retained replay, transport recovery,
+  styles, inline images, PNG/WebP exports, multilingual metadata, independent
+  documents, and deferred runtime replacement with explicit closure/reopening.
+- Added and passed literal `$&`, `$'`, `$1` and Japanese text save/reopen coverage
+  in `live_create.py`, releasing the test note's GUI Store before reopening.
+- A disposable copy of `docs/diagrams/architecture.md` (plugin 1.32.0 / SDK 5.4.0)
+  opened, saved with plugin 1.35.1 / SDK 5.6.0 metadata, and reopened with the
+  same document revision. All **78 document records**, including shapes,
+  bindings and inline assets, were preserved. The original note was unchanged.
+  This is one real legacy fixture, not exhaustive migration coverage.
+- Visually inspected the legacy frame WebP, bound-node export, inline-image
+  export, rich-text PNG, and freehand context crop; text, icons, connections,
+  fills and cropping rendered correctly. Previews remain outside tracked docs.
+- Automated checks passed: **175 Python tests**, **134 Node tests**, runtime and
+  loader syntax, generated package consistency, and `git diff --check`.
+- Final checkout-runtime `doctor`: plugin **1.35.1**, supported, version tested,
+  no missing capabilities, no document sessions, and `pendingUpdate: null`.
+  All temporary test notes were removed; unrelated sessions were not closed.
 
-No mandatory bridge code change was established by the
-[tagged comparison](https://github.com/tldraw/obsidian-plugin/compare/1.32.0...1.35.1).
-Principal plugin hooks remain present; API presence does not prove behavior.
+## Outcome and limits
 
-- **High:** Plan a separately authorized installer update for the newer Electron,
-  then repeat CLI/transport checks. No CLI regression was reproduced.
-- **High:** Test synchronization, rollback, Undo, queued changes at teardown,
-  saving and reopening on plugin 1.35.1 / SDK 5.6.0. The
-  [SDK 5.6 Store fixes](https://tldraw.dev/releases/v5.6.0) affect these boundaries;
-  retain existing reconciliation until tested.
-- **Medium:** Add save/reopen coverage for literal `$&` and `$'` labels, following
-  the plugin's [saving fix](https://github.com/tldraw/obsidian-plugin/blob/1.35.1/src/utils/strings.ts).
-  Recheck assets, styles and exports after the [SDK 5.5 changes](https://tldraw.dev/releases/v5.5.0)
-  and [1.35.1 patches](https://github.com/tldraw/obsidian-plugin/compare/1.35.0...1.35.1).
+No functional bridge regression was reproduced and no compatibility workaround
+was needed. Added **1.35.1** to `testedPluginVersions`, updated compatibility
+statements, added the literal-text persistence regression, and rebuilt the
+plugin package. Existing Store reconciliation remains in place: the
+[SDK 5.6 notification/rollback fixes](https://tldraw.dev/releases/v5.6.0) do not
+by themselves establish that it is safe to remove the bridge's protections.
 
-Use [testing procedures](../testing.md), especially `live_create.py`,
-`live_styles.py`, `live_apply_preview.py`, `live_images.py` and dedicated-note
-rollback/Undo/close checks. Update `testedPluginVersions` and compatibility
-claims only after relevant target live tests. No application, installer, plugin
-or runtime implementation was updated by this review.
+Tests ran after the user's plugin update in the existing Obsidian process.
+Its global library registry retains both 5.4.0 and 5.6.0 registrations; the
+installed bundle, saved metadata and newer non-finite camera validation confirm
+5.6.0 availability/behavior. A clean application restart was not performed.
+Manual GUI gestures and GUI/embed export paths were not separately tested.
+Only the checkout runtime was confirmed current; the rebuilt package was not
+installed into other Codex-cache contexts.
+
+The previously identified installer/Electron update remains separate scope and
+was not an observed blocker. No application, plugin, personal configuration,
+production diagram or distributed drawing guidance was changed by this check.

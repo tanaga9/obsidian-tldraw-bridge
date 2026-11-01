@@ -567,14 +567,14 @@ test('create checks required APIs before writing, including for tested versions'
 })
 
 test('doctor and capabilities distinguish API availability from tested versions',async()=>{
-  for(const version of ['1.31.0','1.32.0','99.0.0']) {
+  for(const version of ['1.31.0','1.32.0','1.35.1','99.0.0']) {
     const h=setup()
     h.plugin.manifest.version=version
     for(const action of ['doctor','capabilities']) {
       const result=await h.invoke(action,{},action)
       assert.equal(result.supported,true)
       assert.equal(result.versionTested,version!=='99.0.0')
-      assert.deepEqual(result.testedPluginVersions,['1.31.0','1.32.0'])
+      assert.deepEqual(result.testedPluginVersions,['1.31.0','1.32.0','1.35.1'])
       assert.deepEqual(result.missingCapabilities,[])
     }
   }

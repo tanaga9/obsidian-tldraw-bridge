@@ -153,7 +153,23 @@ with tempfile.TemporaryDirectory(prefix='bridge-live-create-') as directory:
         assert c.call('saved', {'path': created_path})['saved']
         current = c.call('state', {'path': created_path})
         assert next(r for r in current['records'] if r['id'] == shape)['parentId'] == result['currentPageId']
-        print(json.dumps({'created': True, 'nestedFolder': True, 'emptyNote': True, 'editable': True, 'replayPreserved': True, 'existingRejected': True, 'namedApply': True, 'observation': True, 'structuredConflict': True, 'status': True, 'compactPositionEdit': True, 'deferredGuiConflicts': 5, 'saveConflict': True}))
+        # Saving arbitrary drawing text must not interpret String.replace patterns.
+        literal = "Literal $& $' $1 日本語"
+        edited = c.call('apply', {'path': created_path, 'revision': current['revision'], 'operations': [
+            {'op': 'updateShapes', 'shapes': [{'id': shape, 'type': 'geo', 'props': {
+                'richText': {'type': 'doc', 'content': [{'type': 'paragraph', 'content': [
+                    {'type': 'text', 'text': literal}]}]}}}]}
+        ]})
+        assert edited['persistence']['saved']
+        c.call('close', {'path': created_path})
+        # Release the GUI Store too, so reopening reads the persisted Markdown.
+        c.evaluate('(()=>{for(const leaf of app.workspace.getLeavesOfType("tldraw-view"))'
+            '{if(leaf.view.file?.path===' + json.dumps(created_path) + ')leaf.detach();}})()', True)
+        reopened = c.call('open', {'path': created_path})
+        assert reopened['revision'] == edited['revision']
+        assert c.call('observe', {'path': created_path, 'ids': [shape]})['shapes'][0]['text'] == literal
+        assert c.call('saved', {'path': created_path})['saved']
+        print(json.dumps({'created': True, 'nestedFolder': True, 'emptyNote': True, 'editable': True, 'replayPreserved': True, 'existingRejected': True, 'namedApply': True, 'observation': True, 'structuredConflict': True, 'status': True, 'compactPositionEdit': True, 'deferredGuiConflicts': 5, 'saveConflict': True, 'literalTextSaveReopen': True}))
     finally:
         if created_path in c.call('doctor')['documents']:
             c.call('close', {'path': created_path})

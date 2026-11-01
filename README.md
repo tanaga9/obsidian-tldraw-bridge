@@ -25,7 +25,7 @@ Prerequisites:
 - Obsidian's official CLI is enabled and available on the same computer.
 - Python 3.9.6+ is available. Codex checks it before running the bridge.
 
-Tested with tldraw 1.31.0 and 1.32.0. Other versions are allowed; the bridge checks required APIs at runtime and reports any missing functionality.
+Tested with tldraw 1.31.0, 1.32.0 and 1.35.1. Other versions are allowed; the bridge checks required APIs at runtime and reports any missing functionality.
 
 Tell Codex the vault, diagram, and desired change. For example:
 

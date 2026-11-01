@@ -61,7 +61,7 @@ If the plugin package is stale, regenerate it with `python3 scripts/build_plugin
 ## Live test setup
 
 Use macOS with Python 3.9.6+, running Obsidian Desktop, its enabled official CLI,
-and the tldraw plugin enabled. Versions 1.31.0 and 1.32.0 have been tested;
+and the tldraw plugin enabled. Versions 1.31.0, 1.32.0 and 1.35.1 have been tested;
 other versions are allowed when the required APIs are available. Windows can also run these checks; its command
 substitutions are shown below. If CLI discovery fails, update the Obsidian
 installer or select the actual official CLI path; do not point at the GUI.
@@ -184,7 +184,9 @@ No third-party Python imaging library is needed.
 python3 tests/live_create.py --vault Documents
 ```
 
-This check creates a uniquely named folder and Markdown note through `create`, verifies an empty editable document, request replay, duplicate rejection, and a named saved shape edit, compact observation, capabilities, retained status, structured stale-revision rejection, full-state inspection, position edits from compact observations, five deferred-GUI conflict rejections, and a GUI change injected during saving, then closes the session and removes its temporary note and folder. It uses fresh runtime and loader copies so cached code does not affect the check.
+This check creates a uniquely named folder and Markdown note through `create`, verifies an empty editable document, request replay, duplicate rejection, and a named saved shape edit, compact observation, capabilities, retained status, structured stale-revision rejection, full-state inspection, position edits from compact observations, five deferred-GUI conflict rejections, and a GUI change injected during saving. It also verifies literal `$&`, `$'`,
+`$1` and Japanese text after saving, closing the GUI Store and reopening the note.
+It then closes the session and removes its temporary note and folder. It uses fresh runtime and loader copies so cached code does not affect the check.
 
 ## Runtime reload integration check
 
