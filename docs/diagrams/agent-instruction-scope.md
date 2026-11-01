@@ -583,7 +583,7 @@ tags:
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "solid",
+					"fill": "semi",
 					"size": "m",
 					"font": "sans",
 					"align": "start",

@@ -358,7 +358,7 @@ tags:
 					"font": "sans",
 					"scale": 1
 				},
-				"index": "b0btbTV",
+				"index": "b0Yol0V",
 				"typeName": "shape"
 			},
 			{
@@ -383,7 +383,7 @@ tags:
 					"flipY": false,
 					"color": "blue",
 					"labelColor": "black",
-					"fill": "none",
+					"fill": "solid",
 					"size": "s",
 					"font": "sans",
 					"align": "middle",
@@ -397,7 +397,7 @@ tags:
 						]
 					}
 				},
-				"index": "b0b8pQ",
+				"index": "b0OBHz",
 				"typeName": "shape"
 			},
 			{
@@ -1529,7 +1529,7 @@ tags:
 					"flipY": false,
 					"color": "violet",
 					"labelColor": "black",
-					"fill": "none",
+					"fill": "solid",
 					"size": "s",
 					"font": "sans",
 					"align": "middle",
@@ -1543,7 +1543,7 @@ tags:
 						]
 					}
 				},
-				"index": "b0mlEb",
+				"index": "b0PKDQ",
 				"typeName": "shape"
 			},
 			{
