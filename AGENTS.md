@@ -15,6 +15,12 @@ For tldraw diagrams used in this repository's documentation:
 - Export previews as WebP and inspect readability at the intended display size.
 - Keep intermediate previews in a temporary directory, outside tracked documentation.
 
+When the distributed drawing Skill changes, review the
+[Skill knowledge map](docs/skill-knowledge-map.md) in the same change.
+Update its editable page and WebP together when needed, keeping the map in the
+user's perspective. Follow [map maintenance](docs/development.md#skill-knowledge-map-maintenance)
+and inspect meaning and rendering before delivery.
+
 Maintain canonical distributed Skill sources under `integrations/codex/skills/obsidian-tldraw/`;
 `plugins/obsidian-tldraw-bridge/` is generated. Follow the
 [development guide](docs/development.md) when extending the guidance or rebuilding

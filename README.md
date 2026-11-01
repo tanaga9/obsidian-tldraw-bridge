@@ -62,6 +62,7 @@ See the [design explanation](docs/diagramming-guide-design-system.md) and [edita
 - [Operations and recovery](integrations/codex/skills/obsidian-tldraw/references/operations.md): observation, named edits, SDK scripts, results, and retries.
 - [Diagramming guidance](integrations/codex/skills/obsidian-tldraw/references/diagramming/index.md): diagram selection and drawing conventions.
 - [tldraw overview](docs/tldraw-overview.md): apps, SDK, formats, tool comparisons, and AI editing.
+- [Skill knowledge map](docs/skill-knowledge-map.md): bundled drawing guidance and when Codex consults it.
 - [Development and distribution](docs/development.md): builds, local marketplace registration, and standalone Skill packaging.
 - [Testing](docs/testing.md) and [known limitations](docs/known-limitations.md): verification and runtime boundaries.
 

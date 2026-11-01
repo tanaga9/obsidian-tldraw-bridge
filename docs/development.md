@@ -29,6 +29,21 @@ The canonical sources are `src/` and `integrations/codex/skills/obsidian-tldraw/
 
 The plugin display name is **Obsidian Tldraw Bridge**, defined in `scripts/build_plugin.py` under `extensions.com.openai.interface.displayName`. The stable plugin identifier and package directory remain `obsidian-tldraw-bridge`. The marketplace title is set separately in `.agents/plugins/marketplace.json`.
 
+## Skill knowledge map maintenance
+
+The [Skill knowledge map](skill-knowledge-map.md) supplements the existing
+architecture diagram with task-based knowledge routes. Keep implementation,
+installation, and maintainer procedures outside this map.
+
+When the canonical drawing Skill changes, review the changed knowledge against
+the map in the same change. Update affected shapes through the
+bridge, export frame `shape:distribution-knowledge` on page
+`page:distribution-knowledge` to `docs/diagrams/skill-knowledge-map.webp` at
+scale `0.6` (1896 pixels wide), and inspect meaning, connections, and readability
+at about 1200 pixels display width. Confirm the inspected revision is saved and
+keep the note and preview together. Follow the usual read-only multilingual
+review before committing a changed note. If the map remains accurate, preserve it.
+
 ## README architecture diagram
 
 The README uses [architecture.webp](diagrams/architecture.webp), rendered from the
