@@ -41,7 +41,7 @@ class Bridge:
             "language-status": {"path", "diagramId"},
             "language-checkpoint": {"path", "revision", "checkpoint", "full"},
             "open": {"path", "currentPageId"}, "state": {"path"}, "saved": {"path"}, "close": {"path"},
-            "observe": {"path", "revision", "pageId", "limit", "offset", "ids", "bounds"},
+            "observe": {"path", "revision", "pageId", "limit", "offset", "ids", "bounds", "includeRichText"},
             "apply": {"path", "revision", "pageId", "operations", "full", "preview"}, "batch": {"path", "revision", "operations", "full"},
             "script": {"path", "revision", "code", "full"}, "freehand": {"path", "revision", "drawing", "full"},
             "image-info": {"file", "maxDimension", "format", "quality", "maxBytes"},
@@ -141,6 +141,8 @@ class Bridge:
                     or b["w"] <= 0 or b["h"] <= 0):
                     invalid("Bounds must be finite with positive width and height")
         if action == "observe":
+            if 'includeRichText' in args and type(args['includeRichText']) is not bool:
+                invalid('includeRichText must be a boolean')
             limit = args.get("limit", 100)
             offset = args.get("offset", 0)
             if type(limit) is not int or not 1 <= limit <= 500 or type(offset) is not int or offset < 0:

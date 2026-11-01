@@ -266,6 +266,8 @@ GUI selection or viewport. It returns revision, page IDs/names, shape IDs/types,
 text, common style props, parent IDs, page-space bounds, parent-local position
 (`localPosition.x`/`y`), local rotation, z-order,
 and bindings touching the returned shapes. It does not report human GUI selection.
+Add `--rich-text` (API `includeRichText: true`) to include exact `richText`
+documents for the selected shapes, without loading the entire document's records.
 
 Use `--ids <id> ...` or `--bounds X Y W H` to narrow the view. Results default to
 100 shapes, with `--limit` up to 500. Follow `nextOffset` using `--offset` and the
@@ -301,6 +303,9 @@ operations depend on the current page, such as creating shapes without a parent.
 | `alignShapes` | `ids`, `alignment`: `left`, `center-horizontal`, `right`, `top`, `center-vertical`, `bottom` |
 | `distributeShapes` | `ids`, `axis`: `horizontal`, `vertical` |
 | `setCurrentPage` | `pageId` |
+| `formatText` | `id`, exact `text`, `marks`: boolean `bold`, `italic`, `code`, and/or `highlight`; optional 1-based `occurrence` |
+| `setTextList` | `id`, `list`: `bullet` or `none`; converts the whole label |
+| `separateArrowLabel` | `id`: arrow ID, `labelId`: unused text ID, parent-local `x`, `y`, positive displayed `width` |
 | `undo`, `redo` | None; each must be the only operation in its request |
 
 There must be 1–1,000 operations. Unknown operations/fields and invalid named
@@ -308,6 +313,48 @@ argument types are rejected before editing. SDK shape validation runs during
 application; synchronous failures restore Store records. Ordinary batches share
 one history boundary. Use stable IDs for subsequent updates and preserve
 unrelated content. No automatic conflict resolution is performed.
+
+### Text formatting
+
+Prefer `formatText` for partial formatting of existing text. It splits only the
+matched text runs and preserves other marks, link attributes, paragraphs, and
+list structure. `true` adds a mark; `false` removes only that mark. Matching is
+case-sensitive and literal, with newlines between paragraphs/list items and at
+hard breaks. An absent or ambiguous match raises `TEXT_MATCH_FAILED` without
+applying the batch. For repeated text, specify a 1-based `occurrence`.
+
+```json
+[{"op":"formatText","id":"shape:status","text":"Ready","marks":{"bold":true,"highlight":true}}]
+```
+
+For a single shape, the CLI avoids JSON entirely:
+
+```sh
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> --request-id <unique-id> format-text diagram.md --revision <revision> --shape-id shape:status --text Ready --bold --highlight --preview-output /absolute/path/review.webp
+```
+
+Use `--no-bold`, `--no-italic`, `--no-code`, or `--no-highlight` to remove a mark.
+`--list bullet` / `--list none` converts the whole label between paragraphs and
+a simple bullet list while retaining inline formatting. Complex/nested lists or
+other block types are rejected; edit their exact rich-text structure instead.
+
+`separateArrowLabel` transfers an arrow's rich text into a new text shape with
+the same parent, rotation, opacity, font, and text color, then clears the
+native label. Specify the new label's parent-local `x`, `y`, and displayed
+`width` before rotation; choose enough width for the intended wrapping. The
+operation preserves character size by adjusting scale using SDK font sizes,
+rejecting unavailable font-size information. Arrow endpoints and bindings are
+preserved. For example:
+
+```json
+[{"op":"separateArrowLabel","id":"shape:arrow","labelId":"shape:label","x":200,"y":80,"width":400}]
+```
+
+Inspect the label's context, wrapping, and clipping, particularly inside frames.
+The label is independent: update its placement when moving/reconnecting the
+arrow. Text operations require an unlocked rich-text shape and are available
+through `apply` / `format-text`, not the SDK-only `batch` interface. They share
+normal revision, rollback, persistence, Undo/Redo, and retained-request behavior.
 
 ### Apply with a preview
 

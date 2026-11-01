@@ -13,5 +13,7 @@ Python 3.9.6+ is an environment prerequisite. The bridge does not bundle or inst
 | Updating the runtime loader itself | Requires restart | Drawing runtime source changes at the same installed path load on the next new request after all bridge sessions have been explicitly closed. Changes to `loader.cjs` itself require restarting Obsidian. |
 | Cancelling or restoring arbitrary asynchronous scripts | Unsupported | Use synchronous scripts only. Detecting a Promise does not cancel already scheduled work. |
 | Compatibility with SDK updates | Not guaranteed | Tested with tldraw 1.31.0, 1.32.0 and 1.35.1. Other versions are allowed; required APIs are checked at runtime. API presence does not guarantee compatible behavior. |
+| Native arrow rich-text export | Wrapped/multi-paragraph labels can clip on plugin 1.35.1 / SDK 5.6.0 | Use `separateArrowLabel` to transfer the label into independent editable text. Its placement must be updated when the arrow moves or is reconnected. |
+| Rich-text block conversion | Simple paragraphs and bullet lists only | `formatText` preserves existing structures while changing inline marks. `setTextList` rejects nested/complex blocks; edit their SDK `richText` directly. Default SDK configuration disables `codeBlock`; inline `code` is supported. |
 
 Restoring Store records after a synchronous script failure is implemented and tested. Side effects outside the Store and full mutual exclusion with human GUI edits are outside the guarantee.

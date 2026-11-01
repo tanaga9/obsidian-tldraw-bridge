@@ -35,6 +35,7 @@ def parser():
     observe.add_argument("--page-id", help="Pin currentPageId when continuing observation")
     observe.add_argument("--limit", type=int, default=100)
     observe.add_argument("--offset", type=int, default=0)
+    observe.add_argument("--rich-text", action="store_true", help="Include exact richText documents for the selected shapes")
     selection = observe.add_mutually_exclusive_group()
     selection.add_argument("--ids", nargs="+")
     selection.add_argument("--bounds", nargs=4, type=float, metavar=("X", "Y", "W", "H"))
@@ -43,13 +44,26 @@ def parser():
     apply.add_argument("--revision", required=True)
     apply.add_argument("--page-id", help="Reject if the dedicated Editor changed pages")
     apply.add_argument("--input", required=True, help="Operations JSON file, or - for stdin")
-    apply.add_argument("--preview-output", help="After saving, export this edit's revision for visual inspection")
-    preview_region = apply.add_mutually_exclusive_group()
-    preview_region.add_argument("--preview-ids", nargs="+", help="Export these shapes; include affected connections and context")
-    preview_region.add_argument("--preview-bounds", nargs=4, type=float, metavar=("X", "Y", "W", "H"))
-    apply.add_argument("--preview-scale", type=float)
-    apply.add_argument("--preview-format", choices=("png", "webp"))
-    apply.add_argument("--preview-quality", type=float)
+    text = sub.add_parser('format-text', help='Format an exact phrase without rebuilding rich-text JSON')
+    text.add_argument('path')
+    text.add_argument('--revision', required=True)
+    text.add_argument('--page-id')
+    text.add_argument('--shape-id', required=True)
+    text.add_argument('--text', help='Exact phrase; repeated phrases require --occurrence')
+    text.add_argument('--occurrence', type=int, help='1-based match occurrence')
+    for mark in ('bold', 'italic', 'code', 'highlight'):
+        flags = text.add_mutually_exclusive_group()
+        flags.add_argument('--' + mark, dest=mark, action='store_const', const=True, default=None)
+        flags.add_argument('--no-' + mark, dest=mark, action='store_const', const=False)
+    text.add_argument('--list', choices=('bullet', 'none'), help='Convert the entire label to/from a simple bullet list')
+    for edit_parser in (apply, text):
+        edit_parser.add_argument("--preview-output", help="After saving, export this edit's revision for visual inspection")
+        preview_region = edit_parser.add_mutually_exclusive_group()
+        preview_region.add_argument("--preview-ids", nargs="+", help="Export these shapes; include affected connections and context")
+        preview_region.add_argument("--preview-bounds", nargs=4, type=float, metavar=("X", "Y", "W", "H"))
+        edit_parser.add_argument("--preview-scale", type=float)
+        edit_parser.add_argument("--preview-format", choices=("png", "webp"))
+        edit_parser.add_argument("--preview-quality", type=float)
     sub.add_parser("forget", help="Release a completed receipt; its id must not be retried afterwards").add_argument("id")
     sub.add_parser("create", help="Create a new tldraw Markdown note and open its editor session").add_argument("path", help="New vault-relative .md path")
     for command in ("open", "state", "saved", "close"):
@@ -81,7 +95,7 @@ def parser():
     image.add_argument('--parent-id', help="Parent shape on the current page; coordinates are parent-local")
     image.add_argument('--page-id', help="Pin the current page")
     image.add_argument('--shape-id', help="Optional new shape: ID (existing shapes are never replaced)")
-    for edit_parser in (apply, batch, script, freehand, image, checkpoint):
+    for edit_parser in (apply, text, batch, script, freehand, image, checkpoint):
         edit_parser.add_argument("--full", action="store_true", help="Include full document records and editor diagnostics in the result")
     preview = sub.add_parser("preview")
     preview.add_argument("path")
@@ -145,6 +159,24 @@ def _execute(options):
         args["path"] = options.path
     if getattr(options, "revision", None):
         args["revision"] = options.revision
+    if options.command == 'format-text':
+        marks = {key: getattr(options, key) for key in ('bold', 'italic', 'code', 'highlight')
+                 if getattr(options, key) is not None}
+        if bool(marks) != (options.text is not None) or (options.occurrence is not None and not marks):
+            raise ValueError('--text and at least one mark flag must be used together; --occurrence requires --text')
+        operations = []
+        if marks:
+            op = {'op': 'formatText', 'id': options.shape_id, 'text': options.text, 'marks': marks}
+            if options.occurrence is not None:
+                op['occurrence'] = options.occurrence
+            operations.append(op)
+        if options.list is not None:
+            operations.append({'op': 'setTextList', 'id': options.shape_id, 'list': options.list})
+        if not operations:
+            raise ValueError('Specify mark flags or --list')
+        args['operations'] = operations
+        if options.full:
+            args['full'] = True
     if options.command == "style-spec":
         args["shapeType"] = options.shape_type
     if options.command == 'language-status' and options.diagram_id is not None:
@@ -180,9 +212,9 @@ def _execute(options):
             args["ids"] = options.ids
         if options.bounds is not None:
             args["bounds"] = dict(zip(("x", "y", "w", "h"), options.bounds))
-    if options.command == "apply" and options.page_id is not None:
+    if options.command in ("apply", "format-text") and options.page_id is not None:
         args["pageId"] = options.page_id
-    if options.command == "apply":
+    if options.command in ("apply", "format-text"):
         preview = {key: getattr(options, "preview_" + key) for key in
                    ("output", "ids", "bounds", "scale", "format", "quality")
                    if getattr(options, "preview_" + key) is not None}
@@ -192,6 +224,8 @@ def _execute(options):
             args["preview"] = preview
     if options.command == "observe":
         args.update(limit=options.limit, offset=options.offset)
+        if options.rich_text:
+            args['includeRichText'] = True
         if options.page_id is not None:
             args["pageId"] = options.page_id
     if options.command == "preview":
@@ -209,7 +243,7 @@ def _execute(options):
     elif options.command == "status":
         result = bridge.status(options.id)
     else:
-        result = bridge.call(options.command, args, options.request_id)
+        result = bridge.call('apply' if options.command == 'format-text' else options.command, args, options.request_id)
     return result
 
 
@@ -229,7 +263,7 @@ def _output(options, result):
             except (OSError, ValueError):
                 pass
         mutating = options.command in {'create', 'open', 'close', 'apply', 'batch', 'script',
-                                       'freehand', 'insert-image', 'preview', 'forget', 'language-checkpoint'}
+                                       'freehand', 'insert-image', 'preview', 'forget', 'language-checkpoint', 'format-text'}
         outcome = 'applied' if mutating else 'unknown' if options.command == 'status' else 'not_applied'
         request_id = options.id if options.command in {'status', 'forget'} else options.request_id
         error = BridgeError('Could not output completed command result: ' + str(exc),

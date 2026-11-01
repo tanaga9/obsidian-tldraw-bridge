@@ -64,6 +64,28 @@ All checks below ran on **2026-11-01 (UTC)** against the installed combination.
 
 ## Outcome and limits
 
+### Focused rich-text check
+
+Latest focused verification: **2026-11-01T02:53:11Z**, checkout
+`178d3023f22e3b05fba18d621f188e8b76b35b13` with text-operation edits, vault
+`obsidian-tldraw-bridge`, plugin **1.35.1** / SDK **5.6.0**.
+`tests/live_rich_text.py` verifies exact mark/list results and removals, untouched
+text, selected rich-text observation, saved/export revision agreement, and disk
+reopening. Label separation preserves effective character size and bindings;
+its position and width are explicit, without automatic placement or custom metadata.
+
+Native wrapped/list arrow labels and auto-sized list text can clip in WebP output.
+Separate editable text with ample explicit width rendered correctly in the
+inspected preview; check wrapping and reposition it with the arrow.
+Default SDK text configuration supports inline code but disables `codeBlock`.
+GUI rendering and the native-export root cause remain unverified. No application
+or plugin upgrade was performed. Drawing guidance and operation docs were updated;
+the existing knowledge-map routes still apply, so its note/preview were preserved.
+Release versions and application/Electron/Node observations above retain their
+original research/verification dates; this was an installed-capability check.
+
+### Previous upgrade review
+
 No functional bridge regression was reproduced and no compatibility workaround
 was needed. **1.35.1** remains live-tested. Diagnostics now compare the installed
 stable plugin version with the package-known latest release. The rebuilt Skill

@@ -9,7 +9,7 @@ const source = fs.readFileSync(path.join(__dirname, '../src/obsidian_tldraw_brid
 const copy = value => JSON.parse(JSON.stringify(value))
 function setup() {
   const context = { require, module: {exports: {}}, Buffer, setTimeout }
-  vm.runInNewContext(source + '\nmodule.exports.testAccess = { sessionsFor, revision, saved, script, batch };', context)
+  vm.runInNewContext(source + '\nmodule.exports.testAccess = { sessionsFor, revision, saved, script, batch, editOperations, namedOperations };', context)
   const api = context.module.exports
   const access = api.testAccess
   let values = [
@@ -1425,4 +1425,20 @@ test('three-language handoff retains third-language review and isolates other di
   assert.equal(status('workflow','ja'),'current')
   assert.deepEqual(copy(h.group('workflow')),protectedGroup)
   assert.deepEqual(copy(h.values().filter(r=>r.id.includes('workflow'))),protectedRecords)
+})
+
+test('text operations share revision checks and roll back earlier operations on a failed match',()=>{
+  const h=setup(), shape=h.values().find(r=>r.id==='shape:a')
+  shape.type='geo'
+  shape.props.richText={type:'doc',content:[{type:'paragraph',content:[{type:'text',text:'Ready'}]}]}
+  const before=copy(h.values()), rev=h.access.revision(h.editor)
+  const operation={op:'formatText',id:'shape:a',text:'Ready',marks:{bold:true}}
+  const edit = (operations, revision) => h.access.editOperations(h.app,'a.md',h.access.namedOperations(operations),revision)
+  assert.throws(()=>edit([operation],'stale'),error=>error.code==='REVISION_CONFLICT')
+  assert.throws(()=>h.access.batch(h.app,'a.md',[{method:'formatText',args:[operation]}],rev),/Unsupported operation/)
+  assert.throws(()=>edit([operation,
+    {op:'formatText',id:'shape:a',text:'Absent',marks:{italic:true}}],rev),error=>error.code==='TEXT_MATCH_FAILED')
+  assert.deepEqual(copy(h.values()),before)
+  edit([operation],rev)
+  assert.equal(h.editor.getShape('shape:a').props.richText.content[0].content[0].marks[0].type,'bold')
 })

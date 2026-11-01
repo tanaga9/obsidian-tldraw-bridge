@@ -4,11 +4,44 @@ Use this bridge's Editor API, not another tldraw application's HTTP server or cu
 
 ## Styles
 
-Bold text is currently outside this workflow's supported scope. When exceptional emphasis warrants a dark node, use regular light text and verify readability in the preview.
-
 Use `style-spec <path> --shape-type <type>` before choosing uncertain style values. Enum names do not establish appearance: `semi` need not mean translucent, and a property name can also be one of its values. SDK style defaults, ShapeUtil defaults, and the Editor's current next-shape style are separate values. Explicit props override creation styles; creation hooks may further change a shape. Unavailable fields are unknown. Verify appearance with a preview in the target environment.
 
 For example, the inspected plugin 1.32.0 renders a blue `solid` fill as a pale tint and a blue `fill` as saturated blue. Shape `opacity` affects its label as well as its body; use separate opaque text over a translucent background shape when independent opacity is needed. Keep such label backgrounds small enough not to obscure nearby enclosure boundaries or arrowheads.
+
+## Rich text
+
+Apply the [text-formatting guidance](index.md#common-rules) through
+[text operations](../operations.md#text-formatting) or CLI `format-text` for
+existing text. Use `observe --rich-text --ids <ids>` to inspect exact formatting.
+For creation or complex structures, pass `props.richText` directly to
+`createShapes` / `updateShapes`, preserving unrelated marks and structure.
+Markdown in plain strings does not become formatting; `style-spec` does not
+enumerate rich-text marks. Inspect installed records/text options before using
+unfamiliar structures and choose a supported alternative if needed.
+
+For plugin 1.35.1 / SDK 5.6.0, inline text nodes accept marks named `bold`,
+`italic`, `code`, and `highlight`. For example, a partially bold label is:
+
+```json
+{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Status: "},{"type":"text","text":"Ready","marks":[{"type":"bold"}]}]}]}
+```
+
+Bullet lists contain `listItem` nodes with paragraphs. The inspected default
+configuration supports inline `code` but disables `codeBlock`.
+
+Preview the actual result: verify that bold, italic, code, lists, and highlights
+appear as intended where used, including highlight contrast, list indentation,
+wrapping, and clipping. Formatting can change rendered bounds; recheck nearby
+content and incident connectors when it does. Confirm the inspected revision is
+saved through the usual operation contracts.
+
+On plugin 1.35.1 / SDK 5.6.0, wrapped/multi-paragraph arrow labels can clip in
+WebP exports. Prefer separate text for these labels; use `separateArrowLabel`
+for an existing native label when adding a shape is within scope. Lists in
+auto-sized text can also wrap beyond measured bounds in this SDK; choose ample
+explicit width and inspect the export. Keep concise,
+correctly rendered native labels. Inspect separate text placement and update it
+when moving or reconnecting the arrow; it does not automatically follow.
 
 ## Frames
 

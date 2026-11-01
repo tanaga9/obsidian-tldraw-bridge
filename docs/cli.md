@@ -110,6 +110,9 @@ SDK access, result fields, errors, persistence, and request-ID recovery.
 | Vaults and tldraw status | `vaults [--config-dir <folder-name>]`; no `--vault` |
 | Installed style specification | `style-spec <path> --shape-type <type>`; the document must already be open |
 | Compact observation | `observe <path> [--ids <id> ... \| --bounds X Y W H] [--limit N]`; continue with `--offset N --revision <revision> --page-id <currentPageId>` |
+| Exact selected text formatting | `observe <path> --ids <id> ... --rich-text` |
+| Partial text formatting | `format-text <path> --revision <revision> --shape-id <id> --text <phrase> --bold --highlight`; use `--italic`, `--code`, or `--no-<mark>` as needed; repeated phrases require `--occurrence N` |
+| Bullet lists | `format-text <path> --revision <revision> --shape-id <id> --list bullet` (or `none`) |
 | Full records | `state <path>`; add `--full` to `apply`, `batch`, `script`, or `freehand` for full edit results |
 | Edit, save and export | `apply <path> --revision <revision> --page-id <page> --input <file> --preview-output <absolute-image-path>`; optional `--preview-ids`, `--preview-bounds`, `--preview-scale`, `--preview-format`, `--preview-quality` |
 | Freehand drawing | `freehand <path> --revision <revision> --input <file>`; see [drawing input](../integrations/codex/skills/obsidian-tldraw/references/freehand.md) |
@@ -123,6 +126,15 @@ Use a fresh global `--request-id` for each consequential edit. After a timeout,
 inspect its status or repeat the identical request with the same ID. Release
 completed receipts with `forget`; explicit IDs occupy the 128-receipt capacity
 until forgotten or Obsidian restarts.
+
+`format-text` compiles to one ordinary `apply` request, including revision/page
+checks, rollback, saving, retained replay, `--full`, and the same `--preview-*`
+options. It preserves formatting outside the matched phrase. List conversion
+applies to the whole label and supports paragraphs/simple bullet lists only.
+The `apply` operation `separateArrowLabel` transfers rich text with an explicit
+position and width, preserving character size and arrow bindings. The independent
+label requires coordinated repositioning when the arrow moves. See the canonical
+[text operation contract](../integrations/codex/skills/obsidian-tldraw/references/operations.md#text-formatting).
 
 `saved` and edit `persistence` return the document `revision` verified against
 Markdown, alongside `saved`, `path`, and `bytes`.

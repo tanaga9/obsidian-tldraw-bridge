@@ -326,6 +326,27 @@ of missing or stale saved revisions in otherwise valid bundles), and required
 property preservation inside otherwise editable records. A valid review bound
 to a changed label or reconnected binding cannot override a property violation.
 
+## Rich-text integration check
+
+```sh
+python3 tests/live_rich_text.py --vault obsidian-tldraw-bridge
+```
+
+Choose the registered vault explicitly. Uses an isolated runtime and a disposable
+note in `workspace/drawings/`. Exercises the real CLI adapter and Obsidian transport
+for partial bold/italic/code/highlight, ambiguous-match rejection, mark removal,
+whole-label bullet-list conversion, exact rich-text observation, and arrow-label
+separation. Asserts expected rich-text documents, including the unformatted first
+match and mark/list removal, and checks effective font size before/after label
+separation. Checks that arrow bindings and unrelated shapes survive, the export
+matches the saved revision, and records survive reopening after releasing the
+test note's GUI Store. Success removes its note/session and receipts; failures
+retain them with a request/runtime manifest for recovery instead of performing
+uncertain cleanup. Inspect the reported before/after WebP files separately for
+clipping and readability. Unit checks in `tests/rich-text.test.cjs` also cover
+existing link attributes, Unicode, selections spanning blocks, unsupported list
+structures, explicit parent-local placement, and effective font-size preservation.
+
 ## Multilingual integration check
 
 ```sh

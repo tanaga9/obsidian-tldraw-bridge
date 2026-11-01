@@ -303,6 +303,106 @@ const operationFields = {
   alignShapes: { ids: 'array', alignment: ['left', 'center-horizontal', 'right', 'top', 'center-vertical', 'bottom'] },
   distributeShapes: { ids: 'array', axis: ['horizontal', 'vertical'] },
   setCurrentPage: { pageId: 'string' }, undo: {}, redo: {},
+  formatText: { id: 'string', text: 'string', marks: 'object', occurrence: 'optional-positive-integer' },
+  setTextList: { id: 'string', list: ['bullet', 'none'] },
+  separateArrowLabel: { id: 'string', labelId: 'string', x: 'number', y: 'number', width: 'positive-number' },
+}
+const textOperations = new Set(['formatText', 'setTextList', 'separateArrowLabel'])
+function richTextShape(editor, id) {
+  const shape = editor.getShape(id)
+  if (!shape || shape.isLocked || !shape.props?.richText || shape.props.richText.type !== 'doc') {
+    throw fault('INVALID_INPUT', 'Text operation requires an unlocked shape with richText')
+  }
+  return shape
+}
+function formatText(editor, op) {
+  const shape = richTextShape(editor, op.id), richText = JSON.parse(JSON.stringify(shape.props.richText))
+  let plain = '', blocks = 0
+  const spans = []
+  function collect(node) {
+    if (node.type === 'paragraph' || node.type === 'heading') {
+      if (blocks++) plain += '\n'
+    }
+    if (node.type === 'text') {
+      spans.push({ node, start: plain.length, end: plain.length + node.text.length })
+      plain += node.text
+    } else if (node.type === 'hardBreak') plain += '\n'
+    else if (Array.isArray(node.content)) node.content.forEach(collect)
+    else if (node.type !== 'paragraph' && node.type !== 'heading') plain += '\ufffc'
+  }
+  collect(richText)
+  const matches = []
+  for (let at = plain.indexOf(op.text); at !== -1; at = plain.indexOf(op.text, at + 1)) matches.push(at)
+  if (!matches.length || (op.occurrence === undefined && matches.length !== 1) || (op.occurrence ?? 1) > matches.length) {
+    throw fault('TEXT_MATCH_FAILED', 'Text must match uniquely, or specify a valid 1-based occurrence', 'not_applied', { matches: matches.length })
+  }
+  const start = matches[(op.occurrence ?? 1) - 1], end = start + op.text.length, replacements = new Map()
+  for (const span of spans) {
+    const a = Math.max(start, span.start) - span.start, b = Math.min(end, span.end) - span.start
+    if (a >= b) continue
+    const node = span.node, pieces = []
+    if (a) pieces.push({ ...node, text: node.text.slice(0, a) })
+    const selected = { ...node, text: node.text.slice(a, b) }
+    let marks = [...(node.marks ?? [])]
+    for (const [type, enabled] of Object.entries(op.marks)) {
+      const existing = marks.find(mark => mark.type === type)
+      marks = marks.filter(mark => mark.type !== type)
+      if (enabled) marks.push(existing ?? { type })
+    }
+    if (marks.length) selected.marks = marks
+    else delete selected.marks
+    pieces.push(selected)
+    if (b < node.text.length) pieces.push({ ...node, text: node.text.slice(b) })
+    replacements.set(node, pieces)
+  }
+  if (!replacements.size) throw fault('TEXT_MATCH_FAILED', 'Selection contains no text characters')
+  function replace(node) {
+    if (node.content) node.content = node.content.flatMap(child => replacements.get(child) ?? [replace(child)])
+    return node
+  }
+  editor.updateShapes([{ id: shape.id, type: shape.type, props: { richText: replace(richText) } }])
+}
+function setTextList(editor, op) {
+  const shape = richTextShape(editor, op.id), richText = JSON.parse(JSON.stringify(shape.props.richText))
+  const paragraphs = []
+  for (const block of richText.content ?? []) {
+    if (block.type === 'paragraph') paragraphs.push(block)
+    else if (block.type === 'bulletList' && Array.isArray(block.content) && block.content.every(item =>
+      item.type === 'listItem' && item.content?.length === 1 && item.content[0].type === 'paragraph')) {
+      paragraphs.push(...block.content.map(item => item.content[0]))
+    } else throw fault('INVALID_INPUT', 'List conversion supports paragraphs and simple bullet lists only; preserve complex structures with richText')
+  }
+  if (!paragraphs.length) throw fault('INVALID_INPUT', 'List conversion requires at least one paragraph')
+  richText.content = op.list === 'none' ? paragraphs : [{ type: 'bulletList', content:
+    paragraphs.map(paragraph => ({ type: 'listItem', content: [paragraph] })) }]
+  editor.updateShapes([{ id: shape.id, type: shape.type, props: { richText } }])
+}
+function separateArrowLabel(editor, op) {
+  const shape = richTextShape(editor, op.id)
+  if (shape.type !== 'arrow' || editor.getShape(op.labelId)) throw fault('INVALID_INPUT', 'Expected an arrow and an unused labelId')
+  requireFunctions(editor, ['createShapes', 'getShapeUtil', 'getCurrentTheme', 'getColorMode'], 'editor')
+  const scale = shape.props.scale ?? 1
+  editor.createShapes([{ id: op.labelId, type: 'text', parentId: shape.parentId,
+    x: op.x, y: op.y, rotation: shape.rotation, opacity: shape.opacity,
+    props: {
+      richText: shape.props.richText, font: shape.props.font, size: shape.props.size,
+      color: shape.props.labelColor, scale, w: op.width / scale, autoSize: false, textAlign: 'start',
+    } }])
+  // Size enums have different pixel sizes for arrow labels and text shapes.
+  const display = value => {
+    const util = editor.getShapeUtil(value)
+    requireFunctions(util, ['options.getDefaultDisplayValues', 'options.getCustomDisplayValues'], 'shapeUtil')
+    const args = [editor, value, editor.getCurrentTheme(), editor.getColorMode()]
+    return { ...util.options.getDefaultDisplayValues(...args), ...util.options.getCustomDisplayValues(...args) }
+  }
+  const arrowFontSize = display(shape).labelFontSize, textFontSize = display(editor.getShape(op.labelId)).fontSize
+  if (![arrowFontSize, textFontSize].every(value => Number.isFinite(value) && value > 0)) {
+    throw fault('TLDRAW_UNSUPPORTED', 'Cannot determine effective arrow/text font sizes')
+  }
+  const textScale = scale * arrowFontSize / textFontSize
+  editor.updateShapes([{ id: op.labelId, type: 'text', props: { scale: textScale, w: op.width / textScale } },
+    { id: shape.id, type: 'arrow',
+    props: { richText: { type: 'doc', content: [{ type: 'paragraph' }] } } }])
 }
 function fault(code, message, outcome = 'not_applied', details) {
   return Object.assign(new Error(message), { code, outcome, details })
@@ -365,6 +465,8 @@ function capabilities(app) {
     imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
       optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
     preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9, afterApply: true },
+    textFormatting: { marks: ['bold', 'italic', 'code', 'highlight'], match: 'exact-unique-or-1-based-occurrence',
+      lists: ['bullet', 'none'], observationOption: 'includeRichText', separateArrowLabel: true },
     operations: operationFields, coordinates: { observeBounds: 'page', shapePosition: 'parent-local' }, observation: 'dedicated-editor-current-page',
     limits: { operations: 1000, observeShapes: 500, observeBindings: 500, retainedRequests: 128, previewScale: 4,
       scriptResultBytes: SCRIPT_RESULT_BYTES, scriptResultDepth: SCRIPT_RESULT_DEPTH },
@@ -439,7 +541,10 @@ function namedOperations(operations) {
     const args = Object.entries(fields).map(([key, type]) => {
       const value = op[key]
       const valid = Array.isArray(type) ? type.includes(value) : type === 'array'
-        ? Array.isArray(value) && value.length > 0 : typeof value === 'string' && value.length > 0
+        ? Array.isArray(value) && value.length > 0 : type === 'object'
+        ? value && typeof value === 'object' && !Array.isArray(value) : type === 'optional-positive-integer'
+        ? value === undefined || Number.isSafeInteger(value) && value > 0 : type === 'number' || type === 'positive-number'
+        ? Number.isFinite(value) && (type === 'number' || value > 0) : typeof value === 'string' && value.length > 0
       if (!valid) throw fault('INVALID_INPUT', `Invalid ${key} for ${op.op}`, 'not_applied', { operationIndex: index })
       return value
     })
@@ -447,12 +552,23 @@ function namedOperations(operations) {
     if (op.ids && op.ids.some(id => typeof id !== 'string' || !id.startsWith(prefix))) {
       throw fault('INVALID_INPUT', `Expected ${prefix} IDs`, 'not_applied', { operationIndex: index })
     }
+    if (textOperations.has(op.op)) {
+      if (!op.id.startsWith('shape:') || (op.labelId !== undefined && !op.labelId.startsWith('shape:'))) {
+        throw fault('INVALID_INPUT', 'Text operations require shape: IDs')
+      }
+      if (op.op === 'formatText' && (!Object.keys(op.marks).length || Object.entries(op.marks).some(([key, value]) =>
+        !['bold', 'italic', 'code', 'highlight'].includes(key) || typeof value !== 'boolean'))) {
+        throw fault('INVALID_INPUT', 'marks must contain boolean bold, italic, code, or highlight values')
+      }
+      return { method: op.op, args: [op] }
+    }
     return { method: op.op, args }
   })
 }
 function observe(app, args) {
   const session = sessionFor(app, args.path), editor = session.editor
   flushPendingChanges(app, session)
+  if (args.includeRichText !== undefined && typeof args.includeRichText !== 'boolean') throw fault('INVALID_INPUT', 'includeRichText must be a boolean')
   if (args.revision) assertRevision(app, session, args.revision)
   const limit = args.limit ?? 100, offset = args.offset ?? 0
   if (!Number.isInteger(limit) || limit < 1 || limit > 500 || !Number.isInteger(offset) || offset < 0 || (offset && (!args.revision || !args.pageId))) {
@@ -491,7 +607,8 @@ function observe(app, args) {
       return { id, type: shape.type, parentId: shape.parentId, bounds: shapeBounds(id),
         localPosition: { x: shape.x, y: shape.y },
         localRotation: shape.rotation, opacity: shape.opacity, index: shape.index, isLocked: shape.isLocked,
-        props: Object.fromEntries(['geo','color','fill','dash','size','font','align','verticalAlign'].filter(k => shape.props?.[k] !== undefined).map(k => [k,shape.props[k]])), ...(typeof text === 'string' ? { text: text.slice(0,2000), textTruncated: text.length > 2000 } : {}) }
+        props: Object.fromEntries(['geo','color','fill','dash','size','font','align','verticalAlign'].filter(k => shape.props?.[k] !== undefined).map(k => [k,shape.props[k]])), ...(typeof text === 'string' ? { text: text.slice(0,2000), textTruncated: text.length > 2000 } : {}),
+        ...(args.includeRichText && shape.props?.richText ? { richText: shape.props.richText } : {}) }
     }),
     bindings: bindings.slice(0,500).map(r => ({ id: r.id, type: r.type, fromId: r.fromId, toId: r.toId, props: r.props })),
     total, offset, nextOffset: offset + selected.length < total ? offset + selected.length : null,
@@ -679,19 +796,29 @@ function editResult(app, path, before, full) {
 }
 
 function batch(app, path, operations, expected, full = false) {
+  return editOperations(app, path, operations, expected, full, false)
+}
+function editOperations(app, path, operations, expected, full = false, named = true) {
   const session = sessionFor(app, path)
   assertRevision(app, session, expected)
   if (!Array.isArray(operations) || !operations.length || operations.length > 1000) throw new Error('Batch must contain 1-1000 operations')
   for (const op of operations) {
-    if (!op || !methods.has(op.method) || !Array.isArray(op.args)) throw new Error('Unsupported operation')
-    requireFunctions(session.editor, [op.method], 'editor')
+    const text = named && textOperations.has(op?.method)
+    if (!op || (!text && !methods.has(op.method)) || !Array.isArray(op.args)) throw new Error('Unsupported operation')
+    requireFunctions(session.editor, text ? ['getShape', 'updateShapes'] : [op.method], 'editor')
   }
   const editor = session.editor
   requireEditing(editor)
   const before = JSON.parse(JSON.stringify(records(editor)))
   const history = operations.some(op => ['undo','redo'].includes(op.method))
   if (history && operations.length !== 1) throw new Error('Undo/redo must be a separate batch')
-  const apply = () => { for (const op of operations) editor[op.method](...op.args) }
+  const apply = () => { for (const op of operations) {
+    if (named && textOperations.has(op.method)) {
+      if (op.method === 'formatText') formatText(editor, op.args[0])
+      else if (op.method === 'setTextList') setTextList(editor, op.args[0])
+      else separateArrowLabel(editor, op.args[0])
+    } else editor[op.method](...op.args)
+  } }
   if (history) editor.run(apply)
   else runWithRollback(editor, 'Obsidian tldraw bridge', apply)
   return editResult(app, path, before, full)
@@ -939,13 +1066,13 @@ async function execute(app, action, args) {
       throw fault('PAGE_CONFLICT', 'Current page changed; observe again before editing')
     }
     args = { ...args, operations: namedOperations(args.operations) }
-    action = 'batch'
   }
-  if (action === 'batch' || action === 'script' || action === 'insert-image' || action === 'language-checkpoint') {
+  if (action === 'apply' || action === 'batch' || action === 'script' || action === 'insert-image' || action === 'language-checkpoint') {
     let result
     try {
       result = action === 'language-checkpoint' ? script(app,args.path,'checkpoint',args.revision,args.full,editor => checkpointLanguages(editor,args.checkpoint))
         : action === 'insert-image' ? await insertImage(app, args)
+        : action === 'apply' ? editOperations(app,args.path,args.operations,args.revision,args.full)
         : action === 'batch' ? batch(app,args.path,args.operations,args.revision,args.full) : script(app,args.path,args.code,args.revision,args.full)
     } catch (error) {
       if (error?.code) throw error

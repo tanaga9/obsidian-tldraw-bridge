@@ -241,3 +241,31 @@ class PreviewCommandTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class TextFormattingCommandTest(unittest.TestCase):
+    def test_text_flags_compile_to_one_apply_and_preserve_request_identity(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, contextlib.redirect_stdout(io.StringIO()):
+            client.return_value.call.return_value = {'revision': 'after'}
+            self.assertEqual(main(['--vault', 'V', '--request-id', 'text-edit', 'format-text', 'a.md',
+                '--revision', 'r', '--shape-id', 'shape:a', '--text', 'Ready', '--occurrence', '2',
+                '--bold', '--no-italic', '--list', 'bullet',
+                '--preview-output', str(Path.cwd() / 'text.webp')]), 0)
+            action, args, identity = client.return_value.call.call_args.args
+            self.assertEqual((action, identity), ('apply', 'text-edit'))
+            self.assertEqual(args['operations'], [
+                {'op': 'formatText', 'id': 'shape:a', 'text': 'Ready', 'marks': {'bold': True, 'italic': False}, 'occurrence': 2},
+                {'op': 'setTextList', 'id': 'shape:a', 'list': 'bullet'}])
+            self.assertEqual(args['revision'], 'r')
+            self.assertEqual(args['preview']['output'], str(Path.cwd() / 'text.webp'))
+
+    def test_incomplete_text_flags_do_not_connect(self):
+        for flags in ([], ['--text', 'Ready'], ['--bold'], ['--list', 'bullet', '--occurrence', '1']):
+            with self.subTest(flags=flags), patch('obsidian_tldraw_bridge.cli.Client') as client, contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(main(['--vault', 'V', 'format-text', 'a.md', '--revision', 'r', '--shape-id', 'shape:a', *flags]), 1)
+                client.assert_not_called()
+
+    def test_observe_can_include_exact_rich_text(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, contextlib.redirect_stdout(io.StringIO()):
+            client.return_value.call.return_value = {}
+            self.assertEqual(main(['--vault', 'V', 'observe', 'a.md', '--ids', 'shape:a', '--rich-text']), 0)
+            self.assertTrue(client.return_value.call.call_args.args[1]['includeRichText'])

@@ -66,6 +66,12 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
   evidence in `details.result`, and export failure in `details.cause`; do not
   reapply. Retained replay returns the original result/failure without exporting
   again. See [apply with a preview](../integrations/codex/skills/obsidian-tldraw/references/operations.md#apply-with-a-preview).
+- `apply` supports named text operations `formatText`, `setTextList`, and
+  `separateArrowLabel`. These preserve unrelated rich-text runs and arrow bindings;
+  see [text formatting](../integrations/codex/skills/obsidian-tldraw/references/operations.md#text-formatting)
+  for selection and list-conversion semantics and independent-label placement.
+  `observe` accepts `includeRichText: true` to return exact rich text for selected
+  shapes. `capabilities.textFormatting` describes the available marks and operations.
 - `freehand` takes a `drawing` object, compiled to a synchronous SDK script.
 - `insert-image` takes `path`, `revision`, and a local image `file`, plus optional
   `x`, `y`, `width`, `height`, `parentId`, `pageId`, `shapeId`, and `full`.
