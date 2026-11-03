@@ -46,6 +46,34 @@ the agent loads. Selecting a vault does not automatically load its `AGENTS.md`.
 See [agent instruction scope](docs/agent-instructions.md) for path examples and
 sample export instructions.
 
+### Preview gallery in Obsidian Bases
+
+Use a Cards view to browse tldraw notes. Each card represents a note.
+To give a note a cover, point its optional `tldraw-preview` property at an
+exported image in the vault that represents the note's subject:
+
+```yaml
+tldraw-preview: "[[docs/diagrams/architecture.webp]]"
+```
+
+An agent can maintain this link when an existing export makes a suitable cover.
+The property is optional. This minimal Base lists all tldraw notes and uses the
+linked image as the cover when available.
+
+```yaml
+filters:
+  and:
+    - note["tldraw-file"] == true
+views:
+  - type: cards
+    name: Gallery
+    order:
+      - file.name
+    image: note.tldraw-preview
+```
+
+For a working example, see [Tldraw Gallery.base](Tldraw%20Gallery.base).
+
 ## Diagramming guide design
 
 The Skill distills design knowledge into practical drawing guidance. Normal use follows a check–revise loop through saved delivery; maintainers improve the guidance through selected cases and evidence.

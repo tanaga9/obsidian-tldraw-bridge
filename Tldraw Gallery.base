@@ -1,0 +1,29 @@
+filters:
+  and:
+    - note["tldraw-file"] == true
+formulas:
+  title: link(file.path, if(note.title, note.title, file.basename))
+views:
+  - type: cards
+    name: Gallery
+    filters:
+      and:
+        - if(note["tldraw-preview"].isType("link"), note["tldraw-preview"].asFile().isTruthy(), false)
+    order:
+      - formula.title
+      - tags
+    sort: []
+    image: note.tldraw-preview
+    imageFit: contain
+    cardSize: 260
+  - type: table
+    name: All drawings
+    order:
+      - formula.title
+      - tldraw-preview
+      - file.folder
+    sort:
+      - property: file.folder
+        direction: ASC
+      - property: file.name
+        direction: ASC

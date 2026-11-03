@@ -1,5 +1,6 @@
 ---
 tldraw-file: true
+tldraw-preview: "[[docs/diagrams/architecture.webp]]"
 tags:
   - tldraw
 ---

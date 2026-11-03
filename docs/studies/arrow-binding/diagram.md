@@ -1,5 +1,7 @@
 ---
+title: Arrow binding pattern study
 tldraw-file: true
+tldraw-preview: "[[docs/studies/arrow-binding/previews/recommended-use-cases.webp]]"
 tags:
   - tldraw
 ---

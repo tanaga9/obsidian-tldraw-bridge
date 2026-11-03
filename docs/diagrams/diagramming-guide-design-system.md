@@ -1,5 +1,6 @@
 ---
 tldraw-file: true
+tldraw-preview: "[[docs/diagrams/diagramming-guide-design-system.webp]]"
 tags:
   - tldraw
 ---

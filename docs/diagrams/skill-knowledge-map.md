@@ -1,5 +1,6 @@
 ---
 tldraw-file: true
+tldraw-preview: "[[docs/diagrams/skill-knowledge-map.webp]]"
 tags:
   - tldraw
 ---

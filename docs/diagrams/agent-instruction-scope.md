@@ -1,5 +1,6 @@
 ---
 tldraw-file: true
+tldraw-preview: "[[docs/diagrams/agent-instruction-scope.webp]]"
 tags:
   - tldraw
 ---

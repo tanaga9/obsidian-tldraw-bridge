@@ -441,6 +441,18 @@ Discriminate records with `typeName`: both an arrow shape and its binding have
 
 ## Image preview
 
+When a suitable image has been exported into the vault, consider setting the
+optional `tldraw-preview` frontmatter property to a quoted wikilink to that
+image as the note's cover for Obsidian Bases. This can be done when saving
+the export or later when setting up a gallery for existing notes. Keep the
+current link while it still points to
+a suitable cover. Replace a broken or outdated link when a suitable export
+exists, or remove the unusable property if none is available. Leave the
+property absent when there is no suitable image or a cover is unwanted.
+Export images when the drawing task calls for them. The gallery property
+itself does not require an export. Apply the same concurrent-save precautions
+as for [Markdown body edits](#markdown-body-edits) and verify the saved property.
+
 For overview/detail images from one editable source, use `--bounds X Y W H`
 to crop the rendered whole exported page in page coordinates. This retains
 occlusion and existing parent clipping. Selecting a frame with `--ids` instead
