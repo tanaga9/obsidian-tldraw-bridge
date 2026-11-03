@@ -39,7 +39,7 @@ Offer a few concrete extensions to the initial sketch, explaining what each woul
 or clarify. Incorporate the user's feedback and chosen extensions, inspect and
 save the updated diagram, then repeat at meaningful increments while the diagram
 is taking shape. Do not silently apply all proposed extensions before receiving
-feedback. Extend the same page by default; use another page when a distinct topic
+feedback. Extend the same page by default; use another page when a related topic
 or detail view benefits from separation, keeping information that needs simultaneous
 comparison together and making the relationship between pages clear.
 
@@ -121,6 +121,12 @@ Preserve accurate relationships, the requested purpose and scope, required reada
 When requirements compete, first consider layout changes, grouping, or overview/detail separation while keeping essential meaning visible. Relax a project default when it obstructs meaning or readability; preserve explicit user choices and meaningful existing conventions. Use the clarification guidance in the production workflow when a tradeoff leaves consequential uncertainty about the purpose, information scope, or structure. Briefly explain consequential exceptions rather than documenting every routine adjustment.
 
 Among acceptable designs, balance navigation, consistency, density, appearance, and execution effort according to the purpose and viewing environment. Do not require multiple rendered alternatives for routine decisions. Check the affected meaning, connections, and rendering after a change; use the existing operation contracts for persistence.
+
+## Organizing pages in a note
+
+Group pages by the note's overall subject. Related diagrams, detail views,
+comparisons, and language versions can share a note. Use a separate note for a
+distinct subject readers would look for separately.
 
 ## Format selection
 
