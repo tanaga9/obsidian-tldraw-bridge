@@ -16,8 +16,8 @@ the canonical **distributed** Skill lives under
 
 - For research, review, or proposal requests, inspect sources and perform
   non-mutating diagnostics; report recommended changes without implementing
-  them. Always update the maintenance snapshot described below, including for
-  proposal-only checks, unless the user explicitly requests no file changes.
+  them. For upstream checks, update the maintenance snapshot described below,
+  including for proposal-only checks, unless the user requests no file changes.
   Write any additional report file only when requested or useful.
 - For implementation or knowledge-update requests, make the scoped changes and
   validate them. Existing authorization carries forward; do not insert a second
@@ -145,10 +145,16 @@ verification separate, each with its actual date and scope. Preserve the last ge
 new live tests were performed. Mark unknown or failed checks explicitly; retain
 previously confirmed values with their original dates rather than presenting
 them as newly checked. Maintain one current snapshot and use Git for history.
-Keep it brief: a version/evidence table, diagnostic and live-test dates/scopes,
-and unresolved actions. Put extended analysis in the response or a separately
-requested report. Omit full command output, hashes, and staging history unless
-they explain an unresolved issue. Editing the guidance or reformatting this
-record alone must not advance check dates.
+Update existing rows and summaries in place. Keep the latest broad live
+verification and retain a focused check only while it establishes a distinct
+compatibility fact still needed for maintenance. Fold superseded findings into
+the current summary or remove them. Keep only unresolved limits that affect
+current decisions. Do not add a section per check or copy routine feature test
+results into this record. Use the response for detailed findings and Git for
+historical snapshots.
+
+Before finishing, review the snapshot diff and remove duplicated or superseded
+material. Omit full command output and staging history. Editing the guidance or
+reformatting this record alone must not advance check dates.
 If the user requests no file changes or saving is blocked, include the snapshot
 in the response and state that the saved record was not updated.
