@@ -87,7 +87,9 @@ unless the connection, document, SDK, or task context changes or an error requir
 
 An initialized bridge session works independently of GUI tabs. Continue editing,
 saving, and previewing when the user closes a tab; no pause or user action is
-needed for tab closure alone. Do not reopen the tab or require a visible diagram.
+needed for tab closure alone. When handing off a specific area for the user to
+inspect, use [reveal](references/operations.md#show-a-shape-in-obsidian) when
+moving their view helps.
 Before recovering an initialization or reopening failure, read
 [session lifecycle](references/operations.md#session-lifecycle).
 Treat initialization interrupted by a closed tab or window, or an Obsidian exit,

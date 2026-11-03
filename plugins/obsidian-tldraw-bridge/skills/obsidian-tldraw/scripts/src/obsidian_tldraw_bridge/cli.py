@@ -29,6 +29,9 @@ def parser():
     checkpoint.add_argument('--revision', required=True)
     checkpoint.add_argument('--input', required=True, help='Reviewed checkpoint JSON file, or - for stdin')
     sub.add_parser("status", help="Inspect a retained request without re-executing it").add_argument("id")
+    reveal = sub.add_parser("reveal", help="Show a shape in the Obsidian diagram tab")
+    reveal.add_argument("path")
+    reveal.add_argument("--shape-id", required=True)
     observe = sub.add_parser("observe", help="Read compact current-page shapes, text, bounds, and connections")
     observe.add_argument("path")
     observe.add_argument("--revision", help="Required when continuing an observation at an offset")
@@ -219,6 +222,8 @@ def _execute(options):
             args["drawing"] = json.loads(source)
         else:
             args["code"] = source
+    if options.command == "reveal":
+        args["shapeId"] = options.shape_id
     if options.command in ("observe", "preview"):
         if options.ids is not None:
             args["ids"] = options.ids
@@ -276,7 +281,7 @@ def _output(options, result):
                     close()
             except (OSError, ValueError):
                 pass
-        mutating = options.command in {'create', 'open', 'close', 'apply', 'batch', 'script',
+        mutating = options.command in {'create', 'open', 'reveal', 'close', 'apply', 'batch', 'script',
                                        'freehand', 'insert-image', 'preview', 'preview-many', 'forget', 'language-checkpoint', 'format-text'}
         outcome = 'applied' if mutating else 'unknown' if options.command == 'status' else 'not_applied'
         request_id = options.id if options.command in {'status', 'forget'} else options.request_id

@@ -47,6 +47,25 @@ Specify the vault for every command except `vaults`; diagram paths are vault-rel
 `batch`, `freehand`, `preview-many`, and `script` accept `--input -` for standard input. Results
 are JSON; handled errors are JSON on standard error with exit code 1.
 
+## Show a shape in Obsidian
+
+After opening or creating a bridge session, use a shape ID from `observe` or
+`state`:
+
+```sh
+python3 bridge.py --vault Documents reveal 'Drawings/example.md' --shape-id shape:bridge-example
+```
+
+`reveal` activates or opens the drawing tab, switches the GUI to the shape's
+page, and zooms to the part of the shape visible within its parent frames.
+`visibleBoundsInView` reports whether that part fits in the viewport. It can
+be false at minimum zoom. The drawing and bridge session's current page stay
+as they were. Use it when handing
+off a specific area for review. A missing shape fails before opening a tab.
+If the GUI camera is locked, unlock zoom in the drawing and retry. Failures
+after opening or activating a tab begins include `details.revealProgress` with
+the path, shape ID, and last GUI stage reached.
+
 ## Choosing a vault
 
 List registered vaults and their on-disk tldraw installation status without

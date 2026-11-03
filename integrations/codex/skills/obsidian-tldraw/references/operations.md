@@ -86,6 +86,21 @@ survive restart: an unavailable receipt does not mean the edit was unapplied,
 and reusing its ID cannot prevent a duplicate. If saved content leaves intent
 unclear, resolve that with the user rather than replaying the old edit blindly.
 
+## Show a shape in Obsidian
+
+When the user wants to inspect a specific area, use an existing bridge session
+and a known shape or frame ID:
+
+```sh
+python3 "<skill-directory>/scripts/bridge.py" --vault <vault> reveal diagram.md --shape-id shape:target
+```
+
+This brings the drawing tab forward, opens it if needed, and zooms to the
+shape. `visibleBoundsInView` reports whether the part visible within ancestor
+frames fits in the viewport. The diagram and the bridge session's current page are unaffected.
+Use it at the point of handoff when moving the user's view helps. Leave the
+view alone during routine edits and previews.
+
 ## Vault enumeration
 
 `vaults` is a global CLI command and does not require `--vault`:

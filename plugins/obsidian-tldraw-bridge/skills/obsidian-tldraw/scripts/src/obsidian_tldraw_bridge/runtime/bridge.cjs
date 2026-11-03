@@ -461,7 +461,7 @@ function requireEditing(editor) {
 function capabilities(app) {
   const plugin = app.plugins.getPlugin('tldraw')
   return { apiVersion: 1, ...pluginSupport(plugin),
-    actions: ['doctor','capabilities','style-spec','language-status','language-checkpoint','create','open','observe','state','apply','batch','script','image-info','insert-image','saved','preview','preview-many','close'],
+    actions: ['doctor','capabilities','style-spec','language-status','language-checkpoint','create','open','reveal','observe','state','apply','batch','script','image-info','insert-image','saved','preview','preview-many','close'],
     imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
       optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
     preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9, afterApply: true, pageSelection: true, multiple: true },
@@ -671,6 +671,66 @@ async function acquireSeed(app, plugin, file) {
     await new Promise(resolve => setTimeout(resolve, 100))
   }
   throw new Error('Opened tldraw view, but no live Editor reference became available')
+}
+
+async function reveal(app, args) {
+  const { path, shapeId } = args
+  if (typeof path !== 'string' || !path.endsWith('.md') ||
+      typeof shapeId !== 'string' || !shapeId.startsWith('shape:') || shapeId.length === 6) {
+    throw fault('INVALID_INPUT', 'Specify a Markdown path and a shape ID')
+  }
+  const session = sessionFor(app, path)
+  const plugin = requirePlugin(app)
+  flushPendingChanges(app, session)
+  if (!session.editor.getShape(shapeId)) throw fault('SHAPE_NOT_FOUND', `Shape does not exist: ${shapeId}`)
+  const file = app.vault.getAbstractFileByPath(path)
+  if (!file || file !== session.file) throw fault('INVALID_INPUT', 'The open session no longer matches the requested file')
+
+  const workspace = app.workspace
+  const leaves = () => workspace.getLeavesOfType('tldraw-view')
+  let leaf = leaves().find(candidate => candidate === workspace.activeLeaf && candidate.view.file === file)
+    ?? leaves().find(candidate => candidate.view.file === file)
+  requireFunctions(workspace, ['revealLeaf', 'setActiveLeaf'], 'workspace')
+  const progress = { path, shapeId, stage: null }
+  try {
+    if (!leaf) {
+      requireFunctions(plugin, ['openTldrFile'], 'plugin')
+      progress.stage = 'opening_tab'
+      leaf = await plugin.openTldrFile(file, 'new-tab', 'tldraw-view')
+    }
+    if (!leaf || leaf.view.file !== file || !leaves().includes(leaf)) {
+      throw fault('EDITOR_UNAVAILABLE', 'The requested diagram tab is unavailable')
+    }
+    progress.stage = 'activating_tab'
+    await workspace.revealLeaf(leaf)
+    if (leaf.view.file === file && leaves().includes(leaf)) workspace.setActiveLeaf(leaf, { focus: true })
+    const deadline = Date.now() + INITIALIZATION_TIMEOUT_MS
+    while (Date.now() < deadline && workspace.activeLeaf === leaf && leaf.view.file === file && leaves().includes(leaf)) {
+      const editor = plugin.currTldrawEditor
+      if (editor && !editor.isDisposed && leaf.view.containerEl?.contains(editor.getContainer?.())) {
+        progress.stage = 'tab_active'
+        requireFunctions(editor, ['getAncestorPageId', 'getShapeMaskedPageBounds', 'getCameraOptions',
+          'getCurrentPageId', 'setCurrentPage', 'zoomToBounds', 'getViewportPageBounds', 'run'], 'GUI editor')
+        const pageId = editor.getAncestorPageId(shapeId)
+        if (!pageId) throw fault('SHAPE_NOT_FOUND', `Shape does not exist in the visible editor: ${shapeId}`)
+        const bounds = editor.getShapeMaskedPageBounds(shapeId)
+        if (!bounds) throw fault('SHAPE_NOT_VISIBLE', `Shape has no visible bounds: ${shapeId}`)
+        if (editor.getCameraOptions().isLocked) throw fault('CAMERA_LOCKED', 'Unlock zoom in the diagram before revealing a shape')
+        progress.stage = 'positioning_camera'
+        editor.run(() => {
+          if (editor.getCurrentPageId() !== pageId) editor.setCurrentPage(pageId)
+          editor.zoomToBounds(bounds, { immediate: true })
+        }, { history: 'ignore' })
+        return { path, shapeId, pageId, visibleBoundsInView: editor.getViewportPageBounds().contains(bounds) }
+      }
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    throw fault('EDITOR_UNAVAILABLE', 'The requested diagram did not have a focused live Editor')
+  } catch (error) {
+    if (!progress.stage) throw error
+    const failure = failureInfo(error)
+    throw fault(failure.code, failure.message, 'unknown', { ...failure.details, revealProgress: progress })
+  }
 }
 
 async function create(app, path) {
@@ -1113,6 +1173,7 @@ async function execute(app, action, args) {
   if (action === 'image-info') return (await prepareImage(app.workspace.containerEl.ownerDocument, args)).report
   if (action === 'observe') return observe(app, args)
   if (action === 'create') return create(app, args.path)
+  if (action === 'reveal') return reveal(app, args)
   if (action === 'open') return open(app, args.path, args.currentPageId)
   if (action === 'state') {
     const result = state(app, args.path)

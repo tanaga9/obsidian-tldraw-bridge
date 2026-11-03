@@ -41,6 +41,7 @@ class Bridge:
             "language-status": {"path", "diagramId"},
             "language-checkpoint": {"path", "revision", "checkpoint", "full"},
             "open": {"path", "currentPageId"}, "state": {"path", "recordType"}, "saved": {"path"}, "close": {"path"},
+            "reveal": {"path", "shapeId"},
             "observe": {"path", "revision", "pageId", "limit", "offset", "ids", "bounds", "includeRichText"},
             "apply": {"path", "revision", "pageId", "operations", "full", "preview"}, "batch": {"path", "revision", "operations", "full"},
             "script": {"path", "revision", "code", "full"}, "freehand": {"path", "revision", "drawing", "full"},
@@ -159,6 +160,10 @@ class Bridge:
                     not isinstance(b.get(k), (int, float)) or not math.isfinite(b[k]) for k in ("x", "y", "w", "h"))
                     or b["w"] <= 0 or b["h"] <= 0):
                     invalid("Bounds must be finite with positive width and height")
+        if action == "reveal":
+            shape_id = args.get("shapeId")
+            if not isinstance(shape_id, str) or not shape_id.startswith("shape:") or not shape_id[6:]:
+                invalid("Specify a shape ID")
         if action == "observe":
             if 'includeRichText' in args and type(args['includeRichText']) is not bool:
                 invalid('includeRichText must be a boolean')

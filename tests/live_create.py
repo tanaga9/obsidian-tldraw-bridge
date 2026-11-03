@@ -69,27 +69,44 @@ with tempfile.TemporaryDirectory(prefix='bridge-live-create-') as directory:
         assert moved['persistence']['saved']
         assert c.call('observe', {'path': created_path, 'ids': [shape]})['shapes'][0]['localPosition']['x'] == position['x'] + 25
 
-        # Creation need not show the note. Open a GUI specifically for the
-        # following synchronization checks; never infer it from currTldrawEditor.
-        gui_slot = 'app[' + json.dumps('create-test-gui-' + identity) + ']'
-        c.evaluate('(()=>{' + gui_slot + '={status:"running"};'
-            'app.plugins.getPlugin("tldraw").openTldrFile(app.vault.getAbstractFileByPath('
-            + json.dumps(created_path) + '),"new-tab","tldraw-view")'
-            '.then(()=>{' + gui_slot + '={status:"complete"}})'
-            '.catch(e=>{' + gui_slot + '={status:"failed",error:String(e)}});})()', True)
+        c.evaluate('(()=>{for(const leaf of app.workspace.getLeavesOfType("tldraw-view"))'
+            '{if(leaf.view.file?.path===' + json.dumps(created_path) + ')leaf.detach();}})()', True)
+        assert c.call('state', {'path': created_path})['guiViews'] == 0
         try:
-            for _ in range(100):
-                gui = c.evaluate('JSON.stringify({...' + gui_slot + ',ready:!!app.plugins.getPlugin("tldraw")'
-                    '.currTldrawEditor?.getShape(' + json.dumps(shape) + ')})')
-                if gui['status'] == 'failed':
-                    raise RuntimeError(gui['error'])
-                if gui['status'] == 'complete' and gui['ready']:
-                    break
-                time.sleep(.1)
-            else:
-                raise RuntimeError('Fixture GUI did not open')
+            c.call('reveal', {'path': created_path, 'shapeId': 'shape:missing'})
+            raise AssertionError('Reveal accepted a missing shape')
+        except BridgeError as error:
+            assert error.code == 'SHAPE_NOT_FOUND'
+        assert c.call('state', {'path': created_path})['guiViews'] == 0
+
+        # Reveal explicitly opens the diagram even if creation had no GUI.
+        for _ in range(2):
+            assert c.call('reveal', {'path': created_path, 'shapeId': shape}) == {
+                'path': created_path, 'shapeId': shape, 'pageId': observed['currentPageId'], 'visibleBoundsInView': True,
+            }
+            visible = c.evaluate('JSON.stringify((()=>{'
+                'const editor=app.plugins.getPlugin("tldraw").currTldrawEditor;'
+                'const bounds=editor.getShapePageBounds(' + json.dumps(shape) + ');'
+                'return {path:app.workspace.getActiveFile()?.path,'
+                'visible:editor.getViewportPageBounds().contains(bounds)};})())')
+            assert visible == {'path': created_path, 'visible': True}
+        revealed = c.call('state', {'path': created_path})
+        assert revealed['guiViews'] == 1
+        assert revealed['revision'] == moved['revision']
+        assert revealed['currentPageId'] == observed['currentPageId']
+
+        camera = 'app.plugins.getPlugin("tldraw").currTldrawEditor'
+        c.evaluate(camera + '.setCameraOptions({isLocked:true})', True)
+        try:
+            c.call('reveal', {'path': created_path, 'shapeId': shape})
+            raise AssertionError('Reveal accepted a locked camera')
+        except BridgeError as error:
+            assert error.code == 'CAMERA_LOCKED' and error.outcome == 'unknown'
+            assert error.details['revealProgress'] == {
+                'path': created_path, 'shapeId': shape, 'stage': 'tab_active',
+            }
         finally:
-            c.evaluate('JSON.stringify(delete ' + gui_slot + ')')
+            c.evaluate(camera + '.setCameraOptions({isLocked:false})', True)
 
         # Real SDK notifications are deferred: mutate the GUI and dispatch in the
         # same eval turn, without an animation frame or sleep between them.
@@ -169,7 +186,46 @@ with tempfile.TemporaryDirectory(prefix='bridge-live-create-') as directory:
         assert reopened['revision'] == edited['revision']
         assert c.call('observe', {'path': created_path, 'ids': [shape]})['shapes'][0]['text'] == literal
         assert c.call('saved', {'path': created_path})['saved']
-        print(json.dumps({'created': True, 'nestedFolder': True, 'emptyNote': True, 'editable': True, 'replayPreserved': True, 'existingRejected': True, 'namedApply': True, 'observation': True, 'structuredConflict': True, 'status': True, 'compactPositionEdit': True, 'deferredGuiConflicts': 5, 'saveConflict': True, 'literalTextSaveReopen': True}))
+        other_page = 'page:reveal-target'
+        target = 'shape:reveal-target'
+        clipped = 'shape:reveal-clipped'
+        other = c.call('script', {'path': created_path, 'revision': reopened['revision'], 'code':
+            'editor.createPage(' + json.dumps({'id': other_page, 'name': 'Reveal target'}) + ');'
+            'editor.createShapes(' + json.dumps([{
+                'id': target, 'type': 'frame', 'parentId': other_page, 'x': 1500, 'y': 1500,
+                'props': {'w': 240, 'h': 160},
+            }, {
+                'id': clipped, 'type': 'geo', 'parentId': target, 'x': 210, 'y': 20,
+                'props': {'w': 120, 'h': 60},
+            }]) + ');',
+        })
+        assert c.call('reveal', {'path': created_path, 'shapeId': shape})['pageId'] == reopened['currentPageId']
+        assert c.call('reveal', {'path': created_path, 'shapeId': target})['pageId'] == other_page
+        gui = c.evaluate('JSON.stringify((()=>{'
+            'const editor=app.plugins.getPlugin("tldraw").currTldrawEditor;'
+            'return {pageId:editor.getCurrentPageId(),visible:editor.getViewportPageBounds()'
+            '.contains(editor.getShapePageBounds(' + json.dumps(target) + '))};})())')
+        assert gui == {'pageId': other_page, 'visible': True}
+        after_reveal = c.call('state', {'path': created_path})
+        assert after_reveal['currentPageId'] == reopened['currentPageId']
+        assert after_reveal['revision'] == other['revision']
+        assert c.call('reveal', {'path': created_path, 'shapeId': clipped}) == {
+            'path': created_path, 'shapeId': clipped, 'pageId': other_page, 'visibleBoundsInView': True,
+        }
+        clipping = c.evaluate('JSON.stringify((()=>{const editor=' + camera + ';'
+            'const id=' + json.dumps(clipped) + ';'
+            'const visible=editor.getShapeMaskedPageBounds(id);'
+            'return {clipped:visible.w<editor.getShapePageBounds(id).w,'
+            'inView:editor.getViewportPageBounds().contains(visible)};})())')
+        assert clipping == {'clipped': True, 'inView': True}
+        oversized = c.call('apply', {'path': created_path, 'revision': after_reveal['revision'], 'operations': [
+            {'op': 'updateShapes', 'shapes': [{'id': target, 'type': 'frame', 'props': {'w': 100000, 'h': 100000}}]},
+        ]})
+        assert c.call('reveal', {'path': created_path, 'shapeId': target}) == {
+            'path': created_path, 'shapeId': target, 'pageId': other_page, 'visibleBoundsInView': False,
+        }
+        assert c.call('state', {'path': created_path})['revision'] == oversized['revision']
+        print(json.dumps({'created': True, 'nestedFolder': True, 'emptyNote': True, 'editable': True, 'replayPreserved': True, 'existingRejected': True, 'namedApply': True, 'observation': True, 'structuredConflict': True, 'status': True, 'compactPositionEdit': True, 'deferredGuiConflicts': 5, 'saveConflict': True, 'literalTextSaveReopen': True, 'reveal': True, 'crossPageReveal': True, 'lockedCamera': True, 'oversizedReveal': True, 'clippedReveal': True}))
     finally:
         if created_path in c.call('doctor')['documents']:
             c.call('close', {'path': created_path})

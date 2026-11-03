@@ -47,8 +47,13 @@ Choose a fresh request ID per intended edit and reuse it only with identical arg
   A `doctor` failure with `TLDRAW_UNSUPPORTED` retains `pluginVersion` and
   `pluginUpdate` in its error details for the same advisory use.
 - `call(action, args, request_id=None)` returns a JSON-compatible result. Actions
-  include `capabilities`, `style-spec`, `doctor`, `create`, `open`, `observe`, `state`, `apply`,
+  include `capabilities`, `style-spec`, `doctor`, `create`, `open`, `reveal`, `observe`, `state`, `apply`,
   `batch`, `script`, `language-status`, `language-checkpoint`, `freehand`, `image-info`, `insert-image`, `saved`, `preview`, `preview-many`, and `close`.
+- `reveal` takes `{path, shapeId}` for an open session and returns
+  `{path, shapeId, pageId, visibleBoundsInView}`. It opens or activates the GUI
+  tab and zooms to the target. `visibleBoundsInView` checks the bounds after
+  clipping by ancestor frames. Failures after GUI changes begin report outcome
+  `unknown` and `details.revealProgress`. See [Show a shape in Obsidian](cli.md#show-a-shape-in-obsidian).
 - `state` accepts optional `recordType` to filter `records` by a registered document
   `typeName`, such as `shape`, `binding`, or `page`. Its revision still covers the
   whole document. A shape and binding can share `type: "arrow"`; use `typeName`
