@@ -37,6 +37,7 @@ class Bridge:
             raise BridgeError(message, code="INVALID_INPUT", outcome="not_applied")
         fields = {
             "doctor": set(), "capabilities": set(), "create": {"path"},
+            "markdown-body": {"path"}, "markdown-body-update": {"path", "body", "fileHash"},
             "style-spec": {"path", "shapeType"},
             "language-status": {"path", "diagramId"},
             "language-checkpoint": {"path", "revision", "checkpoint", "full"},
@@ -82,6 +83,14 @@ class Bridge:
             if len({item["output"] for item in prepared}) != len(prepared):
                 invalid("Preview output paths must be distinct")
             args["outputs"] = prepared
+        if action == "markdown-body-update":
+            import re
+            if not isinstance(args.get("body"), str) or not isinstance(args.get("fileHash"), str) or not re.fullmatch(r"[a-f0-9]{64}", args["fileHash"]):
+                invalid("Body and SHA-256 fileHash are required")
+            if args["body"] and not args["body"].endswith("\n"):
+                invalid("Nonempty body must end in a newline")
+            if "!!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!" in args["body"] or "!!!_END_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!" in args["body"]:
+                invalid("Drawing markers are forbidden in body")
         if action == "style-spec":
             if not isinstance(args.get("shapeType"), str) or not args["shapeType"].strip():
                 invalid("Specify a nonempty shapeType")

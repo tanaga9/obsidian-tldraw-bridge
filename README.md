@@ -103,3 +103,14 @@ CLI/API/JSON interfaces and CI may change without notice or a deprecation period
 `python3 bridge.py freehand-plan --input strokes.json` validates the entire drawing and outputs ordered, size-limited `passes` without connecting to Obsidian. Apply each returned pass separately with `freehand`, a unique request ID, and the revision returned by the previous saved edit. The manifest provides pass indexes, counts and SHA-256 hashes to identify inputs; record the request ID and saved revision for each applied pass. A hash alone does not prove application. The passes are not atomic. On failure or an uncertain result, stop and inspect the request status before continuing; do not replay a completed edit.
 
 When receipt capacity is reached, the error includes retained status counts and releasable IDs. Inspect each request before explicitly forgetting it: forgotten IDs lose replay protection.
+
+### Markdown prose above the drawing
+
+`markdown-body <path>` reads the prose and returns a whole-file `fileHash`.
+`markdown-body-update <path> --file-hash <hash> --input <body.txt>` replaces
+that prose while preserving frontmatter and drawing data. Nonempty body input
+must end with a newline. The update uses `vault.process`, rejects a stale hash,
+and refuses notes with open editors, active bridge sessions or tldraw stores.
+It does not lock out external writers or editors opened later; inspect the file
+and request status after an uncertain outcome. Body hashes are not drawing-save
+or preview evidence.

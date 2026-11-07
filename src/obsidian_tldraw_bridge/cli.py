@@ -18,6 +18,12 @@ def parser():
     sub = p.add_subparsers(dest="command", required=True)
     vaults = sub.add_parser("vaults", help="List registered vaults and on-disk tldraw installation status")
     vaults.add_argument("--config-dir", default=".obsidian", help="Configuration folder name to inspect in each vault (default: .obsidian)")
+    body = sub.add_parser("markdown-body", help="Read prose above drawing and whole-file hash")
+    body.add_argument("path")
+    body_update = sub.add_parser("markdown-body-update", help="Replace prose using a whole-file hash; requires closed editors")
+    body_update.add_argument("path")
+    body_update.add_argument("--file-hash", required=True)
+    body_update.add_argument("--input", required=True, help="UTF-8 body text file, or - for stdin")
     sub.add_parser("doctor")
     sub.add_parser("capabilities", help="Discover runtime operations and limits")
     style_spec = sub.add_parser("style-spec", help="Read installed style values and defaults from an open document")
@@ -184,6 +190,9 @@ def _execute(options):
         args["path"] = options.path
     if getattr(options, "revision", None):
         args["revision"] = options.revision
+    if options.command == 'markdown-body-update':
+        args['fileHash'] = options.file_hash
+        args['body'] = _read_input(options.input)
     if options.command == 'state' and options.record_type is not None:
         args['recordType'] = options.record_type
     if options.command == 'preview-many':
@@ -296,7 +305,7 @@ def _output(options, result):
             except (OSError, ValueError):
                 pass
         mutating = options.command in {'create', 'open', 'reveal', 'close', 'apply', 'batch', 'script',
-                                       'freehand', 'insert-image', 'preview', 'preview-many', 'forget', 'language-checkpoint', 'format-text'}
+                                       'freehand', 'insert-image', 'preview', 'preview-many', 'forget', 'language-checkpoint', 'format-text', 'markdown-body-update'}
         outcome = 'applied' if mutating else 'unknown' if options.command == 'status' else 'not_applied'
         request_id = options.id if options.command in {'status', 'forget'} else options.request_id
         error = BridgeError('Could not output completed command result: ' + str(exc),

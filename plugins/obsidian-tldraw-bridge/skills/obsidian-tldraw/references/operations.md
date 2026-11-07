@@ -11,24 +11,20 @@ such as rationale, working notes, and unresolved questions. The drawing view sho
 the diagram; users need the **View as markdown** action to read this prose. Keep
 information users need to see in the diagram or the response as well.
 
-Before editing the prose, check the file's modification time against the current
-time. Proceed when the last modification is at least a few seconds old (use
-3 seconds as a practical default). If it is more recent, wait and check again.
-Read the latest contents, then recheck the modification time immediately before
-writing; if it changed or is too recent, reread after another quiet period.
-Edit only the intended prose, preserving frontmatter, asset references, and the
-complete drawing data block. This heuristic is sufficient for routine edits;
-closing GUI tabs or bridge sessions is not required. If updates keep arriving,
-defer the prose edit rather than repeatedly racing the writer. Read back the
-saved file to confirm the intended prose and preserved drawing data.
+Use `markdown-body <path>` to read prose and the SHA-256 hash of the entire file.
+Use `markdown-body-update <path> --file-hash <hash> --input <body.txt>` to
+replace only that prose, preserving frontmatter and the drawing block. Nonempty
+body input must end in a newline. This operation uses Obsidian's `vault.process`
+and rejects stale hashes or notes with an open bridge session, tldraw store, or
+Markdown/tldraw editor. It never closes an editor automatically. Re-read after a
+conflict; on an uncertain outcome inspect the file and request status before retry.
+Use a unique request ID for consequential changes.
 
-This reduces risk but does not lock the file. In tldraw 1.32.0,
-[serialization](https://github.com/tldraw/obsidian-plugin/blob/1.32.0/src/utils/document.ts#L115-L135)
-preserves text outside the data markers, but the
-[save manager](https://github.com/tldraw/obsidian-plugin/blob/1.32.0/src/obsidian/plugin/TLDataDocumentStoreManager.ts)
-writes the whole file from in-memory contents. A concurrent save can overwrite a
-prose edit, or a stale prose write can revert drawing changes. Bridge revisions
-and `saved` verify drawing records, not prose preservation.
+These checks reduce races but do not lock out external writers or an editor opened
+after the check. A file hash covers prose and drawing bytes at the process callback,
+not future saves. Do not treat prose or its hash as evidence of a saved drawing
+revision or successful image export. The prior quiet-period method remains a
+fallback only when the atomic API is unavailable; it cannot guarantee isolation.
 
 ## Session lifecycle
 

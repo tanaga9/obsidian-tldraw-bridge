@@ -62,6 +62,56 @@ function setup() {
   return {api,access,editor,app,plugin,invoke,values:()=>values,markdown,setDisk:value=>{disk=copy(value)}}
 }
 
+test('markdown body update preserves frontmatter and drawing and detects conflicts or open editors',async()=>{
+  const h=setup(), file={path:'a.md',extension:'md'}
+  let text='---\ntldraw-file: true\n---\n\nOld note\n\n'+h.markdown(h.values())
+  h.app.vault.getAbstractFileByPath=()=>file
+  h.app.vault.read=async()=>text
+  h.app.vault.process=async(_file,fn)=>{text=fn(text)}
+  h.access.sessionsFor(h.app).delete('a.md')
+  const read=await h.invoke('markdown-body',{path:'a.md'},'body-read')
+  assert.equal(read.body,'\nOld note\n\n')
+  const before=text.slice(text.indexOf('```json'))
+  const updated=await h.invoke('markdown-body-update',{path:'a.md',fileHash:read.fileHash,body:'\nNew note\n\n'},'body-edit')
+  assert.equal(updated.saved,true)
+  assert.ok(text.startsWith('---\ntldraw-file: true\n---\n\nNew note\n\n'))
+  assert.equal(text.slice(text.indexOf('```json')),before)
+  const previous=text
+  h.api.dispatch(h.app,'markdown-body-update',{path:'a.md',fileHash:read.fileHash,body:'stale\n'},'body-conflict')
+  await new Promise(resolve=>setImmediate(resolve))
+  assert.equal(JSON.parse(h.api.poll(h.app,'body-conflict')).failure.code,'BODY_CONFLICT')
+  assert.equal(text,previous)
+  h.app.workspace.getLeavesOfType=()=>[{view:{file}}]
+  h.api.dispatch(h.app,'markdown-body-update',{path:'a.md',fileHash:updated.fileHash,body:'unsafe\n'},'body-open')
+  await new Promise(resolve=>setImmediate(resolve))
+  assert.equal(JSON.parse(h.api.poll(h.app,'body-open')).failure.code,'BODY_EDITOR_OPEN')
+  assert.equal(text,previous)
+  h.app.workspace.getLeavesOfType=()=>[]
+  h.app.vault.process=async(_file,fn)=>{text=fn(text); throw new Error('write uncertain')}
+  h.api.dispatch(h.app,'markdown-body-update',{path:'a.md',fileHash:updated.fileHash,body:'Changed\n'},'body-unknown')
+  await new Promise(resolve=>setImmediate(resolve))
+  const failed=JSON.parse(h.api.poll(h.app,'body-unknown')).failure
+  assert.equal(failed.code,'BODY_SAVE_UNCONFIRMED')
+  assert.equal(failed.outcome,'unknown')
+})
+
+test('markdown body preserves UTF-8 BOM and frontmatter on replacement',async()=>{
+  const h=setup(), file={path:'a.md',extension:'md'}
+  h.access.sessionsFor(h.app).delete('a.md')
+  h.app.vault.getAbstractFileByPath=()=>file
+  for (const frontmatter of ['---\ntldraw-file: true\n---\n', '---\r\ntldraw-file: true\r\n---\r\n', '']) {
+    let text='\ufeff'+frontmatter+'Old body\n'+h.markdown(h.values())
+    h.app.vault.read=async()=>text
+    h.app.vault.process=async(_file,fn)=>{text=fn(text)}
+    const id=frontmatter.length.toString()
+    const before=await h.invoke('markdown-body',{path:'a.md'},'bom-read-'+id)
+    assert.equal(before.body,'Old body\n')
+    const drawing=text.slice(text.indexOf('```json'))
+    await h.invoke('markdown-body-update',{path:'a.md',fileHash:before.fileHash,body:'New body\n'},'bom-edit-'+id)
+    assert.equal(text,'\ufeff'+frontmatter+'New body\n'+drawing)
+  }
+})
+
 test('document scope drives revisions and includes custom persistent types',()=>{
   const h=setup(), before=h.access.revision(h.editor)
   h.editor.updateDocumentSettings({gridSize:20})

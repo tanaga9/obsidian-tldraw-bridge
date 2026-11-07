@@ -461,7 +461,7 @@ function requireEditing(editor) {
 function capabilities(app) {
   const plugin = app.plugins.getPlugin('tldraw')
   return { apiVersion: 1, ...pluginSupport(plugin),
-    actions: ['doctor','capabilities','style-spec','language-status','language-checkpoint','create','open','reveal','observe','state','apply','batch','script','image-info','insert-image','saved','preview','preview-many','close'],
+    actions: ['doctor','capabilities','markdown-body','markdown-body-update','style-spec','language-status','language-checkpoint','create','open','reveal','observe','state','apply','batch','script','image-info','insert-image','saved','preview','preview-many','close'],
     imageInsertion: { formats: ['png', 'webp', 'jpeg'], storage: 'inline-data-url', coordinates: 'parent-local',
       optionalProcessing: ['maxDimension', 'format', 'quality', 'maxBytes'] },
     preview: { formats: ['png', 'webp'], defaultFormat: 'webp', webpQuality: 0.9, afterApply: true, pageSelection: true, multiple: true },
@@ -928,6 +928,68 @@ function parseMarkdown(text) {
   return data
 }
 
+const DRAWING_MARKER = '```json !!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!'
+function bodyParts(text) {
+  parseMarkdown(text)
+  const end = text.indexOf(DRAWING_MARKER)
+  let start = text.startsWith('\ufeff') ? 1 : 0
+  const afterBom = text.slice(start)
+  if (/^---\r?\n/.test(afterBom)) {
+    const match = /^---\r?\n[\s\S]*?^---(?:\r?\n|$)/m.exec(afterBom)
+    if (!match || start + match[0].length > end) throw fault('INVALID_INPUT', 'Invalid frontmatter before drawing')
+    start += match[0].length
+  }
+  return {prefix: text.slice(0,start), body: text.slice(start,end), suffix: text.slice(end)}
+}
+function bodyHash(text) { return crypto.createHash('sha256').update(text, 'utf8').digest('hex') }
+function markdownFile(app, path) {
+  if (typeof path !== 'string' || !path.endsWith('.md') || path.includes('\\') ||
+      path.split('/').some(part => !part || part === '.' || part === '..')) throw fault('INVALID_INPUT', 'Use a vault-relative Markdown path')
+  const file = app.vault.getAbstractFileByPath(path)
+  if (!file || file.extension !== 'md') throw fault('INVALID_INPUT', 'Markdown document required')
+  return file
+}
+function assertBodyQuiescent(app, path) {
+  const plugin = requirePlugin(app)
+  const groups = plugin.tlDataDocumentStoreManager?.storesManager?.storeGroupMap
+  if (!groups || typeof groups.has !== 'function' || typeof app.workspace.getLeavesOfType !== 'function')
+    throw fault('BODY_CHECK_UNAVAILABLE', 'Cannot verify open editors; body update refused')
+  const openLeaf = ['tldraw-view', 'markdown'].some(type => app.workspace.getLeavesOfType(type).some(leaf => leaf.view?.file?.path === path))
+  if (sessionsFor(app).has(path) || groups.has(path) || openLeaf)
+    throw fault('BODY_EDITOR_OPEN', 'Close all editors and bridge sessions for this note before updating its body')
+}
+async function markdownBody(app, args, update = false) {
+  const file = markdownFile(app, args.path)
+  if (!update) {
+    const text = await app.vault.read(file)
+    return {path: args.path, body: bodyParts(text).body, fileHash: bodyHash(text)}
+  }
+  if (typeof args.body !== 'string' || (args.body && !args.body.endsWith('\n')) || args.body.includes('!!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!') ||
+      args.body.includes('!!!_END_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!') ||
+      typeof args.fileHash !== 'string' || !/^[a-f0-9]{64}$/.test(args.fileHash))
+    throw fault('INVALID_INPUT', 'Body text and a SHA-256 fileHash are required; drawing markers are forbidden')
+  if (typeof app.vault.process !== 'function') throw fault('BODY_CHECK_UNAVAILABLE', 'Atomic vault.process is unavailable')
+  assertBodyQuiescent(app, args.path)
+  let expected
+  try {
+    await app.vault.process(file, text => {
+      assertBodyQuiescent(app, args.path)
+      if (bodyHash(text) !== args.fileHash) throw fault('BODY_CONFLICT', 'The file changed; read its body again before editing')
+      const parts = bodyParts(text)
+      expected = parts.prefix + args.body + parts.suffix
+      return expected
+    })
+  } catch (error) {
+    if (expected !== undefined) throw fault('BODY_SAVE_UNCONFIRMED', 'Body update outcome is uncertain; inspect the file before retrying', 'unknown')
+    throw error
+  }
+  let actual
+  try { actual = await app.vault.read(file) }
+  catch (_) { throw fault('BODY_SAVE_UNCONFIRMED', 'Cannot verify body update; inspect the file before retrying', 'unknown') }
+  if (actual !== expected) throw fault('BODY_SAVE_UNCONFIRMED', 'Body update was superseded; inspect the file before retrying', 'unknown')
+  return {path: args.path, fileHash: bodyHash(actual), saved: true}
+}
+
 async function prepareImage(document, args) {
   if (typeof args.name !== 'string' || !args.name || typeof args.src !== 'string') throw fault('INVALID_INPUT', 'Image name and data URL are required')
   for (const key of ['maxDimension', 'maxBytes']) {
@@ -1169,6 +1231,8 @@ async function execute(app, action, args) {
       documents: [...sessionsFor(app).keys()]}
   }
   if (action === 'capabilities') return capabilities(app)
+  if (action === 'markdown-body') return markdownBody(app, args)
+  if (action === 'markdown-body-update') return markdownBody(app, args, true)
   if (action === 'style-spec') return styleSpec(app, args)
   if (action === 'image-info') return (await prepareImage(app.workspace.containerEl.ownerDocument, args)).report
   if (action === 'observe') return observe(app, args)
