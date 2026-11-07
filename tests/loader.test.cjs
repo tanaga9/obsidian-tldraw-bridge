@@ -63,6 +63,22 @@ function fixture(t) {
   return {filename,app,write,run}
 }
 
+test('capacity errors list retained receipts and preserve replay',async t=>{
+  const h=fixture(t)
+  for(let i=0;i<128;i++) await h.run('doctor',{},'capacity-'+i)
+  assert.throws(()=>loader.dispatch(h.app,h.filename,'doctor',{},'overflow'),error=>{
+    assert.equal(error.code,'RECEIPT_CAPACITY')
+    assert.equal(error.details.retained,128)
+    assert.equal(error.details.releasable.length,128)
+    assert.deepEqual(error.details.statusCounts,{complete:128,failed:0,running:0})
+    assert.match(error.details.recovery,/replay protection/)
+    return true
+  })
+  assert.equal(JSON.parse(loader.poll(h.app,h.filename,'capacity-0')).status,'complete')
+  assert.equal(JSON.parse(loader.forget(h.app,h.filename,'capacity-0')).forgotten,true)
+  assert.ok(await h.run('doctor',{},'replacement'))
+})
+
 test('updates wait for all sessions to be explicitly closed',async t=>{
   const h=fixture(t)
   await h.run('open',{path:'a.md'})

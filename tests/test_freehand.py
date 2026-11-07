@@ -6,9 +6,10 @@ import struct
 import subprocess
 import sys
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
-from obsidian_tldraw_bridge.freehand import compile_script, encode_points, sample_path
+from obsidian_tldraw_bridge.freehand import compile_script, encode_points, sample_path, plan_passes, FreehandCapacityError
 
 
 def decode(path):
@@ -22,6 +23,31 @@ def decode(path):
 
 
 class CurveTest(unittest.TestCase):
+    def test_plan_splits_ordered_input_and_prevalidates_every_stroke(self):
+        strokes = [{'id': 'shape:s' + str(i), 'path': 'M0 0 L1 1'} for i in range(1100)]
+        passes = plan_passes({'spacing': 3, 'strokes': strokes})
+        self.assertGreater(len(passes), 1)
+        self.assertEqual([s for part in passes for s in part['strokes']], strokes)
+        for part in passes:
+            self.assertEqual(part['spacing'], 3)
+            compile_script(part)
+        with self.assertRaises(ValueError):
+            plan_passes({'strokes': strokes + [strokes[0]]})
+        with self.assertRaises(ValueError):
+            plan_passes({'strokes': strokes + [{'id': 'shape:bad', 'path': 'M0 0'}]})
+
+    def test_planning_compiles_each_stroke_once_and_passes_fit(self):
+        strokes = [{'id': 'shape:' + str(i), 'path': 'M0 0 Q50 80 100 0'} for i in range(500)]
+        from obsidian_tldraw_bridge import freehand
+        with patch.object(freehand, '_compile_strokes', wraps=freehand._compile_strokes) as compiled:
+            passes = plan_passes({'strokes': strokes})
+            self.assertEqual(compiled.call_count, len(strokes))
+        self.assertGreater(len(passes), 1)
+        for part in passes:
+            self.assertLessEqual(len(compile_script(part).encode('utf-8')), 96000)
+        with self.assertRaises(FreehandCapacityError):
+            compile_script({'strokes': strokes})
+
     def test_quadratic_and_cubic_pass_through_expected_midpoints(self):
         quadratic, closed = sample_path('M 0 0 Q 10 20 20 0', 1)
         self.assertFalse(closed)

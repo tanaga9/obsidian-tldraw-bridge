@@ -97,3 +97,9 @@ See the [design explanation](docs/diagramming-guide-design-system.md) and [edita
 ## Compatibility
 
 CLI/API/JSON interfaces and CI may change without notice or a deprecation period. Contributors and agents may make breaking changes within the task's scope without separate compatibility approval. Use the documentation shipped with the current version; see the [compatibility policy](docs/development.md#compatibility-policy).
+
+### Planning large freehand drawings
+
+`python3 bridge.py freehand-plan --input strokes.json` validates the entire drawing and outputs ordered, size-limited `passes` without connecting to Obsidian. Apply each returned pass separately with `freehand`, a unique request ID, and the revision returned by the previous saved edit. The manifest provides pass indexes, counts and SHA-256 hashes to identify inputs; record the request ID and saved revision for each applied pass. A hash alone does not prove application. The passes are not atomic. On failure or an uncertain result, stop and inspect the request status before continuing; do not replay a completed edit.
+
+When receipt capacity is reached, the error includes retained status counts and releasable IDs. Inspect each request before explicitly forgetting it: forgotten IDs lose replay protection.

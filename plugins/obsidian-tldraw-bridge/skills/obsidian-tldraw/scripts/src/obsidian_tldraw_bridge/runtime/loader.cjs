@@ -100,7 +100,14 @@ module.exports = {
     const previous = retained(ctx, app, id)
     if (previous) return previous.runtime.dispatch(app, action, args, id)
     if ([...ctx.jobs.values()].some(job => job.status === 'running')) throw Object.assign(new Error('CLI job still running'), { code: 'RUNTIME_BUSY', outcome: 'not_applied' })
-    if (ctx.jobs.size >= 128) throw Object.assign(new Error('Receipt capacity reached: use the CLI forget command to release completed request ids'), { code: 'RECEIPT_CAPACITY', outcome: 'not_applied' })
+    if (ctx.jobs.size >= 128) throw Object.assign(new Error('Receipt capacity reached: use the CLI forget command to release completed request ids'), {
+      code: 'RECEIPT_CAPACITY', outcome: 'not_applied', details: {
+        capacity: 128, retained: ctx.jobs.size,
+        statusCounts: Object.fromEntries(['complete', 'failed', 'running'].map(status => [status, [...ctx.jobs.values()].filter(job => job.status === status).length])),
+        releasable: [...ctx.jobs.values()].filter(job => job.status !== 'running').map(job => ({id: job.id, status: job.status})),
+        recovery: 'Inspect completed or failed requests before forgetting. Forgotten IDs lose replay protection; never retry them.'
+      }
+    })
     const job = { id, request, status: 'running' }
     ctx.jobs.set(id, job)
     Promise.resolve().then(async () => {

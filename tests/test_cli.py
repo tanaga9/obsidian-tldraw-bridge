@@ -143,6 +143,20 @@ sys.exit(cli.main(['--vault', 'V', '--request-id', 'created-note', 'create', 'pl
 
 
 class FreehandCommandTest(unittest.TestCase):
+    def test_plan_emits_stable_pass_manifest_without_connecting(self):
+        source = json.dumps({'strokes': [{'id': 'shape:a', 'path': 'M0 0 L5 5'}]})
+        results = []
+        for _ in range(2):
+            output = io.StringIO()
+            with patch('obsidian_tldraw_bridge.cli.Client') as client, patch('sys.stdin', io.StringIO(source)), contextlib.redirect_stdout(output):
+                self.assertEqual(main(['freehand-plan', '--input', '-']), 0)
+                client.assert_not_called()
+            results.append(json.loads(output.getvalue()))
+        self.assertEqual(results[0]['manifest'], results[1]['manifest'])
+        self.assertEqual(results[0]['manifest'][0]['strokeCount'], 1)
+        self.assertEqual(len(results[0]['manifest'][0]['sha256']), 64)
+        self.assertIn('do not prove', results[0]['recovery'])
+
     def test_curve_definitions_use_existing_revision_and_request_id_contract(self):
         source = json.dumps({'strokes': [{'id': 'shape:curve', 'part': 'detail', 'path': 'M0 0 Q10 20 20 0'}]})
         with patch('obsidian_tldraw_bridge.cli.Client') as client:

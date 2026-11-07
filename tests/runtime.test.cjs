@@ -373,7 +373,17 @@ test('bounds preview includes surrounding shapes and crops without changing cach
 test('receipt limit preserves replay and frees capacity only on explicit forget',async()=>{
   const h=setup()
   for(let i=0;i<128;i++)await h.invoke('doctor',{},'id-'+i)
-  assert.throws(()=>h.api.dispatch(h.app,'doctor',{},'overflow'),/Receipt capacity/)
+  assert.throws(()=>h.api.dispatch(h.app,'doctor',{},'overflow'),error=>{
+    assert.match(error.message,/Receipt capacity/)
+    assert.equal(error.details.capacity,128)
+    assert.equal(error.details.retained,128)
+    assert.equal(error.details.releasable.length,128)
+    assert.equal(error.details.statusCounts.complete,128)
+    assert.equal(error.details.statusCounts.failed,0)
+    assert.equal(error.details.statusCounts.running,0)
+    assert.match(error.details.recovery,/replay protection/)
+    return true
+  })
   assert.equal(JSON.parse(h.api.dispatch(h.app,'doctor',{},'id-0')).status,'complete')
   assert.throws(()=>h.api.dispatch(h.app,'state',{path:'a.md'},'id-0'),/another request/)
   assert.equal(JSON.parse(h.api.forget(h.app,'id-0')).forgotten,true)

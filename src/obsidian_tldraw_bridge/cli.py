@@ -1,10 +1,12 @@
 """JSON CLI for structured operations and trusted SDK scripts."""
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
 from .obsidian import BridgeError, Client
 from .api import Bridge, list_vaults
+from .freehand import plan_passes
 
 
 def parser():
@@ -86,6 +88,8 @@ def parser():
     freehand.add_argument("path")
     freehand.add_argument("--revision", required=True)
     freehand.add_argument("--input", required=True, help="Stroke definitions JSON file, or - for stdin")
+    plan = sub.add_parser("freehand-plan", help="Validate and split strokes into ordered edits without connecting")
+    plan.add_argument("--input", required=True, help="Stroke definitions JSON file, or - for stdin")
     image = sub.add_parser("insert-image", help="Embed a local PNG, WebP or JPEG image")
     image.add_argument("path", help="Open vault-relative .md path")
     image.add_argument("--revision", required=True)
@@ -150,7 +154,17 @@ def _print_json(value, stream, *, ensure_ascii=False):
 def main(argv=None):
     options = parser().parse_args(argv)
     try:
-        if options.command == 'vaults':
+        if options.command == 'freehand-plan':
+            if options.vault is not None or options.request_id is not None:
+                raise BridgeError('freehand-plan does not accept --vault or --request-id', code='INVALID_INPUT', outcome='not_applied')
+            passes = plan_passes(json.loads(_read_input(options.input)))
+            manifest = [{'index': i + 1, 'strokeCount': len(part['strokes']),
+                         'sha256': hashlib.sha256(json.dumps(part, sort_keys=True, separators=(',', ':'),
+                                                               ensure_ascii=True).encode('utf-8')).hexdigest()}
+                        for i, part in enumerate(passes)]
+            result = {'passes': passes, 'passCount': len(passes), 'manifest': manifest, 'atomic': False,
+                      'recovery': 'Record each pass hash, unique request ID, and saved revision. Stop on uncertain outcomes; inspect status and saved content before resuming. Hashes do not prove an edit was applied.'}
+        elif options.command == 'vaults':
             if options.vault is not None or options.request_id is not None:
                 raise BridgeError('vaults does not accept --vault or --request-id', code='INVALID_INPUT', outcome='not_applied')
             result = list_vaults(options.obsidian, options.timeout, options.config_dir)

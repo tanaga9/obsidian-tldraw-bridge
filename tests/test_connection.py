@@ -137,6 +137,16 @@ class ConnectionTest(unittest.TestCase):
                 else:
                     self.assertEqual(self.client._runtime_evaluate("(touched=true,JSON.stringify({ok:true}))"), {'ok': True})
 
+    def test_runtime_admission_error_preserves_details(self):
+        self.client.vault = 'Vault'
+        def evaluate(source, *args, **kwargs):
+            harness = "const app={vault:{getName:()=> 'Vault'},appId:'id'};console.log(eval(" + json.dumps(source) + "));"
+            return json.loads(subprocess.run(['node', '-e', harness], capture_output=True, check=True).stdout)
+        with patch.object(self.client, 'evaluate', side_effect=evaluate):
+            with self.assertRaises(BridgeError) as raised:
+                self.client._runtime_evaluate("(()=>{throw Object.assign(new Error('full'),{code:'RECEIPT_CAPACITY',outcome:'not_applied',details:{retained:128}})})()")
+        self.assertEqual(raised.exception.details['retained'], 128)
+
     def test_dispatch_and_poll_share_budget(self):
         now = [100.0]
         budgets = []

@@ -5,6 +5,10 @@ import math
 import re
 import struct
 
+class FreehandCapacityError(ValueError):
+    """A valid edit exceeds a per-request transport or drawing limit."""
+
+
 _TOKEN = re.compile(r"[MLQCZ]|[-+]?(?:\d*\.\d+|\d+\.?\d*)(?:[eE][-+]?\d+)?")
 
 
@@ -90,11 +94,11 @@ def encode_points(points):
     return base64.b64encode(data).decode("ascii")
 
 
-def compile_script(data):
+def _compile_strokes(data):
     if not isinstance(data, dict) or not isinstance(data.get("strokes"), list) or not data["strokes"]:
         raise ValueError("Expected an object with a nonempty strokes array")
     if len(data["strokes"]) > 1000:
-        raise ValueError("Use at most 1000 strokes per edit")
+        raise FreehandCapacityError("Use at most 1000 strokes per edit")
     spacing = number(data.get("spacing", 2), "spacing", .25, 20)
     strokes = []
     ids = set()
@@ -109,7 +113,7 @@ def compile_script(data):
         points, closed = sample_path(stroke.get("path"), spacing)
         total += len(points)
         if total > 100000:
-            raise ValueError("Edit exceeds 100000 sampled points")
+            raise FreehandCapacityError("Edit exceeds 100000 sampled points")
         pressure = number(stroke.get("pressure", .5), "pressure", 0, 1)
         taper = number(stroke.get("taper", .15), "taper", 0, 1)
         scale = number(stroke.get("scale", 1), "scale", .01, 100)
@@ -147,10 +151,60 @@ def compile_script(data):
         if part is not None:
             result["part"] = part
         strokes.append(result)
+    return strokes, total
+
+
+def _render_script(strokes):
     script = _SCRIPT.replace("__STROKES__", json.dumps(strokes, separators=(",", ":")))
     if len(script.encode("utf-8")) > 96000:
-        raise ValueError("Freehand edit is too large; split it into smaller passes")
+        raise FreehandCapacityError("Freehand edit is too large; split it into smaller passes")
     return script
+
+
+def compile_script(data):
+    strokes, _ = _compile_strokes(data)
+    return _render_script(strokes)
+
+
+def plan_passes(data):
+    """Validate the entire drawing and partition it into ordered, valid edits.
+
+    This is a planning operation only: each pass remains a separate edit with
+    its own revision and request ID, so no atomicity is implied.
+    """
+    if not isinstance(data, dict) or not isinstance(data.get("strokes"), list) or not data["strokes"]:
+        raise ValueError("Expected an object with a nonempty strokes array")
+    strokes = data["strokes"]
+    options = {key: value for key, value in data.items() if key != "strokes"}
+    ids = set()
+    prepared = []
+    # Compile exactly once per stroke. No edit is returned unless all input is valid.
+    for stroke in strokes:
+        compiled, points = _compile_strokes({**options, "strokes": [stroke]})
+        _render_script(compiled)  # A single stroke must fit by itself.
+        identity = stroke["id"]
+        if identity in ids:
+            raise ValueError("Each stroke needs a unique shape: ID across all passes")
+        ids.add(identity)
+        encoded = json.dumps(compiled[0], separators=(",", ":")).encode("utf-8")
+        prepared.append((stroke, points, len(encoded)))
+    # JSON emits ASCII escapes by default, as in _render_script. Count commas
+    # and the fixed script wrapper exactly, without repeatedly sampling curves.
+    base_bytes = len(_render_script([]).encode("utf-8"))
+    result, current = [], []
+    count_points = payload_bytes = 0
+    for stroke, points, size in prepared:
+        next_bytes = payload_bytes + size + (1 if current else 0)
+        if current and (len(current) == 1000 or count_points + points > 100000 or base_bytes + next_bytes > 96000):
+            result.append({**options, "strokes": current})
+            current, count_points, payload_bytes = [], 0, 0
+            next_bytes = size
+        current.append(stroke)
+        count_points += points
+        payload_bytes = next_bytes
+    if current:
+        result.append({**options, "strokes": current})
+    return result
 
 
 _SCRIPT = r'''

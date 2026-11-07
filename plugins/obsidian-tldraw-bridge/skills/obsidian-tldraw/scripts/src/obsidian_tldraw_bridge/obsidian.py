@@ -290,7 +290,7 @@ class Client:
                  "{code:'VAULT_MISMATCH',outcome:'unknown'});")
         wrapped = ("(()=>{try{" + guard + "return " + expression + ";}catch(e){return JSON.stringify({_bridgeError:{"
                    "code:e?.code||'RUNTIME_ERROR',message:e?.message||String(e),"
-                   "outcome:e?.outcome||'unknown'}})}})()")
+                   "outcome:e?.outcome||'unknown',details:e?.details||{}}})}})()")
         try:
             if deadline is None:
                 result = self.evaluate(wrapped, missing_ok)

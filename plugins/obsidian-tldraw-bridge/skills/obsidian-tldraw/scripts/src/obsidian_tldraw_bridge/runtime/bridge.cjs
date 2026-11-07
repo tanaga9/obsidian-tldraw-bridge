@@ -1299,7 +1299,11 @@ module.exports = { reviewLanguages, languageHashes, parseMarkdown,
       return JSON.stringify(queue.get(id))
     }
     if ([...queue.values()].some(job => job.status === 'running')) throw fault('RUNTIME_BUSY', 'CLI job still running')
-    if (queue.size >= MAX_JOBS) throw fault('RECEIPT_CAPACITY', 'Receipt capacity reached: use the CLI forget command to release completed request ids')
+    if (queue.size >= MAX_JOBS) throw fault('RECEIPT_CAPACITY', 'Receipt capacity reached: use the CLI forget command to release completed request ids', 'not_applied', {
+      capacity: MAX_JOBS, retained: queue.size,
+      statusCounts: Object.fromEntries(['complete', 'failed', 'running'].map(status => [status, [...queue.values()].filter(job => job.status === status).length])),
+      releasable: [...queue.values()].filter(job => job.status !== 'running').map(job => ({id: job.id, status: job.status})),
+      recovery: 'Inspect completed or failed requests before forgetting. Forgotten IDs lose replay protection; never retry them.' })
     const job = { id, request, status: 'running' }
     queue.set(id, job)
     Promise.resolve().then(() => execute(app, action, args)).then(
