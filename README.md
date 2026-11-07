@@ -106,11 +106,13 @@ When receipt capacity is reached, the error includes retained status counts and 
 
 ### Markdown prose above the drawing
 
+`create <path> --body-input <body.txt>` optionally sets initial prose before opening the editor.
+
 `markdown-body <path>` reads the prose and returns a whole-file `fileHash`.
 `markdown-body-update <path> --file-hash <hash> --input <body.txt>` replaces
 that prose while preserving frontmatter and drawing data. Nonempty body input
 must end with a newline. The update uses `vault.process`, rejects a stale hash,
-and refuses notes with open editors, active bridge sessions or tldraw stores.
+and refuses notes with open editors, active bridge sessions or tldraw stores; the error identifies the blockers.
 It does not lock out external writers or editors opened later; inspect the file
 and request status after an uncertain outcome. Body hashes are not drawing-save
 or preview evidence.

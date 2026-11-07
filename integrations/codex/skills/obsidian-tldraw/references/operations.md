@@ -11,12 +11,23 @@ such as rationale, working notes, and unresolved questions. The drawing view sho
 the diagram; users need the **View as markdown** action to read this prose. Keep
 information users need to see in the diagram or the response as well.
 
+For a new note, supply optional initial prose with `create <path> --body-input
+<body.txt>`; nonempty prose must end in a newline. It is written before opening
+the editor, using the same conflict checks. If initialization fails after file
+creation, inspect the retained path and request status rather than recreating it.
+Open the retained note and inspect its body and saved drawing; complete only missing
+work. If prose is still needed, finish and save the drawing, close the bridge
+session, then update the prose with the current file hash when no editors remain.
+Do not close the user's tabs without authorization. If a tab blocks the update,
+continue other work and report the outstanding prose. Reopen and verify the saved
+drawing and prose after updating; export the drawing when required.
+
 Use `markdown-body <path>` to read prose and the SHA-256 hash of the entire file.
 Use `markdown-body-update <path> --file-hash <hash> --input <body.txt>` to
 replace only that prose, preserving frontmatter and the drawing block. Nonempty
 body input must end in a newline. This operation uses Obsidian's `vault.process`
 and rejects stale hashes or notes with an open bridge session, tldraw store, or
-Markdown/tldraw editor. It never closes an editor automatically. Re-read after a
+Markdown/tldraw editor. `BODY_EDITOR_OPEN` reports `blockers` for the bridge session, tldraw store, and the number of tldraw and Markdown views. It never closes an editor automatically. Re-read after a
 conflict; on an uncertain outcome inspect the file and request status before retry.
 Use a unique request ID for consequential changes.
 
@@ -191,6 +202,10 @@ only the remaining budget. If cleanup has no budget left, the completed result
 still succeeds and the receipt can remain retained. The budget does not cancel
 already delivered work in Obsidian. On an unknown outcome, recover using the same
 request ID; increasing the timeout does not make blind retries safe.
+An explicit `RUNTIME_BUSY` / `not_applied` admission refusal is retried at most
+three times with the same request ID and arguments, within this budget. Poll
+failures, accepted-job failures, unknown outcomes and `BODY_EDITOR_OPEN` are
+not retried automatically. Exhaustion returns the original refusal.
 
 ## CLI connection failures in Codex
 

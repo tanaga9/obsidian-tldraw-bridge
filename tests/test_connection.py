@@ -147,6 +147,59 @@ class ConnectionTest(unittest.TestCase):
                 self.client._runtime_evaluate("(()=>{throw Object.assign(new Error('full'),{code:'RECEIPT_CAPACITY',outcome:'not_applied',details:{retained:128}})})()")
         self.assertEqual(raised.exception.details['retained'], 128)
 
+    def test_busy_admission_retries_same_request_within_budget(self):
+        dispatches, sleeps = [], []
+        def evaluate(code, *args, **kwargs):
+            if '.dispatch(' in code:
+                dispatches.append(code)
+                if len(dispatches) < 4:
+                    raise BridgeError('busy', code='RUNTIME_BUSY', outcome='not_applied')
+                return None
+            return {'status': 'complete', 'result': {'saved': True}}
+        with patch.object(self.client, 'evaluate', side_effect=evaluate), patch('time.sleep', side_effect=sleeps.append):
+            self.assertEqual(self.client.call('apply', {'path':'a.md'}, 'stable-id'), {'saved': True})
+        self.assertEqual(len(dispatches), 4)
+        self.assertTrue(all(code == dispatches[0] for code in dispatches))
+        self.assertEqual(sleeps, [.15, .3, .6])
+
+    def test_no_retry_for_unknown_or_completed_failures(self):
+        cases = [('RUNTIME_BUSY', 'unknown'), ('RESULT_UNKNOWN', 'unknown'), ('BODY_EDITOR_OPEN', 'not_applied')]
+        for code, outcome in cases:
+            with self.subTest(code=code), patch.object(self.client, 'evaluate', side_effect=BridgeError('failure', code=code, outcome=outcome)) as evaluate, patch('time.sleep') as sleep:
+                with self.assertRaises(BridgeError):
+                    self.client.call('create', {'path':'a.md'}, 'stable-id')
+                self.assertEqual(evaluate.call_count, 1)
+                sleep.assert_not_called()
+        def failure(code, *args, **kwargs):
+            return None if '.dispatch(' in code else {'status':'failed', 'error':'busy', 'failure':{'code':'RUNTIME_BUSY','outcome':'not_applied'}}
+        with patch.object(self.client, 'evaluate', side_effect=failure) as evaluate, patch('time.sleep') as sleep:
+            with self.assertRaises(BridgeError):
+                self.client.call('create', {'path':'a.md'}, 'stable-id')
+            self.assertEqual(evaluate.call_count, 2)
+            sleep.assert_not_called()
+
+    def test_busy_exhaustion_and_insufficient_budget_do_not_dispatch_again(self):
+        with patch.object(self.client, 'evaluate', side_effect=BridgeError('busy', code='RUNTIME_BUSY', outcome='not_applied')) as evaluate, patch('time.sleep') as sleep:
+            with self.assertRaises(BridgeError) as raised:
+                self.client.call('create', {'path':'a.md'}, 'stable-id')
+            self.assertEqual(raised.exception.code, 'RUNTIME_BUSY')
+            self.assertEqual(evaluate.call_count, 4)
+            self.assertEqual(sleep.call_count, 3)
+        with patch.object(self.client, 'evaluate', side_effect=BridgeError('busy', code='RUNTIME_BUSY', outcome='not_applied')) as evaluate, patch('time.sleep') as sleep, patch('time.monotonic', side_effect=[0, 0, 29.95]):
+            with self.assertRaises(BridgeError):
+                self.client.call('create', {'path':'a.md'}, 'stable-id')
+            self.assertEqual(evaluate.call_count, 1)
+            sleep.assert_not_called()
+
+    def test_busy_wait_overshooting_deadline_preserves_not_applied(self):
+        with patch.object(self.client, 'evaluate', side_effect=BridgeError('busy', code='RUNTIME_BUSY', outcome='not_applied')) as evaluate, patch('time.sleep') as sleep, patch('time.monotonic', side_effect=[0, 0, 1, 31]):
+            with self.assertRaises(BridgeError) as raised:
+                self.client.call('create', {'path':'a.md'}, 'stable-id')
+            self.assertEqual(raised.exception.code, 'RUNTIME_BUSY')
+            self.assertEqual(raised.exception.outcome, 'not_applied')
+            self.assertEqual(evaluate.call_count, 1)
+            self.assertEqual(sleep.call_count, 1)
+
     def test_dispatch_and_poll_share_budget(self):
         now = [100.0]
         budgets = []

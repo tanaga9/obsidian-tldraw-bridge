@@ -84,7 +84,10 @@ test('markdown body update preserves frontmatter and drawing and detects conflic
   h.app.workspace.getLeavesOfType=()=>[{view:{file}}]
   h.api.dispatch(h.app,'markdown-body-update',{path:'a.md',fileHash:updated.fileHash,body:'unsafe\n'},'body-open')
   await new Promise(resolve=>setImmediate(resolve))
-  assert.equal(JSON.parse(h.api.poll(h.app,'body-open')).failure.code,'BODY_EDITOR_OPEN')
+  const openFailure=JSON.parse(h.api.poll(h.app,'body-open')).failure
+  assert.equal(openFailure.code,'BODY_EDITOR_OPEN')
+  assert.equal(openFailure.details.blockers.markdownViews,1)
+  assert.equal(openFailure.details.blockers.tldrawViews,1)
   assert.equal(text,previous)
   h.app.workspace.getLeavesOfType=()=>[]
   h.app.vault.process=async(_file,fn)=>{text=fn(text); throw new Error('write uncertain')}
@@ -589,6 +592,42 @@ test('create delegates Markdown generation to plugin and returns saved editable 
   const replay=await h.invoke('create',{path:'Drawings/project-plan.md'},'create-plan')
   assert.equal(replay.revision,result.revision)
   assert.equal(h.calls.length,1)
+})
+
+test('create stores optional body before opening and retains replay identity',async()=>{
+  const h=createFixture()
+  let text='---\ntldraw-file: true\n---\n\n'+h.markdown(h.values())
+  h.app.vault.read=async()=>text
+  h.app.vault.process=async(_file,fn)=>{text=fn(text)}
+  const args={path:'plan.md',body:'\n## Purpose\n\nExample\n\n'}
+  const result=await h.invoke('create',args,'create-with-body')
+  assert.equal(result.bodyPersistence.saved,true)
+  assert.match(text,/## Purpose\n\nExample/)
+  assert.equal((await h.invoke('create',args,'create-with-body')).revision,result.revision)
+  assert.equal(h.calls.filter(call=>call.filename).length,1)
+})
+
+test('create preserves unexpected existing prose and reports retained path',async()=>{
+  const h=createFixture()
+  let text='---\ntldraw-file: true\n---\nExisting prose\n'+h.markdown(h.values())
+  h.app.vault.read=async()=>text
+  let writes=0
+  h.app.vault.process=async(_file,fn)=>{writes++;text=fn(text)}
+  await assert.rejects(h.invoke('create',{path:'plan.md',body:'Replacement\n'},'create-conflict'),/already contains prose/)
+  const failure=JSON.parse(h.api.poll(h.app,'create-conflict')).failure
+  assert.equal(failure.code,'CREATE_INCOMPLETE')
+  assert.equal(failure.outcome,'unknown')
+  assert.equal(failure.details.path,'plan.md')
+  assert.equal(failure.details.cause.code,'BODY_CONFLICT')
+  assert.equal(writes,0)
+  assert.match(text,/Existing prose/)
+})
+
+test('invalid initial body is rejected before creating a file',async()=>{
+  const h=createFixture()
+  await assert.rejects(h.invoke('create',{path:'plan.md',body:'missing newline'}),/newline/)
+  assert.equal(h.files.size,0)
+  assert.equal(h.calls.length,0)
 })
 
 test('create refuses existing files or folders without changing them',async()=>{

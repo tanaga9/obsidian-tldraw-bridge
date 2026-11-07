@@ -36,7 +36,7 @@ class Bridge:
         def invalid(message):
             raise BridgeError(message, code="INVALID_INPUT", outcome="not_applied")
         fields = {
-            "doctor": set(), "capabilities": set(), "create": {"path"},
+            "doctor": set(), "capabilities": set(), "create": {"path", "body"},
             "markdown-body": {"path"}, "markdown-body-update": {"path", "body", "fileHash"},
             "style-spec": {"path", "shapeType"},
             "language-status": {"path", "diagramId"},
@@ -83,10 +83,12 @@ class Bridge:
             if len({item["output"] for item in prepared}) != len(prepared):
                 invalid("Preview output paths must be distinct")
             args["outputs"] = prepared
-        if action == "markdown-body-update":
+        if action == "markdown-body-update" or (action == "create" and "body" in args):
             import re
-            if not isinstance(args.get("body"), str) or not isinstance(args.get("fileHash"), str) or not re.fullmatch(r"[a-f0-9]{64}", args["fileHash"]):
-                invalid("Body and SHA-256 fileHash are required")
+            if not isinstance(args.get("body"), str):
+                invalid("Body text is required")
+            if action == "markdown-body-update" and (not isinstance(args.get("fileHash"), str) or not re.fullmatch(r"[a-f0-9]{64}", args["fileHash"])):
+                invalid("SHA-256 fileHash is required")
             if args["body"] and not args["body"].endswith("\n"):
                 invalid("Nonempty body must end in a newline")
             if "!!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!" in args["body"] or "!!!_END_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!" in args["body"]:

@@ -733,7 +733,8 @@ async function reveal(app, args) {
   }
 }
 
-async function create(app, path) {
+async function create(app, path, body) {
+  if (body !== undefined) validateBody(body)
   if (typeof path !== 'string' || !path.endsWith('.md') || path.includes('\\') || /[\x00-\x1f]/.test(path)
     || path.split('/').some(part => !part || part === '.' || part === '..') || path.split('/').at(-1) === '.md') {
     throw new Error('Use a vault-relative Markdown path without traversal')
@@ -754,11 +755,18 @@ async function create(app, path) {
       await new Promise(resolve => setTimeout(resolve, 100))
     }
     if (sessionsFor(app).has(file.path)) throw new Error('A session already exists for the created path')
+    let bodyPersistence
+    if (body !== undefined) {
+      const initial = await markdownBody(app, {path: file.path})
+      if (initial.body.trim()) throw fault('BODY_CONFLICT', 'New note already contains prose; inspect it before replacing')
+      bodyPersistence = await markdownBody(app, {path: file.path, body, fileHash: initial.fileHash}, true)
+    }
     const result = await open(app, file.path)
-    return { ...result, created: true, requestedPath: path, persistence: await saved(app, file.path) }
+    return { ...result, created: true, requestedPath: path, persistence: await saved(app, file.path),
+      ...(bodyPersistence ? {bodyPersistence} : {}) }
   } catch (error) {
     // Keep the created note: GUI edits or a delayed save may already exist.
-    throw new Error(`Created ${file.path}, but initialization failed: ${errorMessage(error)}. Use open with this path to recover.`)
+    throw fault('CREATE_INCOMPLETE', `Created ${file.path}, but initialization failed: ${errorMessage(error)}. Use open with this path to recover.`, 'unknown', {path: file.path, cause: failureInfo(error), recovery: 'Inspect the retained note and request status; do not repeat create blindly.'})
   }
 }
 
@@ -954,9 +962,16 @@ function assertBodyQuiescent(app, path) {
   const groups = plugin.tlDataDocumentStoreManager?.storesManager?.storeGroupMap
   if (!groups || typeof groups.has !== 'function' || typeof app.workspace.getLeavesOfType !== 'function')
     throw fault('BODY_CHECK_UNAVAILABLE', 'Cannot verify open editors; body update refused')
-  const openLeaf = ['tldraw-view', 'markdown'].some(type => app.workspace.getLeavesOfType(type).some(leaf => leaf.view?.file?.path === path))
-  if (sessionsFor(app).has(path) || groups.has(path) || openLeaf)
-    throw fault('BODY_EDITOR_OPEN', 'Close all editors and bridge sessions for this note before updating its body')
+  const count = type => app.workspace.getLeavesOfType(type).filter(leaf => leaf.view?.file?.path === path).length
+  const blockers = {bridgeSession: sessionsFor(app).has(path), tldrawStore: groups.has(path),
+    tldrawViews: count('tldraw-view'), markdownViews: count('markdown')}
+  if (blockers.bridgeSession || blockers.tldrawStore || blockers.tldrawViews || blockers.markdownViews)
+    throw fault('BODY_EDITOR_OPEN', 'Close all editors and bridge sessions for this note before updating its body', 'not_applied', {path, blockers})
+}
+function validateBody(body) {
+  if (typeof body !== 'string' || (body && !body.endsWith('\n')) || body.includes('!!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!') ||
+      body.includes('!!!_END_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!'))
+    throw fault('INVALID_INPUT', 'Body must be text, end in a newline when nonempty, and contain no drawing markers')
 }
 async function markdownBody(app, args, update = false) {
   const file = markdownFile(app, args.path)
@@ -964,10 +979,9 @@ async function markdownBody(app, args, update = false) {
     const text = await app.vault.read(file)
     return {path: args.path, body: bodyParts(text).body, fileHash: bodyHash(text)}
   }
-  if (typeof args.body !== 'string' || (args.body && !args.body.endsWith('\n')) || args.body.includes('!!!_START_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!') ||
-      args.body.includes('!!!_END_OF_TLDRAW_DATA__DO_NOT_CHANGE_THIS_PHRASE_!!!') ||
-      typeof args.fileHash !== 'string' || !/^[a-f0-9]{64}$/.test(args.fileHash))
-    throw fault('INVALID_INPUT', 'Body text and a SHA-256 fileHash are required; drawing markers are forbidden')
+  validateBody(args.body)
+  if (typeof args.fileHash !== 'string' || !/^[a-f0-9]{64}$/.test(args.fileHash))
+    throw fault('INVALID_INPUT', 'A SHA-256 fileHash is required')
   if (typeof app.vault.process !== 'function') throw fault('BODY_CHECK_UNAVAILABLE', 'Atomic vault.process is unavailable')
   assertBodyQuiescent(app, args.path)
   let expected
@@ -1236,7 +1250,7 @@ async function execute(app, action, args) {
   if (action === 'style-spec') return styleSpec(app, args)
   if (action === 'image-info') return (await prepareImage(app.workspace.containerEl.ownerDocument, args)).report
   if (action === 'observe') return observe(app, args)
-  if (action === 'create') return create(app, args.path)
+  if (action === 'create') return create(app, args.path, args.body)
   if (action === 'reveal') return reveal(app, args)
   if (action === 'open') return open(app, args.path, args.currentPageId)
   if (action === 'state') {

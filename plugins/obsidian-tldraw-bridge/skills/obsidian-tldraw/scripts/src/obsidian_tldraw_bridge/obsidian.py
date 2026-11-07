@@ -380,7 +380,22 @@ class Client:
         job_id = request_id or "bridge-" + uuid.uuid4().hex
         loader, module = self._runtime()
         identity = json.dumps(job_id)
-        self._runtime_evaluate(f"{loader}.dispatch(app,{module},{json.dumps(action)},{json.dumps(args or {})},{identity})", job_id, True, deadline=deadline)
+        dispatch = f"{loader}.dispatch(app,{module},{json.dumps(action)},{json.dumps(args or {})},{identity})"
+        # Only an explicit admission refusal proves that this dispatch was not
+        # accepted. Never retry timeouts, poll failures, or completed jobs here.
+        delays = (0.15, 0.3, 0.6)
+        for attempt in range(len(delays) + 1):
+            try:
+                self._runtime_evaluate(dispatch, job_id, True, deadline=deadline)
+                break
+            except BridgeError as exc:
+                if exc.code != 'RUNTIME_BUSY' or exc.outcome != 'not_applied' or attempt == len(delays):
+                    raise
+                if deadline - time.monotonic() <= delays[attempt]:
+                    raise
+                time.sleep(delays[attempt])
+                if time.monotonic() >= deadline:
+                    raise
         while time.monotonic() < deadline:
             job = self._runtime_evaluate(f"{loader}.poll(app,{module},{identity})", job_id, True, deadline=deadline)
             if job and job.get("status") == "failed":

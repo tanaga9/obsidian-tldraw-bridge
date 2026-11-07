@@ -23,6 +23,15 @@ class CreateCommandTest(unittest.TestCase):
             client.return_value.call.assert_called_once_with('create', {'path': 'Drawings/project-plan.md'}, 'create-plan')
             self.assertTrue(json.loads(output.getvalue())['created'])
 
+    def test_create_initial_body_is_forwarded_and_validated(self):
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, patch('sys.stdin', io.StringIO('Purpose\n')), contextlib.redirect_stdout(io.StringIO()):
+            client.return_value.call.return_value = {'created': True}
+            self.assertEqual(main(['--vault','V','--request-id','new','create','a.md','--body-input','-']),0)
+            client.return_value.call.assert_called_once_with('create', {'path':'a.md','body':'Purpose\n'}, 'new')
+        with patch('obsidian_tldraw_bridge.cli.Client') as client, patch('sys.stdin',io.StringIO('no newline')), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(main(['--vault','V','create','a.md','--body-input','-']),1)
+            client.assert_not_called()
+
     def test_create_rejects_invalid_paths_before_connecting(self):
         for path in ('../escape.md', '/absolute.md', 'folder/../escape.md', 'plan.tldr', 'folder\\plan.md'):
             with self.subTest(path=path), patch('obsidian_tldraw_bridge.cli.Client') as client:

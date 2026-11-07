@@ -76,7 +76,9 @@ def parser():
         edit_parser.add_argument("--preview-format", choices=("png", "webp"))
         edit_parser.add_argument("--preview-quality", type=float)
     sub.add_parser("forget", help="Release a completed receipt; its id must not be retried afterwards").add_argument("id")
-    sub.add_parser("create", help="Create a new tldraw Markdown note and open its editor session").add_argument("path", help="New vault-relative .md path")
+    create = sub.add_parser("create", help="Create a new tldraw Markdown note and open its editor session")
+    create.add_argument("path", help="New vault-relative .md path")
+    create.add_argument("--body-input", help="Optional initial UTF-8 body file, or - for stdin")
     for command in ("open", "state", "saved", "close"):
         command_parser = sub.add_parser(command)
         command_parser.add_argument("path", help="Vault-relative .md path")
@@ -190,6 +192,8 @@ def _execute(options):
         args["path"] = options.path
     if getattr(options, "revision", None):
         args["revision"] = options.revision
+    if options.command == 'create' and options.body_input is not None:
+        args['body'] = _read_input(options.body_input)
     if options.command == 'markdown-body-update':
         args['fileHash'] = options.file_hash
         args['body'] = _read_input(options.input)
