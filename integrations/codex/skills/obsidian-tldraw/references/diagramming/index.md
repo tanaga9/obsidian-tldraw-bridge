@@ -9,7 +9,7 @@ is within the agreed scope using the [improvement and redesign conditions](impro
 A general improvement request defaults to preserving the main structure;
 choosing this production workflow does not itself authorize a redesign.
 
-1. **Establish the task:** Use the user's purpose, source facts, audience, and viewing conditions to state what the reader should understand or decide. Identify the required facts and relationships, including useful content to preserve in an existing diagram, and choose the [format and layout](#format-selection).
+1. **Establish the task:** Use the user's purpose, source facts, audience, and viewing conditions to state what the reader should understand or decide. Identify the required facts and relationships, including useful content to preserve in an existing diagram, and choose the [representation and format](#format-selection). For new work, if another representation serves the task better than tldraw and the user has not explicitly chosen tldraw, use it instead of proceeding automatically to a tldraw sketch.
 2. **Draw a structural candidate:** For a new diagram, use the [initial sketch and collaborative expansion](#starting-a-new-diagram) approach below. If confidence in the design direction is insufficient, gather the missing information before committing to a structure, using the clarification guidance below. Once the direction is sufficiently supported, draw short element names and meaningful connections before visual polish or extended explanation. Use placement and containment to communicate the relationships. Keep necessary qualifications visible; distinguish different connection meanings, such as chronology and causality, with labels, line styles, or a small legend when direction alone is ambiguous.
 3. **Check and revise:** Inspect the candidate against the task and the [completion conditions](#resolving-design-conflicts). If meaning, required content, or structure fails, revise the structure and check again. For readability problems, adjust layout, grouping, or detail level; relax obstructive project defaults before sacrificing meaning. Resolve incorrect connections or edits as well. Proceed when the candidate communicates the required relationships and can be read at its intended viewing level; supporting notes must not hide essential meaning.
 4. **Refine and verify:** Improve navigation, consistency, appearance, and effort within those conditions. Add only explanation and detail that serve the purpose; move extended explanation into supporting notes. Perform the [quality check](#quality-check). If refinement breaks a completion condition, return to the affected structure or layout and recheck it.
@@ -130,7 +130,26 @@ distinct subject readers would look for separately.
 
 ## Format selection
 
-Briefly compare suitable representations and state the selection reason in one sentence. First consider established formats, including UML, and use one when it fits well. Rely on familiar conventions without loading tutorials.
+When starting a new diagram, consider representations in this order, stopping
+when one adequately serves the purpose:
+
+1. Concise prose, combined as useful with lists, nested lists (tree structures),
+   or tables.
+2. If more expressive power is needed, charts or diagrams using tools such as
+   Mermaid or PlantUML.
+3. If those are insufficient, visual tools well suited to the AI agent's
+   capabilities, such as PowerPoint or Google Slides.
+4. Use tldraw when the preceding approaches cannot adequately express the result.
+
+Earlier representations can also help align understanding of what to draw in
+tldraw. Each is a means to an end: combine approaches or change them as the task
+evolves. Respect an explicit user choice of tool or format. This order applies
+to new diagrams, not updates to an existing diagram.
+
+Briefly compare suitable representations and state the selection reason in one
+sentence. When a diagram is appropriate, consider established formats, including
+UML, and use one when it fits well. Rely on familiar conventions without loading
+tutorials.
 
 | Purpose | Starting point |
 | --- | --- |
@@ -143,7 +162,7 @@ Briefly compare suitable representations and state the selection reason in one s
 
 These are candidates, not an exhaustive catalog or mandatory notation. Preserve explicit creative choices and existing conventions. Local corrections do not require repeating format selection or redesigning the diagram. Verify the relevant standard when strict conformance is requested.
 
-When an established format such as UML is the best fit, suggest a dedicated tool such as Mermaid or PlantUML, choosing according to the notation needed. If those tools may not adequately express the required relationships, layout, annotations, or combination of forms, continue with the Obsidian tldraw workflow and briefly explain why. Respect explicit user choices of tool or format.
+For an established format such as UML, consider a dedicated tool such as Mermaid or PlantUML according to the notation needed. Assess whether it can express the required relationships, layout, annotations, and combination of forms.
 
 When none fits the intended meaning well, use a **Freeform Diagram** (also called an Informal Diagram or Ad hoc Diagram): choose or combine boxes and arrows, concept maps, rich pictures, sketchnotes, cluster diagrams, causal loop diagrams, and architecture sketches to express the intended relationships and structure. Include flowchart or swimlane elements where useful. These building blocks can also be established formats in their own right; the composition need not conform to one notation. Make relationship meanings clear with labels or a small legend when needed. The common rules below still apply.
 
