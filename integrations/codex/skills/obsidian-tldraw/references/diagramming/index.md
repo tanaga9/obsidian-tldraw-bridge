@@ -137,8 +137,9 @@ when one adequately serves the purpose:
    or tables.
 2. If more expressive power is needed, charts or diagrams using tools such as
    Mermaid or PlantUML.
-3. If those are insufficient, visual tools well suited to the AI agent's
-   capabilities, such as PowerPoint or Google Slides.
+3. If those are insufficient, consider other visual tools the agent can use
+   effectively in the current environment, such as presentation software
+   (PowerPoint or Google Slides) or code-based graphics using SVG or HTML/CSS.
 4. Use tldraw when the preceding approaches cannot adequately express the result.
 
 Earlier representations can also help align understanding of what to draw in
