@@ -147,6 +147,10 @@ tldraw. Each is a means to an end: combine approaches or change them as the task
 evolves. Respect an explicit user choice of tool or format. This order applies
 to new diagrams, not updates to an existing diagram.
 
+When using another representation, reuse applicable design and quality
+principles from this guidance; follow the chosen tool's own editing, rendering,
+and persistence procedures.
+
 Briefly compare suitable representations and state the selection reason in one
 sentence. When a diagram is appropriate, consider established formats, including
 UML, and use one when it fits well. Rely on familiar conventions without loading
