@@ -9,7 +9,7 @@ const source = fs.readFileSync(path.join(__dirname, '../src/obsidian_tldraw_brid
 const copy = value => JSON.parse(JSON.stringify(value))
 function setup() {
   const context = { require, module: {exports: {}}, Buffer, setTimeout }
-  vm.runInNewContext(source + '\nmodule.exports.testAccess = { sessionsFor, revision, saved, script, batch, editOperations, namedOperations };', context)
+  vm.runInNewContext(source + '\nmodule.exports.testAccess = { sessionsFor, revision, saved, create, script, batch, editOperations, namedOperations };', context)
   const api = context.module.exports
   const access = api.testAccess
   let values = [
@@ -605,6 +605,71 @@ test('create stores optional body before opening and retains replay identity',as
   assert.match(text,/## Purpose\n\nExample/)
   assert.equal((await h.invoke('create',args,'create-with-body')).revision,result.revision)
   assert.equal(h.calls.filter(call=>call.filename).length,1)
+})
+
+test('create with a body waits for reindexing and registers the latest Markdown', async () => {
+  const h = createFixture()
+  let text = '---\ntldraw-file: true\n---\n\n' + h.markdown(h.values())
+  let recognized = true
+  h.plugin.isTldrawFile = () => recognized
+  h.app.vault.read = async () => text
+  h.app.vault.process = async (_file, change) => {
+    text = change(text)
+    recognized = false
+    setTimeout(() => {
+      text = text.replace('Inventory\n', 'Inventory\nSource link added\n')
+      recognized = true
+    }, 10)
+  }
+  h.plugin.tlDataDocumentStoreManager.register = (_file, getData) => {
+    assert.ok(recognized, 'The plugin needs indexed frontmatter to register the store')
+    assert.match(getData(), /Inventory\nSource link added\n/)
+    return h.registration
+  }
+  const result = await h.access.create(h.app, 'inventory.md', 'Inventory\n')
+  assert.ok(result.persistence.saved)
+  assert.equal(h.calls.length, 1)
+})
+
+test('create reports the renamed note without leaving a session under the old path', async () => {
+  const h = createFixture()
+  const originalPath = 'inventory.md'
+  const renamedPath = 'renamed.md'
+  const body = 'Inventory\n'
+  let text = '---\ntldraw-file: true\n---\n\n' + h.markdown(h.values())
+  let recognized = true
+  h.plugin.isTldrawFile = () => recognized
+  h.app.vault.read = async () => text
+  h.app.vault.process = async (file, change) => {
+    text = change(text)
+    recognized = false
+    setTimeout(() => {
+      h.files.delete(originalPath)
+      file.path = renamedPath
+      h.files.set(renamedPath, file)
+      recognized = true
+    }, 10)
+  }
+  let registrations = 0
+  h.plugin.tlDataDocumentStoreManager.register = () => {
+    registrations++
+    return h.registration
+  }
+  await assert.rejects(
+    h.access.create(h.app, originalPath, body),
+    error => {
+      assert.equal(error.code, 'CREATE_INCOMPLETE')
+      assert.equal(error.details.path, renamedPath)
+      assert.match(error.details.cause.message, /moved or was replaced/)
+      return true
+    }
+  )
+  assert.equal(registrations, 0)
+  const sessions = h.access.sessionsFor(h.app)
+  assert.equal(sessions.has(originalPath), false)
+  assert.equal(sessions.has(renamedPath), false)
+  assert.equal((await h.invoke('markdown-body', {path: renamedPath}, 'retained-body')).body, body)
+  assert.equal((await h.invoke('open', {path: renamedPath}, 'recover-renamed')).path, renamedPath)
 })
 
 test('create preserves unexpected existing prose and reports retained path',async()=>{

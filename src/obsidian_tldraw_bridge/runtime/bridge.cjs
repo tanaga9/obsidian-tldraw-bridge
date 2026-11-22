@@ -747,13 +747,6 @@ async function create(app, path, body) {
   const filename = parts.pop()
   const file = await plugin.createTldrFile(filename, { foldername: parts.join('/'), inMarkdown: true })
   try {
-    // The plugin's store manager identifies Markdown through Obsidian's
-    // metadata cache, which can lag behind vault.create without a GUI tab.
-    const deadline = Date.now() + INITIALIZATION_TIMEOUT_MS
-    while (typeof plugin.isTldrawFile === 'function' && !plugin.isTldrawFile(file)) {
-      if (Date.now() >= deadline) throw new Error('Timed out waiting for Obsidian to recognize the new tldraw note')
-      await new Promise(resolve => setTimeout(resolve, 100))
-    }
     if (sessionsFor(app).has(file.path)) throw new Error('A session already exists for the created path')
     let bodyPersistence
     if (body !== undefined) {
@@ -761,7 +754,7 @@ async function create(app, path, body) {
       if (initial.body.trim()) throw fault('BODY_CONFLICT', 'New note already contains prose; inspect it before replacing')
       bodyPersistence = await markdownBody(app, {path: file.path, body, fileHash: initial.fileHash}, true)
     }
-    const result = await open(app, file.path)
+    const result = await open(app, file.path, undefined, file)
     return { ...result, created: true, requestedPath: path, persistence: await saved(app, file.path),
       ...(bodyPersistence ? {bodyPersistence} : {}) }
   } catch (error) {
@@ -770,19 +763,39 @@ async function create(app, path, body) {
   }
 }
 
-async function open(app, path, currentPageId) {
+async function open(app, path, currentPageId, createdFile) {
   if (sessionsFor(app).has(path)) return state(app, path)
   const plugin = requirePlugin(app)
   const file = app.vault.getAbstractFileByPath(path)
   if (!file || file.extension !== 'md') throw new Error('Markdown document required')
-  let text = await app.vault.read(file)
-  parseMarkdown(text)
+  if (createdFile && file !== createdFile) throw new Error('The newly created file was replaced before opening')
+  function assertCreatedFileAtPath() {
+    if (createdFile && (file.path !== path || app.vault.getAbstractFileByPath(path) !== file)) {
+      throw new Error('The newly created file moved or was replaced during initialization')
+    }
+  }
+  async function readForOpen() {
+    const deadline = Date.now() + INITIALIZATION_TIMEOUT_MS
+    for (;;) {
+      assertCreatedFileAtPath()
+      const text = await app.vault.read(file)
+      parseMarkdown(text)
+      // Creation and a subsequent body write can each invalidate the metadata
+      // used by the plugin to open a view or register its store. Read fresh
+      // Markdown on each retry so a later edit survives the wait.
+      if (!createdFile || typeof plugin.isTldrawFile !== 'function' || plugin.isTldrawFile(file)) return text
+      if (Date.now() >= deadline) throw new Error('Timed out waiting for Obsidian to recognize the new tldraw note')
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+  }
+  await readForOpen()
+  assertCreatedFileAtPath()
   const captured = await acquireSeed(app, plugin, file)
   const { seed, bootstrap, ownerDocument, Editor } = captured
   // A GUI opened for initialization may have edited and saved this note while
   // we waited. Register from fresh Markdown if its GUI store was then closed.
-  text = await app.vault.read(file)
-  parseMarkdown(text)
+  const text = await readForOpen()
+  assertCreatedFileAtPath()
   if (ownerDocument?.defaultView?.closed) throw fault('EDITOR_UNAVAILABLE', 'The initialization window was closed; retry open when ready')
   requireFunctions(ownerDocument, ['createElement', 'body.appendChild'], 'editor.container.ownerDocument')
   const session = { path, seed, file, bootstrap, editor: null, registration: null }
