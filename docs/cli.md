@@ -181,6 +181,30 @@ plugin choose a unique filename. Use `open <path>` for existing notes. If creati
 succeeds but opening or persistence verification fails, the error identifies the
 retained note: recover with `open` and `saved`. The bridge does not delete it.
 
+### Why did creation fail if the note already exists?
+
+In the reported failure, `create` had written the note and its Markdown body.
+Opening the editor failed while Obsidian was reindexing the file. The bridge
+now waits until the plugin recognizes the note and reads the latest Markdown
+before it registers the editor. The error code `CREATE_INCOMPLETE` tells you
+the bridge got past file creation. Check the receipt for the retained path
+and the underlying error. [Create and open implementation](../src/obsidian_tldraw_bridge/runtime/bridge.cjs)
+
+![Opening the saved note too early caused the original failure. The corrected flow waits for indexing. An invalid body stops before writing. If the note is renamed during the wait, the file and body remain at the reported path.](diagrams/note-creation-recovery.webp)
+
+Follow `inventory.md` across the top of the [editable diagram](diagrams/note-creation-recovery.md).
+The two branches show how the stopping point determines the recovery action.
+
+| What happened to the request? | What can you conclude? | What do you do next? |
+| --- | --- | --- |
+| The supplied nonempty body is missing its final newline. | Input validation stopped this request before it created a file. | Add the final newline and submit the corrected request with a fresh request ID. |
+| The user renames `inventory.md` after the body is saved, while the bridge waits for indexing. | The renamed file retains its body. The bridge stops before registering an editor at the old path. | Inspect the path and cause in the `CREATE_INCOMPLETE` receipt. Use `open` and then `saved` on the reported path. Use `markdown-body` to check the retained prose. |
+
+The [input validation test](../tests/runtime.test.cjs#L691-L696)
+checks that no file was created. The [rename test](../tests/runtime.test.cjs#L634-L673)
+checks the reported path, retained body, and reopening. If a request merely
+times out, inspect `status <request-id>` before drawing either conclusion.
+
 ## Image insertion
 
 Inspect an image's size before inserting it (Obsidian must be running; no

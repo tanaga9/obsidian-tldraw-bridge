@@ -26,6 +26,21 @@ be chosen or revisions stop yielding useful findings, use
 [design recovery](design-recovery.md). These are conditional aids, not extra
 steps for known corrections or routine choices between acceptable layouts.
 
+### Explaining a complex situation
+
+When several interacting steps make an outcome hard to explain, start with a
+symptom the reader recognizes or a decision they need to make. Follow one
+concrete case through the relevant steps. Keep its names consistent across the
+overview, detail views, and prose. Introduce each mechanism where it explains
+an otherwise surprising outcome. If changing one condition leads to a different
+decision, show the shared path once and mark where the cases diverge.
+
+Check whether the material shows what the reader can conclude at that fork,
+what remains uncertain, and what evidence or action would resolve it. Link a
+consequential claim to an observation, test, or other source the reader can
+inspect. Stop expanding once the material supports the intended decision. Use
+actual reader feedback when assessing whether someone understood it.
+
 ### Starting a new diagram
 
 Begin with a simple, readable initial sketch of the main concept and its essential
