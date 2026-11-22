@@ -1,6 +1,6 @@
 ---
 name: obsidian-tldraw
-description: Create, read, and edit drawings in local Obsidian tldraw notes, including diagrams, mind maps, and freehand line art. Choose suitable diagram patterns and readable layouts through the existing tldraw plugin. Other tldraw apps and Obsidian Canvas use different tools.
+description: Create, read, and edit drawings in local Obsidian tldraw notes, including affinity diagrams, mind maps, and freehand line art. Choose suitable diagram patterns and readable layouts through the existing tldraw plugin. Other tldraw apps and Obsidian Canvas use different tools.
 ---
 
 Use the bundled CLI and its current `--help`; interfaces may change between

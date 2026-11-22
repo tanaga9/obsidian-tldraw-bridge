@@ -7,7 +7,7 @@ Paths refer to the installed `skills/obsidian-tldraw/` Skill.
 
 Codex starts at `SKILL.md`, then uses three basic guides for drawing decisions,
 editing and saving, and SDK drawing details. The drawing guide links to
-format-specific guidance such as mind maps. Codex also selects extra references
+format-specific guidance such as mind maps and affinity diagrams. Codex also selects extra references
 by task, such as connections, improvement, design recovery, language variants,
 or freehand drawing.
 These references have their own conditions; you need not read every

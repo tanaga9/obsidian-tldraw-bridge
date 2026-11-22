@@ -164,6 +164,7 @@ tutorials.
 | Data relationships and movement | ERD, DFD |
 | Strict hierarchies and classification | Tree diagram, including radial layouts |
 | Exploring or organizing ideas around a central topic | [Buzan-style mind map](mind-map.md) |
+| Discovering themes together or explaining a current situation by grouping evidence or inventory items | [Affinity diagram](affinity-diagram.md) |
 | Schedules and dependencies | Gantt chart, PERT diagram |
 
 These are starting points. Follow a linked guide when its diagram type is requested or selected, including when revising its structure. Choose drawing techniques as needed within that diagram type. Preserve explicit creative choices and existing conventions. Local corrections do not require repeating format selection or redesigning the diagram. Verify the relevant standard when strict conformance is requested.

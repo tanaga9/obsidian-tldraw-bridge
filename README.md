@@ -82,6 +82,11 @@ The Skill distills design knowledge into practical drawing guidance. Normal use 
 
 See the [design explanation](docs/diagramming-guide-design-system.md) and [editable Obsidian tldraw note](docs/diagrams/diagramming-guide-design-system.md).
 
+The [editable affinity diagram](docs/diagrams/affinity-diagram.md) uses six
+native sticky notes to sort observations from a release retrospective. Open it
+in Obsidian to move a note, rename a cluster, or duplicate a note and edit its
+text. See the [board preview](docs/diagrams/affinity-diagram.webp).
+
 ## Documentation
 
 - [Agent instruction scope](docs/agent-instructions.md): workspace and vault paths, instruction loading, and export preferences.
