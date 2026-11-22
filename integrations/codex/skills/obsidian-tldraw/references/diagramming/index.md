@@ -162,10 +162,11 @@ tutorials.
 | Goals, interactions, and lifecycles | UML use case, sequence, state diagrams |
 | Software structure and architecture | UML structural diagrams, C4 |
 | Data relationships and movement | ERD, DFD |
-| Hierarchies and topics | Tree diagram, mind map |
+| Strict hierarchies and classification | Tree diagram, including radial layouts |
+| Exploring or organizing ideas around a central topic | [Buzan-style mind map](mind-map.md) |
 | Schedules and dependencies | Gantt chart, PERT diagram |
 
-These are candidates, not an exhaustive catalog or mandatory notation. Preserve explicit creative choices and existing conventions. Local corrections do not require repeating format selection or redesigning the diagram. Verify the relevant standard when strict conformance is requested.
+These are starting points. Follow a linked guide when its diagram type is requested or selected, including when revising its structure. Choose drawing techniques as needed within that diagram type. Preserve explicit creative choices and existing conventions. Local corrections do not require repeating format selection or redesigning the diagram. Verify the relevant standard when strict conformance is requested.
 
 For an established format such as UML, consider a dedicated tool such as Mermaid or PlantUML according to the notation needed. Assess whether it can express the required relationships, layout, annotations, and combination of forms.
 

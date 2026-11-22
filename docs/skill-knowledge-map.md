@@ -6,8 +6,10 @@ Paths refer to the installed `skills/obsidian-tldraw/` Skill.
 ![Knowledge map: choose references by purpose](diagrams/skill-knowledge-map.webp)
 
 Codex starts at `SKILL.md`, then uses three basic guides for drawing decisions,
-editing and saving, and SDK drawing details. It selects extra references by task:
-connections, improvement, design recovery, language variants, or freehand drawing.
+editing and saving, and SDK drawing details. The drawing guide links to
+format-specific guidance such as mind maps. Codex also selects extra references
+by task, such as connections, improvement, design recovery, language variants,
+or freehand drawing.
 These references have their own conditions; you need not read every
 file yourself. The [editable tldraw note](diagrams/skill-knowledge-map.md) contains
 English and Japanese pages for diagram ID `skill-knowledge-map`:

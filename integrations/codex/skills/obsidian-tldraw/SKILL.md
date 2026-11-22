@@ -1,6 +1,6 @@
 ---
 name: obsidian-tldraw
-description: Create, read, and edit local Obsidian tldraw diagrams, choosing suitable diagram patterns and readable layouts through the existing tldraw plugin. Other tldraw apps and Obsidian Canvas use different tools.
+description: Create, read, and edit drawings in local Obsidian tldraw notes, including diagrams, mind maps, and freehand line art. Choose suitable diagram patterns and readable layouts through the existing tldraw plugin. Other tldraw apps and Obsidian Canvas use different tools.
 ---
 
 Use the bundled CLI and its current `--help`; interfaces may change between
@@ -9,11 +9,12 @@ Markdown note and its embedded drawing data.
 
 ## Guidance to load
 
-- For diagram creation, edits, or reviews, read [diagramming guidance](references/diagramming/index.md). It defines the check–revise workflow, completion conditions, and project conventions. Keep local corrections local and preserve useful existing content.
+- For diagram creation, edits, or reviews, read [diagramming guidance](references/diagramming/index.md). Use its [format selection table](references/diagramming/index.md#format-selection) to find guidance for the requested diagram type. Use the shared check–revise workflow and keep local corrections local.
+- For new mind maps, use the [mind map guide](references/diagramming/mind-map.md) and default to the Buzan style. Use the guide to review or materially restructure an existing mind map.
 - If the initial structure cannot be chosen or revisions stop producing useful evidence, use [design recovery](references/diagramming/design-recovery.md) to detect the stall and choose a small, decision-bearing trial.
 - When the user requests improvements or expresses dissatisfaction, or an observed issue warrants a proactive suggestion, read [improvement guidance](references/diagramming/improvement-patterns.md) for proposal conditions, diagnosis, intuitive questions, and optional visual comparisons.
 - For multilingual diagrams, language-page updates, or commit reviews involving them, read [multilingual workflow](references/multilingual.md). Preserve existing target wording/layout; checking does not authorize translation.
-- For directly authored line art, read [freehand drawing](references/freehand.md).
+- For directly authored line art or parts of a diagram that need editable hand-drawn strokes, read [freehand drawing](references/freehand.md).
 - Before editing, read [observation](references/operations.md#observe-before-editing), [named edits](references/operations.md#apply-named-operations), and [failure recovery](references/operations.md#results-and-failure-recovery). For custom SDK scripts, also read the scripting sections linked below; load image and diagnostic details only when needed.
 
 ## Connect to the intended vault
