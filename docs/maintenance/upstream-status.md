@@ -4,18 +4,19 @@ This is a current snapshot. Replace superseded entries and use Git for history.
 
 ## Versions and evidence
 
-| Component | Last observed locally (2026-11-03 UTC) | Last confirmed upstream stable |
+| Component | Last observed locally (2026-11-28 UTC) | Last confirmed upstream stable (2026-11-28 UTC) |
 | --- | --- | --- |
-| Obsidian Desktop | **1.15.0**, installer **1.14.4** (official macOS CLI) | **1.14.5** on 2026-10-31 ([release](https://obsidian.md/changelog/2026-10-22-desktop-v1.14.5/)). Predates the local observation. |
-| Obsidian tldraw plugin | **1.35.1** (running manifest) | **1.35.1** on 2026-11-01 ([release](https://github.com/tldraw/obsidian-plugin/releases/tag/1.35.1), [release API](https://api.github.com/repos/tldraw/obsidian-plugin/releases/latest)) |
-| Embedded tldraw SDK | **5.6.0** (running library registry) | **5.6.0** on 2026-11-01 ([release](https://github.com/tldraw/tldraw/releases/tag/v5.6.0), [release API](https://api.github.com/repos/tldraw/tldraw/releases/latest), [plugin lockfile](https://github.com/tldraw/obsidian-plugin/blob/1.35.1/package-lock.json)) |
-| Electron / Node | **43.7.7 / 24.21.0** (running process) | — |
+| Obsidian Desktop | **1.15.1**, installer **1.15.1** (official macOS CLI) | **1.15.1** ([public release](https://obsidian.md/changelog/2026-11-12-desktop-v1.15.1/)) |
+| Obsidian tldraw plugin | **1.35.1** (running manifest) | **1.35.1** ([release](https://github.com/tldraw/obsidian-plugin/releases/tag/1.35.1), [release API](https://api.github.com/repos/tldraw/obsidian-plugin/releases/latest)) |
+| tldraw SDK | **5.6.0** (running library registry) | **5.6.2** standalone ([release](https://github.com/tldraw/tldraw/releases/tag/v5.6.2), [release API](https://api.github.com/repos/tldraw/tldraw/releases/latest)). Plugin 1.35.1 embeds **5.6.0** ([lockfile](https://github.com/tldraw/obsidian-plugin/blob/1.35.1/package-lock.json)). |
+| Electron / Node | **43.8.9 / 24.22.1** (running process) | — |
 
-Last successful plugin/SDK release check: **2026-11-01T02:13:24Z**.
-The 2026-11-03 source review used plugin 1.35.1 / SDK 5.6.0 and covered
-[Obsidian integration](https://github.com/tldraw/obsidian-plugin/blob/1.35.1/README.md)
-and [SDK feature coverage](https://tldraw.dev/docs/editor). Latest-release
-metadata could not be refreshed. No separate upgrade target is set.
+Last upstream review: **2026-11-28T15:23:02Z**, bridge checkout `b5fe358`.
+[Obsidian Connectors](https://obsidian.md/help/connectors) distributes general
+vault Skills through [obsidian-skills 1.2.3](https://github.com/obsidianmd/obsidian-skills/releases/tag/1.2.3).
+No Connector-specific runtime change or upgrade target was identified. The
+relevant follow-up is co-installation guidance for explicit vault/path selection
+and delegating tldraw Markdown mutations to bridge operations.
 
 ## Live verification
 
@@ -25,8 +26,11 @@ metadata could not be refreshed. No separate upgrade target is set.
 | Rich text | 2026-11-01T02:53:11Z, `178d302` with text-operation edits. Obsidian 1.14.5, plugin 1.35.1, SDK 5.6.0. | `tests/live_rich_text.py` verified marks, lists, label separation, saved/export revision agreement, and disk reopening. |
 | GUI reveal | 2026-11-03, `3185db8` changes. Obsidian 1.15.0, plugin 1.35.1, SDK 5.6.0. | `tests/live_create.py` verified closed-tab opening, tab reuse, cross-page navigation, missing targets, camera lock, oversized and clipped shapes, and preservation of document revision and bridge page. |
 
-Last broad bridge diagnostic: **2026-11-01T02:13:24Z**. Checkout and rebuilt
-package reported plugin 1.35.1 supported and no known update available.
+Focused CLI diagnostic on **2026-11-28 UTC**, checkout `b5fe358`: macOS
+Obsidian/installer 1.15.1, plugin 1.35.1, SDK 5.6.0. The official CLI and bridge
+listed vaults, explicit-vault `doctor` passed, and a read-only `eval` accepted
+top-level `await`.
+Connector co-installation and edit/save behavior were outside this diagnostic.
 
 ## Open limits
 

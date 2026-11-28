@@ -46,6 +46,16 @@ the agent loads. Selecting a vault does not automatically load its `AGENTS.md`.
 See [agent instruction scope](docs/agent-instructions.md) for path examples and
 sample export instructions.
 
+### Use with Obsidian Connectors
+
+[Obsidian Connectors](https://obsidian.md/help/connectors) are optional. Their
+Skills can search and read source notes, edit ordinary Markdown, and work with
+Bases (`.base`) and Obsidian Canvas (`.canvas`). Use the bridge for the drawing
+inside a tldraw note. For prose in that same note, use the bridge's
+[Markdown body workflow](integrations/codex/skills/obsidian-tldraw/references/operations.md#markdown-body-edits).
+When combining tools, give Codex the vault name and the vault-relative path of
+the target drawing.
+
 ### Preview gallery in Obsidian Bases
 
 Use a Cards view to browse tldraw notes. Each card represents a note.
@@ -73,6 +83,13 @@ views:
 ```
 
 For a working example, see [Tldraw Gallery.base](Tldraw%20Gallery.base).
+
+Set `tldraw-preview` with the Obsidian CLI after the bridge saves the drawing
+and exports the WebP and the note's editors and bridge session are closed.
+
+> In the Documents vault, find the launch meeting notes, update the dependency
+> diagram in `Drawings/launch.md`, and export a WebP beside the note. Use it as
+> the cover in the tldraw gallery.
 
 ## Diagramming guide design
 

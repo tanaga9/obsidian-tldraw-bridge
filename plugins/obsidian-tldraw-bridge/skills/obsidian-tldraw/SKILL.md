@@ -71,6 +71,14 @@ unknown statuses and alternative config folders.
 If discovery fails or the requested vault is absent, ask for its name or path
 rather than substituting another vault.
 
+### Work alongside Obsidian Connectors
+
+Use the official Obsidian Skills when available for vault search, ordinary
+Markdown, Bases (`.base`), and Canvas (`.canvas`). Use the bridge workflow for
+tldraw drawing and body edits. When using both CLIs, pass the same confirmed
+vault explicitly and carry the exact vault-relative target path across calls.
+Use `path=` for Obsidian CLI commands that target a specific file.
+
 ## Edit, inspect, and deliver
 
 1. For a new diagram, use `create <vault-relative-path.md>` with an explicit `--request-id`. Continue with the returned actual path. If initialization fails after creation, recover the retained note with `open` and `saved` rather than creating another copy. For an existing note, use `open`.
